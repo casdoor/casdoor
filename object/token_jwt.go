@@ -15,16 +15,19 @@
 package object
 
 import (
+	"crypto/ed25519"
 	"crypto/sha256"
 	"crypto/sha512"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
 	"fmt"
 	"hash"
 	"reflect"
 	"strings"
 	"time"
 
-	"github.com/casdoor/casdoor/gm"
+	"github.com/casdoor/casdoor/ee/gm"
 	"github.com/casdoor/casdoor/util"
 	"github.com/emmansun/gmsm/sm3"
 	"github.com/golang-jwt/jwt/v5"
@@ -744,7 +747,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 	}
 
 	signingApplication := getSigningApplication(application, user.Owner)
-	jwtMethod := getJwtSigningMethod(signingApplication)
+	jwtMethod := GetJwtSigningMethod(signingApplication)
 
 	// the JWT token length in "JWT-Empty" mode will be very short, as User object only has two properties: owner and name
 	if application.TokenFormat == "JWT" {
@@ -769,7 +772,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		return "", "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
 	}
 
-	cert, err := getCertByApplication(signingApplication)
+	cert, err := GetCertByApplication(signingApplication)
 	if err != nil {
 		return "", "", "", "", err
 	}
@@ -817,7 +820,7 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 	return tokenString, refreshTokenString, idTokenString, name, err
 }
 
-func getJwtSigningMethod(application *Application) jwt.SigningMethod {
+func GetJwtSigningMethod(application *Application) jwt.SigningMethod {
 	switch application.TokenSigningMethod {
 	case "RS512":
 		return jwt.SigningMethodRS512
@@ -885,4 +888,49 @@ func ParseJwtTokenByApplication(token string, application *Application) (*Claims
 	}
 
 	return ParseJwtToken(token, cert)
+}
+
+// ParseJwtSigningKey parses the private key of a cert for the signing method of a token
+func ParseJwtSigningKey(method jwt.SigningMethod, cert *Cert) (interface{}, error) {
+	privateKey := cert.PrivateKey
+	switch method.(type) {
+	case *jwt.SigningMethodECDSA:
+		return jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
+	case *jwt.SigningMethodEd25519:
+		return jwt.ParseEdPrivateKeyFromPEM([]byte(privateKey))
+	case *jwt.SigningMethodRSA, *jwt.SigningMethodRSAPSS:
+		return jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
+	}
+	return nil, fmt.Errorf("unexpected signing method: %s", method.Alg())
+}
+
+// ParseJwtVerifyKey parses the certificate of a cert for the signing method of a token being verified
+func ParseJwtVerifyKey(token *jwt.Token, certificate string) (interface{}, error) {
+	switch token.Method.(type) {
+	case *jwt.SigningMethodRSA, *jwt.SigningMethodRSAPSS:
+		return jwt.ParseRSAPublicKeyFromPEM([]byte(certificate))
+	case *jwt.SigningMethodECDSA:
+		return jwt.ParseECPublicKeyFromPEM([]byte(certificate))
+	case *jwt.SigningMethodEd25519:
+		return parseEdPublicKeyFromPem(certificate)
+	}
+	return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+}
+
+// parseEdPublicKeyFromPem takes the Ed25519 public key from a certificate, or from a PEM public key
+func parseEdPublicKeyFromPem(certificate string) (interface{}, error) {
+	block, _ := pem.Decode([]byte(certificate))
+	if block == nil || block.Type != "CERTIFICATE" {
+		return jwt.ParseEdPublicKeyFromPEM([]byte(certificate))
+	}
+
+	parsedCertificate, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
+	publicKey, ok := parsedCertificate.PublicKey.(ed25519.PublicKey)
+	if !ok {
+		return nil, fmt.Errorf("the certificate has no Ed25519 public key")
+	}
+	return publicKey, nil
 }

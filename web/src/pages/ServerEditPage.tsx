@@ -17,7 +17,7 @@ import * as ServerBackend from "@/backend/ServerBackend";
 import {submitEdit} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
 import {EditionNotice} from "@/components/common/EditionNotice";
-import {McpRecordTable} from "@/components/server/McpRecordTable";
+import {McpRecordTable} from "@/ee/components/server/McpRecordTable";
 
 /** The tools the MCP server exposes; "isAllowed" and "requireApproval" are editable. */
 function ToolTable({tools, onChange}: {tools: any[]; onChange: (tools: any[]) => void}) {

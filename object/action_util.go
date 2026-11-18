@@ -22,7 +22,7 @@ import (
 )
 
 // getInstalledAction loads an action installed in the organization, checking that it is of the kind the caller runs
-func getInstalledAction(owner string, name string, kind string) (*action.Module, *actionFile, error) {
+func GetInstalledAction(owner string, name string, kind string) (*action.Module, *actionFile, error) {
 	module, hosts, err := getActionModule(owner, name)
 	if err != nil {
 		return nil, nil, err

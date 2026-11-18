@@ -27,6 +27,7 @@ import (
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 
@@ -697,8 +698,8 @@ func ApiFilter(ctx *context.Context) {
 
 	// the separation of the system, security and audit admins narrows what an allowed admin may do
 	if isAllowed {
-		err := object.CheckAdminDuty(subOwner, subName, method, urlPath, objOwner, objName)
-		if dutyErr, ok := err.(*object.AdminDutyError); ok {
+		err := ee.CheckAdminDuty(subOwner, subName, method, urlPath, objOwner, objName)
+		if dutyErr, ok := err.(*ee.AdminDutyError); ok {
 			responseError(ctx, translateAdminDutyError(ctx, dutyErr))
 			return
 		}
@@ -876,7 +877,7 @@ func formatExtraInfo(extra map[string]interface{}) string {
 }
 
 // translateAdminDutyError names each message literally, for the i18n generator
-func translateAdminDutyError(ctx *context.Context, err *object.AdminDutyError) string {
+func translateAdminDutyError(ctx *context.Context, err *ee.AdminDutyError) string {
 	switch err.Key {
 	case "The audit admin can only view, not change anything":
 		return T(ctx, "enterprise:The audit admin can only view, not change anything")

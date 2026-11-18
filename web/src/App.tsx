@@ -22,7 +22,7 @@ import {useAccountHelmet} from "@/hooks/use-application-chrome";
 import * as Auth from "@/auth/Auth";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
-import {isDelegatedAdmin} from "@/lib/delegated-admin";
+import {isDelegatedAdmin} from "@/ee/lib/delegated-admin";
 
 // ---- console pages -----------------------------------------------------------
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
@@ -32,11 +32,11 @@ const ShortcutsPage = React.lazy(() => import("@/pages/ShortcutsPage"));
 const AccountPage = React.lazy(() => import("@/pages/AccountPage"));
 const MfaSetupPage = React.lazy(() => import("@/pages/auth/MfaSetupPage"));
 const SystemInfoPage = React.lazy(() => import("@/pages/SystemInfoPage"));
-const CompliancePage = React.lazy(() => import("@/pages/CompliancePage"));
-const SecurityScreenPage = React.lazy(() => import("@/pages/SecurityScreenPage"));
-const AccessReviewListPage = React.lazy(() => import("@/pages/AccessReviewListPage"));
-const AccessReviewEditPage = React.lazy(() => import("@/pages/AccessReviewEditPage"));
-const MyAccessReviewsPage = React.lazy(() => import("@/pages/MyAccessReviewsPage"));
+const CompliancePage = React.lazy(() => import("@/ee/pages/CompliancePage"));
+const SecurityScreenPage = React.lazy(() => import("@/ee/pages/SecurityScreenPage"));
+const AccessReviewListPage = React.lazy(() => import("@/ee/pages/AccessReviewListPage"));
+const AccessReviewEditPage = React.lazy(() => import("@/ee/pages/AccessReviewEditPage"));
+const MyAccessReviewsPage = React.lazy(() => import("@/ee/pages/MyAccessReviewsPage"));
 const EditionsPage = React.lazy(() => import("@/pages/EditionsPage"));
 const SettingEditPage = React.lazy(() => import("@/pages/SettingEditPage"));
 
@@ -77,7 +77,7 @@ const EnforcerEditPage = React.lazy(() => import("@/pages/EnforcerEditPage"));
 const AgentListPage = React.lazy(() => import("@/pages/AgentListPage"));
 const AgentEditPage = React.lazy(() => import("@/pages/AgentEditPage"));
 const ServerListPage = React.lazy(() => import("@/pages/ServerListPage"));
-const McpApprovalListPage = React.lazy(() => import("@/pages/McpApprovalListPage"));
+const McpApprovalListPage = React.lazy(() => import("@/ee/pages/McpApprovalListPage"));
 const ServerEditPage = React.lazy(() => import("@/pages/ServerEditPage"));
 const ServerStorePage = React.lazy(() => import("@/pages/ServerStorePage"));
 const EntryListPage = React.lazy(() => import("@/pages/EntryListPage"));
@@ -126,9 +126,9 @@ const WebhookEventListPage = React.lazy(() => import("@/pages/WebhookEventListPa
 const TicketListPage = React.lazy(() => import("@/pages/TicketListPage"));
 const RadiusClientListPage = React.lazy(() => import("@/pages/RadiusClientListPage"));
 const RadiusClientEditPage = React.lazy(() => import("@/pages/RadiusClientEditPage"));
-const PrivilegedAccountListPage = React.lazy(() => import("@/pages/PrivilegedAccountListPage"));
-const PrivilegedAccountEditPage = React.lazy(() => import("@/pages/PrivilegedAccountEditPage"));
-const PrivilegedAccessPage = React.lazy(() => import("@/pages/PrivilegedAccessPage"));
+const PrivilegedAccountListPage = React.lazy(() => import("@/ee/pages/PrivilegedAccountListPage"));
+const PrivilegedAccountEditPage = React.lazy(() => import("@/ee/pages/PrivilegedAccountEditPage"));
+const PrivilegedAccessPage = React.lazy(() => import("@/ee/pages/PrivilegedAccessPage"));
 const TicketEditPage = React.lazy(() => import("@/pages/TicketEditPage"));
 const LdapEditPage = React.lazy(() => import("@/pages/LdapEditPage"));
 const LdapSyncPage = React.lazy(() => import("@/pages/LdapSyncPage"));
@@ -150,7 +150,7 @@ const PromptPage = React.lazy(() => import("@/pages/auth/PromptPage"));
 const TelegramLogin = React.lazy(() => import("@/pages/auth/TelegramLogin"));
 const CasLogout = React.lazy(() => import("@/pages/auth/CasLogout"));
 const CaptchaPage = React.lazy(() => import("@/pages/auth/CaptchaPage"));
-const PushConfirmPage = React.lazy(() => import("@/pages/auth/PushConfirmPage"));
+const PushConfirmPage = React.lazy(() => import("@/ee/pages/auth/PushConfirmPage"));
 const OidcDiscoveryPage = React.lazy(() => import("@/pages/auth/OidcDiscoveryPage"));
 
 Setting.initServerUrl();

@@ -175,7 +175,7 @@ func (c *ApiController) UpdatePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePayment(id, &payment))
+	c.Data["json"] = WrapActionResponse(object.UpdatePayment(id, &payment))
 	c.ServeJSON()
 }
 
@@ -194,7 +194,7 @@ func (c *ApiController) AddPayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPayment(&payment))
+	c.Data["json"] = WrapActionResponse(object.AddPayment(&payment))
 	c.ServeJSON()
 }
 
@@ -213,7 +213,7 @@ func (c *ApiController) DeletePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePayment(&payment))
+	c.Data["json"] = WrapActionResponse(object.DeletePayment(&payment))
 	c.ServeJSON()
 }
 

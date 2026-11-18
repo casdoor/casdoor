@@ -631,7 +631,7 @@ func RefreshToken(application *Application, grantType string, refreshToken strin
 	}
 
 	signingApplication := getSigningApplication(application, token.Organization)
-	cert, err := getCertByApplication(signingApplication)
+	cert, err := GetCertByApplication(signingApplication)
 	if err != nil {
 		return nil, err
 	}
@@ -813,7 +813,7 @@ func checkRefreshClientSecret(application *Application, token *Token, clientSecr
 }
 
 func ValidateJwtAssertion(clientAssertion string, application *Application, host string) (bool, *Claims, error) {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 
 	clientCert, err := getCert(application.Owner, application.ClientCert)
 	if err != nil {

@@ -266,7 +266,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order, autoRenew *bo
 	payerName := fmt.Sprintf("%s | %s", user.Name, user.DisplayName)
 	paymentName := fmt.Sprintf("payment_%v", util.GenerateTimeId())
 
-	originFrontend, originBackend := getOriginFromHost(host)
+	originFrontend, originBackend := GetOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 

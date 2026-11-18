@@ -9,7 +9,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useOrganizationFilter, useRequestOrganization} from "@/hooks/use-organization";
 import * as GroupBackend from "@/backend/GroupBackend";
 import * as Setting from "@/lib/setting";
-import {canDelegated, isDelegatedAdmin, isDelegatedRootGroup} from "@/lib/delegated-admin";
+import {canDelegated, isDelegatedAdmin, isDelegatedRootGroup} from "@/ee/lib/delegated-admin";
 import {newGroup} from "@/pages/defaults";
 
 export default function GroupListPage() {

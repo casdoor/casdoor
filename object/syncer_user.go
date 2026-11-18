@@ -130,7 +130,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 
 func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 	values := []string{}
-	m := syncer.getMapFromOriginalUser(user)
+	m := syncer.GetMapFromOriginalUser(user)
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.IsHashed {
 			values = append(values, m[tableColumn.Name])

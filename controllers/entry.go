@@ -148,7 +148,7 @@ func (c *ApiController) UpdateEntry() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateEntry(id, &entry))
+	c.Data["json"] = WrapActionResponse(object.UpdateEntry(id, &entry))
 	c.ServeJSON()
 }
 
@@ -167,7 +167,7 @@ func (c *ApiController) AddEntry() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddEntry(&entry))
+	c.Data["json"] = WrapActionResponse(object.AddEntry(&entry))
 	c.ServeJSON()
 }
 
@@ -186,6 +186,6 @@ func (c *ApiController) DeleteEntry() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteEntry(&entry))
+	c.Data["json"] = WrapActionResponse(object.DeleteEntry(&entry))
 	c.ServeJSON()
 }

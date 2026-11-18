@@ -27,7 +27,7 @@ import (
 )
 
 func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 
 	rpId, rpOrigins, err := getWebAuthnRpIdAndOrigins(originBackend)
 	if err != nil {

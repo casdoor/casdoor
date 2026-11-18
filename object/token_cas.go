@@ -353,7 +353,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 		return "", "", err
 	}
 
-	cert, err := getCertByApplication(application)
+	cert, err := GetCertByApplication(application)
 	if err != nil {
 		return "", "", err
 	}

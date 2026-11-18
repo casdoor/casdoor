@@ -61,7 +61,7 @@ func restrictTenantEmailProvider(provider *Provider, emailProvider email.EmailPr
 	}
 }
 
-func restrictNotificationClient(client notify.Notifier, httpClient *http.Client) {
+func RestrictNotificationClient(client notify.Notifier, httpClient *http.Client) {
 	if httpNotificationClient, ok := client.(*notification.HttpNotificationClient); ok {
 		httpNotificationClient.SetHttpClient(httpClient)
 	}

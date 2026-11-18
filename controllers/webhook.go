@@ -120,7 +120,7 @@ func (c *ApiController) UpdateWebhook() {
 		webhook.SingleOrgOnly = true
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateWebhook(id, &webhook, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.UpdateWebhook(id, &webhook, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
@@ -149,7 +149,7 @@ func (c *ApiController) AddWebhook() {
 		webhook.SingleOrgOnly = true
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddWebhook(&webhook))
+	c.Data["json"] = WrapActionResponse(object.AddWebhook(&webhook))
 	c.ServeJSON()
 }
 
@@ -168,6 +168,6 @@ func (c *ApiController) DeleteWebhook() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteWebhook(&webhook))
+	c.Data["json"] = WrapActionResponse(object.DeleteWebhook(&webhook))
 	c.ServeJSON()
 }

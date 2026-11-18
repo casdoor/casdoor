@@ -38,7 +38,7 @@ func isValidRealName(s string) bool {
 	return reRealName.MatchString(s)
 }
 
-func resetUserSigninErrorTimes(user *User) error {
+func ResetUserSigninErrorTimes(user *User) error {
 	// if the password is correct and wrong times is not zero, reset the error times
 	if user.SigninWrongTimes == 0 {
 		return nil
@@ -115,11 +115,11 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 
 	leftChances := failedSigninLimit - user.SigninWrongTimes
 	if leftChances == 0 && enableCaptcha {
-		return newSigninError(SigninReasonWrongPassword, i18n.Translate(lang, "check:password or code is incorrect"))
+		return NewSigninError(SigninReasonWrongPassword, i18n.Translate(lang, "check:password or code is incorrect"))
 	} else if leftChances >= 0 {
-		return newSigninError(SigninReasonWrongPassword, fmt.Sprintf(i18n.Translate(lang, "check:password or code is incorrect, you have %s remaining chances"), strconv.Itoa(leftChances)))
+		return NewSigninError(SigninReasonWrongPassword, fmt.Sprintf(i18n.Translate(lang, "check:password or code is incorrect, you have %s remaining chances"), strconv.Itoa(leftChances)))
 	}
 
 	// don't show the chance error message if the user has no chance left
-	return newSigninError(SigninReasonAccountFrozen, fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), failedSigninFrozenTime))
+	return NewSigninError(SigninReasonAccountFrozen, fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), failedSigninFrozenTime))
 }

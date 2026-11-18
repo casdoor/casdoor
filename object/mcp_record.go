@@ -67,9 +67,9 @@ func IsMcpToolCallRecorded(owner string) bool {
 
 func AddMcpRecord(record *McpRecord) {
 	record.CreatedTime = util.GetCurrentTime()
-	record.Arguments = truncateString(record.Arguments, GetMcpRecordBodyLimit())
-	record.Response = truncateString(record.Response, GetMcpRecordBodyLimit())
-	record.UserAgent = truncateString(record.UserAgent, 500)
+	record.Arguments = TruncateString(record.Arguments, GetMcpRecordBodyLimit())
+	record.Response = TruncateString(record.Response, GetMcpRecordBodyLimit())
+	record.UserAgent = TruncateString(record.UserAgent, 500)
 	if _, err := ormer.Engine.Insert(record); err != nil {
 		logs.Warn("the MCP tool call record is not saved: %s", err.Error())
 	}
@@ -115,4 +115,12 @@ func GetPaginationMcpRecords(owner string, filter *McpRecordFilter, offset int, 
 	records := []*McpRecord{}
 	err := getMcpRecordSession(owner, filter).Desc("id").Limit(limit, offset).Find(&records)
 	return records, err
+}
+
+func TruncateString(s string, n int) string {
+	runes := []rune(s)
+	if len(runes) <= n {
+		return s
+	}
+	return string(runes[:n])
 }

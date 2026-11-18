@@ -11,8 +11,8 @@ import {ApplicationBasicTab} from "@/components/application/ApplicationBasicTab"
 import {ApplicationOidcOauthTab} from "@/components/application/ApplicationOidcOauthTab";
 import {ApplicationProvidersTab} from "@/components/application/ApplicationProvidersTab";
 import {ApplicationReverseProxyTab} from "@/components/application/ApplicationReverseProxyTab";
-import {ApplicationFormFillTab} from "@/components/application/ApplicationFormFillTab";
-import {ApplicationProvisioningTab} from "@/components/application/ApplicationProvisioningTab";
+import {ApplicationFormFillTab} from "@/ee/components/application/ApplicationFormFillTab";
+import {ApplicationProvisioningTab} from "@/ee/components/application/ApplicationProvisioningTab";
 import {ApplicationSamlTab} from "@/components/application/ApplicationSamlTab";
 import {ApplicationSecurityTab} from "@/components/application/ApplicationSecurityTab";
 import {ApplicationUiCustomizationTab} from "@/components/application/ApplicationUiCustomizationTab";

@@ -27,15 +27,15 @@ const editionRequiredCode = "edition-required"
 func (c *ApiController) ServeJSON(encoding ...bool) error {
 	switch resp := c.Data["json"].(type) {
 	case *Response:
-		c.localizeEditionError(resp)
+		c.LocalizeEditionError(resp)
 	case Response:
-		c.localizeEditionError(&resp)
+		c.LocalizeEditionError(&resp)
 		c.Data["json"] = resp
 	}
 	return c.Controller.ServeJSON(encoding...)
 }
 
-func (c *ApiController) localizeEditionError(resp *Response) {
+func (c *ApiController) LocalizeEditionError(resp *Response) {
 	if resp == nil || resp.Status != "error" {
 		return
 	}

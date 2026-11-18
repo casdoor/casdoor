@@ -8,7 +8,7 @@ import {PasswordRequirements, checkPasswordComplexity} from "@/lib/password-chec
 import * as Obfuscator from "@/auth/Obfuscator";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
-import {canDelegated, isDelegatedAdminOf} from "@/lib/delegated-admin";
+import {canDelegated, isDelegatedAdminOf} from "@/ee/lib/delegated-admin";
 
 interface PasswordModalProps {
   user: any;

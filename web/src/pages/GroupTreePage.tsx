@@ -15,7 +15,7 @@ import * as GroupBackend from "@/backend/GroupBackend";
 import {useAccount} from "@/hooks/use-account";
 import {submitDelete} from "@/lib/crud";
 import * as Setting from "@/lib/setting";
-import {canDelegated, isDelegatedAdmin, isDelegatedRootGroup} from "@/lib/delegated-admin";
+import {canDelegated, isDelegatedAdmin, isDelegatedRootGroup} from "@/ee/lib/delegated-admin";
 import {cn} from "@/lib/utils";
 
 interface GroupNode {

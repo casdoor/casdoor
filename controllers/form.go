@@ -29,7 +29,7 @@ import (
 // @Success 200 {array} object.Form The Response object
 // @router /get-global-forms [get]
 func (c *ApiController) GetGlobalForms() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 

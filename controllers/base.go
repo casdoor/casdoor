@@ -23,9 +23,9 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/server/web"
+	"github.com/casdoor/casdoor/ee/tracing"
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/tracing"
 	"github.com/casdoor/casdoor/util"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -181,14 +181,6 @@ func (c *ApiController) requireOrganizationPermission(organization string) bool 
 	return true
 }
 
-func (c *ApiController) requireGlobalAdmin() bool {
-	if !c.IsGlobalAdmin() {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return false
-	}
-	return true
-}
-
 func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	username := c.GetSessionUsername()
 	if object.IsAppUser(username) {
@@ -201,7 +193,7 @@ func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 		return appUser.IsGlobalAdmin(), appUser
 	}
 
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil {
 		return false, nil
 	}
@@ -209,7 +201,7 @@ func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	return user.IsGlobalAdmin(), user
 }
 
-func (c *ApiController) getCurrentUser() *object.User {
+func (c *ApiController) GetCurrentUser() *object.User {
 	var user *object.User
 	var err error
 	userId := c.GetSessionUsername()
@@ -401,7 +393,7 @@ func (c *ApiController) setMfaUserSession(userId string) {
 	c.SetSession(object.MfaSessionUserId, userId)
 }
 
-func (c *ApiController) getMfaUserSession() string {
+func (c *ApiController) GetMfaUserSession() string {
 	userId := c.Ctx.Input.CruSession.Get(context.Background(), object.MfaSessionUserId)
 	if userId == nil {
 		return ""
@@ -420,7 +412,7 @@ func (c *ApiController) setExpireForSession(cookieExpireInHours int64) {
 	})
 }
 
-func wrapActionResponse(affected bool, e ...error) *Response {
+func WrapActionResponse(affected bool, e ...error) *Response {
 	if len(e) != 0 && e[0] != nil {
 		return &Response{Status: "error", Msg: e[0].Error()}
 	} else if affected {

@@ -103,7 +103,7 @@ func (c *ApiController) UpdateSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
+	c.Data["json"] = WrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
 	c.ServeJSON()
 }
 
@@ -122,7 +122,7 @@ func (c *ApiController) AddSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSession(&session))
+	c.Data["json"] = WrapActionResponse(object.AddSession(&session))
 	c.ServeJSON()
 }
 
@@ -152,12 +152,12 @@ func (c *ApiController) DeleteSession() {
 	if sessionId != "" {
 		// Ending one session is a sign-out of it: the applications signed in with it are told,
 		// and the id is removed from every Session row of the user, not only this one
-		c.Data["json"] = wrapActionResponse(object.LogoutSessionId(util.GetSessionId(session.Owner, session.Name, session.Application), sessionId, c.Ctx.Request.Host))
+		c.Data["json"] = WrapActionResponse(object.LogoutSessionId(util.GetSessionId(session.Owner, session.Name, session.Application), sessionId, c.Ctx.Request.Host))
 		c.ServeJSON()
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application), curSessionId))
+	c.Data["json"] = WrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application), curSessionId))
 	c.ServeJSON()
 }
 

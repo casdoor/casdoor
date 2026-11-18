@@ -154,7 +154,7 @@ func (c *ApiController) UpdateSubscription() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSubscription(id, &subscription))
+	c.Data["json"] = WrapActionResponse(object.UpdateSubscription(id, &subscription))
 	c.ServeJSON()
 }
 
@@ -191,7 +191,7 @@ func (c *ApiController) SetSubscriptionAutoRenew() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(object.SetSubscriptionAutoRenew(subscription, autoRenew))
+	c.Data["json"] = WrapActionResponse(object.SetSubscriptionAutoRenew(subscription, autoRenew))
 	c.ServeJSON()
 }
 
@@ -243,7 +243,7 @@ func (c *ApiController) AddSubscription() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSubscription(&subscription))
+	c.Data["json"] = WrapActionResponse(object.AddSubscription(&subscription))
 	c.ServeJSON()
 }
 
@@ -262,6 +262,6 @@ func (c *ApiController) DeleteSubscription() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSubscription(&subscription))
+	c.Data["json"] = WrapActionResponse(object.DeleteSubscription(&subscription))
 	c.ServeJSON()
 }

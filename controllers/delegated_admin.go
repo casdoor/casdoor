@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -28,8 +29,8 @@ import (
 const DelegatedScopeKey = "delegatedScope"
 
 // getDelegatedScope is the scope of the current request when it is made by a delegated admin, nil otherwise
-func (c *ApiController) getDelegatedScope() *object.DelegatedScope {
-	scope, ok := c.Ctx.Input.GetData(DelegatedScopeKey).(*object.DelegatedScope)
+func (c *ApiController) getDelegatedScope() *ee.DelegatedScope {
+	scope, ok := c.Ctx.Input.GetData(DelegatedScopeKey).(*ee.DelegatedScope)
 	if !ok || scope == nil || scope.User == "" || c.IsAdmin() {
 		return nil
 	}
@@ -47,7 +48,7 @@ func (c *ApiController) unauthorizedError() error {
 	return errors.New(c.T("auth:Unauthorized operation"))
 }
 
-func (c *ApiController) getDelegatedUsers(scope *object.DelegatedScope) {
+func (c *ApiController) getDelegatedUsers(scope *ee.DelegatedScope) {
 	groupName := c.Ctx.Input.Query("groupName")
 	limit := c.Ctx.Input.Query("pageSize")
 	page := c.Ctx.Input.Query("p")
@@ -85,7 +86,7 @@ func (c *ApiController) getDelegatedUsers(scope *object.DelegatedScope) {
 
 // checkDelegatedUserUpdate checks a user a delegated admin changes: an administered user who keeps their
 // organization, name and ID, doesn't become an admin and stays in the administered groups
-func (c *ApiController) checkDelegatedUserUpdate(scope *object.DelegatedScope, oldUser *object.User, user *object.User, columns string) error {
+func (c *ApiController) checkDelegatedUserUpdate(scope *ee.DelegatedScope, oldUser *object.User, user *object.User, columns string) error {
 	if !scope.CanManageUser(oldUser) {
 		return c.unauthorizedError()
 	}
@@ -96,14 +97,14 @@ func (c *ApiController) checkDelegatedUserUpdate(scope *object.DelegatedScope, o
 		return errors.New(c.T("enterprise:A delegated admin can only put users in the groups they administer"))
 	}
 	isPasswordChanged := user.Password != "" && user.Password != "***" && user.Password != oldUser.Password
-	if (isPasswordChanged || strings.Contains(strings.ToLower(columns), "password")) && !scope.Can(object.DelegatedActionPasswords) {
+	if (isPasswordChanged || strings.Contains(strings.ToLower(columns), "password")) && !scope.Can(ee.DelegatedActionPasswords) {
 		return c.unauthorizedError()
 	}
 	return nil
 }
 
 // checkDelegatedUserAdd checks a user a delegated admin adds, with no group it goes to the delegated admin's first group
-func (c *ApiController) checkDelegatedUserAdd(scope *object.DelegatedScope, user *object.User) error {
+func (c *ApiController) checkDelegatedUserAdd(scope *ee.DelegatedScope, user *object.User) error {
 	if user.Owner != scope.Organization || user.IsAdmin || user.Name == scope.User || scope.IsProtectedName(user.Name) {
 		return c.unauthorizedError()
 	}
@@ -123,7 +124,7 @@ func (c *ApiController) checkDelegatedUserAdd(scope *object.DelegatedScope, user
 	return nil
 }
 
-func (c *ApiController) getDelegatedGroups(scope *object.DelegatedScope) {
+func (c *ApiController) getDelegatedGroups(scope *ee.DelegatedScope) {
 	limit := c.Ctx.Input.Query("pageSize")
 	page := c.Ctx.Input.Query("p")
 	field := c.Ctx.Input.Query("field")
@@ -187,9 +188,9 @@ func (c *ApiController) getDelegatedGroups(scope *object.DelegatedScope) {
 	c.ResponseOk(groups, paginator.Nums())
 }
 
-func (c *ApiController) getDelegatedApplications(scope *object.DelegatedScope) {
+func (c *ApiController) getDelegatedApplications(scope *ee.DelegatedScope) {
 	applications := []*object.Application{}
-	if scope.Can(object.DelegatedActionApplications) {
+	if scope.Can(ee.DelegatedActionApplications) {
 		all, err := object.GetOrganizationApplications("admin", scope.Organization)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -222,7 +223,7 @@ func (c *ApiController) getDelegatedApplications(scope *object.DelegatedScope) {
 
 // checkDelegatedApplicationUpdate checks an application a delegated admin changes: one of their applications that
 // keeps its organization and name
-func (c *ApiController) checkDelegatedApplicationUpdate(scope *object.DelegatedScope, id string, application *object.Application) error {
+func (c *ApiController) checkDelegatedApplicationUpdate(scope *ee.DelegatedScope, id string, application *object.Application) error {
 	oldApplication, err := object.GetApplication(id)
 	if err != nil {
 		return err

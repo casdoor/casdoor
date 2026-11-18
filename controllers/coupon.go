@@ -111,7 +111,7 @@ func (c *ApiController) UpdateCoupon() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateCoupon(id, &coupon))
+	c.Data["json"] = WrapActionResponse(object.UpdateCoupon(id, &coupon))
 	c.ServeJSON()
 }
 
@@ -130,7 +130,7 @@ func (c *ApiController) AddCoupon() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddCoupon(&coupon))
+	c.Data["json"] = WrapActionResponse(object.AddCoupon(&coupon))
 	c.ServeJSON()
 }
 
@@ -149,7 +149,7 @@ func (c *ApiController) DeleteCoupon() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteCoupon(&coupon))
+	c.Data["json"] = WrapActionResponse(object.DeleteCoupon(&coupon))
 	c.ServeJSON()
 }
 

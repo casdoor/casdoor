@@ -18,6 +18,7 @@ import (
 	"github.com/beego/beego/v2/server/web/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -38,25 +39,25 @@ var delegatedApis = map[string]delegatedApi{
 	"/api/get-sorted-users":       {method: "GET"},
 	"/api/get-user-count":         {method: "GET"},
 	"/api/get-user":               {method: "GET"},
-	"/api/add-user":               {method: "POST", action: object.DelegatedActionUsers},
-	"/api/update-user":            {method: "POST", action: object.DelegatedActionUsers},
-	"/api/delete-user":            {method: "POST", action: object.DelegatedActionUsers},
-	"/api/remove-user-from-group": {method: "POST", action: object.DelegatedActionUsers},
-	"/api/set-password":           {method: "POST", action: object.DelegatedActionPasswords},
+	"/api/add-user":               {method: "POST", action: ee.DelegatedActionUsers},
+	"/api/update-user":            {method: "POST", action: ee.DelegatedActionUsers},
+	"/api/delete-user":            {method: "POST", action: ee.DelegatedActionUsers},
+	"/api/remove-user-from-group": {method: "POST", action: ee.DelegatedActionUsers},
+	"/api/set-password":           {method: "POST", action: ee.DelegatedActionPasswords},
 	"/api/get-groups":             {method: "GET"},
 	"/api/get-group":              {method: "GET"},
-	"/api/add-group":              {method: "POST", action: object.DelegatedActionGroups},
-	"/api/update-group":           {method: "POST", action: object.DelegatedActionGroups},
-	"/api/delete-group":           {method: "POST", action: object.DelegatedActionGroups},
+	"/api/add-group":              {method: "POST", action: ee.DelegatedActionGroups},
+	"/api/update-group":           {method: "POST", action: ee.DelegatedActionGroups},
+	"/api/delete-group":           {method: "POST", action: ee.DelegatedActionGroups},
 	"/api/get-applications":       {method: "GET", application: true},
 	"/api/get-application":        {method: "GET", application: true},
-	"/api/update-application":     {method: "POST", action: object.DelegatedActionApplications, application: true},
+	"/api/update-application":     {method: "POST", action: ee.DelegatedActionApplications, application: true},
 	"/api/get-organization":       {method: "GET"},
 }
 
 // checkDelegatedAdmin returns the scope of a delegated admin's request to one of the delegated APIs, nil when the
 // request isn't one or is outside the delegated admin's organization
-func checkDelegatedAdmin(ctx *context.Context, subOwner string, subName string, method string, urlPath string, objects []Object) (*object.DelegatedScope, error) {
+func checkDelegatedAdmin(ctx *context.Context, subOwner string, subName string, method string, urlPath string, objects []Object) (*ee.DelegatedScope, error) {
 	api, ok := delegatedApis[urlPath]
 	if !ok || api.method != method || subOwner == "" || subOwner == "anonymous" || subOwner == "app" || subOwner == "built-in" {
 		return nil, nil
@@ -67,7 +68,7 @@ func checkDelegatedAdmin(ctx *context.Context, subOwner string, subName string, 
 	if impersonating, _ := ctx.Input.GetData("impersonating").(bool); impersonating {
 		return nil, nil
 	}
-	if !object.GetCachedEnterprisePolicy(subOwner).IsDelegatedAdmin(subName) {
+	if !ee.GetCachedEnterprisePolicy(subOwner).IsDelegatedAdmin(subName) {
 		return nil, nil
 	}
 
@@ -75,7 +76,7 @@ func checkDelegatedAdmin(ctx *context.Context, subOwner string, subName string, 
 	if err != nil || user == nil {
 		return nil, err
 	}
-	scope, err := object.GetDelegatedScope(user)
+	scope, err := ee.GetDelegatedScope(user)
 	if err != nil || scope == nil {
 		return nil, err
 	}

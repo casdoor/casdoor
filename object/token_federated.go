@@ -186,7 +186,7 @@ func isFederatedSubjectMatched(pattern string, subject string) bool {
 func isFederatedAudienceMatched(application *Application, credential *FederatedCredential, audiences []string, host string) bool {
 	expected := []string{credential.Audience}
 	if credential.Audience == "" {
-		_, originBackend := getOriginFromHost(host)
+		_, originBackend := GetOriginFromHost(host)
 		expected = []string{originBackend, fmt.Sprintf("%s/api/login/oauth/access_token", originBackend), application.ClientId}
 		if issuer, err := GetOidcIssuerByApplication(host, application); err == nil && issuer != originBackend {
 			expected = append(expected, issuer)

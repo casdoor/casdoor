@@ -40,7 +40,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 		return
 	}
 
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil {
 		c.ResponseError(c.T("general:Please login first"))
 		return
@@ -83,7 +83,7 @@ func (c *ApiController) WebAuthnSignupFinish() {
 		return
 	}
 
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil {
 		c.ResponseError(c.T("general:Please login first"))
 		return

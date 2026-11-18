@@ -27,6 +27,7 @@ import (
 	"github.com/beego/beego/v2/server/web/pagination"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/edition"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -94,7 +95,7 @@ func (c *ApiController) ProxyServer() {
 	}
 
 	// one trace ID ties the agent, the gateway, the MCP server and the business systems behind it together
-	traceId, upstreamTraceparent := object.GetMcpTraceContext(c.Ctx.Request.Header.Get("traceparent"), c.Ctx.Request.Header.Get(mcpTraceIdHeader))
+	traceId, upstreamTraceparent := ee.GetMcpTraceContext(c.Ctx.Request.Header.Get("traceparent"), c.Ctx.Request.Header.Get(mcpTraceIdHeader))
 	c.Ctx.Output.Header(mcpTraceIdHeader, traceId)
 	call := &mcpCall{server: server, caller: caller, traceId: traceId}
 
@@ -123,7 +124,7 @@ func (c *ApiController) ProxyServer() {
 		if len(params.Arguments) > 0 {
 			_ = json.Unmarshal(params.Arguments, &arguments)
 		}
-		reason, err := object.CheckMcpToolPermission(server, caller, params.Name, arguments)
+		reason, err := ee.CheckMcpToolPermission(server, caller, params.Name, arguments)
 		if err != nil {
 			c.McpResponseError(mcpReq.ID, -32603, "failed to check the tool permission", err.Error())
 			return
@@ -134,7 +135,7 @@ func (c *ApiController) ProxyServer() {
 		}
 
 		if tool := server.GetTool(params.Name); tool != nil && tool.RequireApproval {
-			approval, isApproved, err := object.CheckMcpApproval(server, caller, params.Name, string(params.Arguments), traceId, util.GetClientIpFromRequest(c.Ctx.Request))
+			approval, isApproved, err := ee.CheckMcpApproval(server, caller, params.Name, string(params.Arguments), traceId, util.GetClientIpFromRequest(c.Ctx.Request))
 			if err != nil {
 				c.blockMcpToolCall(mcpReq, call, err.Error())
 				return
@@ -149,7 +150,7 @@ func (c *ApiController) ProxyServer() {
 
 	identityToken := ""
 	if server.IdentityHeader != "" {
-		identityToken, call.identityTokenId, err = object.GetMcpIdentityToken(server, caller, traceId, call.params.Name, c.Ctx.Request.Host)
+		identityToken, call.identityTokenId, err = ee.GetMcpIdentityToken(server, caller, traceId, call.params.Name, c.Ctx.Request.Host)
 		if err != nil {
 			c.McpResponseError(mcpReq.ID, -32603, "failed to sign the identity token", err.Error())
 			return
@@ -219,7 +220,7 @@ const mcpTraceIdHeader = "X-Casdoor-Trace-Id"
 // mcpCall is what the gateway knows about a request: the server, who calls and the trace, for the records
 type mcpCall struct {
 	server          *object.Server
-	caller          *object.McpCaller
+	caller          *ee.McpCaller
 	params          mcpself.McpCallToolParams
 	traceId         string
 	identityTokenId string
@@ -227,7 +228,7 @@ type mcpCall struct {
 }
 
 // getMcpCaller tells who calls the gateway from the credential that the AutoSigninFilter has already verified
-func (c *ApiController) getMcpCaller() (*object.McpCaller, error) {
+func (c *ApiController) getMcpCaller() (*ee.McpCaller, error) {
 	userId := c.GetSessionUsername()
 
 	accessKey := c.Ctx.Request.Header.Get("X-Casdoor-Access-Key")
@@ -250,7 +251,7 @@ func (c *ApiController) getMcpCaller() (*object.McpCaller, error) {
 			return nil, err
 		}
 		if token != nil {
-			return object.NewMcpCallerByToken(userId, token)
+			return ee.NewMcpCallerByToken(userId, token)
 		}
 	}
 	if accessKey != "" {
@@ -259,10 +260,10 @@ func (c *ApiController) getMcpCaller() (*object.McpCaller, error) {
 			return nil, err
 		}
 		if key != nil {
-			return object.NewMcpCallerByKey(userId, key)
+			return ee.NewMcpCallerByKey(userId, key)
 		}
 	}
-	return &object.McpCaller{User: userId, AuthMethod: "Session"}, nil
+	return &ee.McpCaller{User: userId, AuthMethod: "Session"}, nil
 }
 
 // mcpResponseRecorder keeps the status and the beginning of the upstream response for the tool call record
@@ -430,9 +431,9 @@ func (c *ApiController) blockMcpToolCall(mcpReq *mcpself.McpRequest, call *mcpCa
 
 // holdMcpToolCall answers a call that waits for approval with a tool result, so that the agent tells the user to get
 // it approved and to call again
-func (c *ApiController) holdMcpToolCall(mcpReq *mcpself.McpRequest, call *mcpCall, approval *object.McpApproval) {
+func (c *ApiController) holdMcpToolCall(mcpReq *mcpself.McpRequest, call *mcpCall, approval *ee.McpApproval) {
 	call.approval = approval.GetId()
-	approvalUrl := object.GetMcpApprovalUrl(c.Ctx.Request.Host, approval)
+	approvalUrl := ee.GetMcpApprovalUrl(c.Ctx.Request.Host, approval)
 	text := fmt.Sprintf("The call of the tool \"%s\" needs approval before it runs. An administrator can approve it at %s, then call the tool again with the same arguments within an hour of the approval. Approval: %s, trace ID: %s",
 		call.params.Name, approvalUrl, approval.GetId(), call.traceId)
 
@@ -470,7 +471,7 @@ func (c *ApiController) holdMcpToolCall(mcpReq *mcpself.McpRequest, call *mcpCal
 // @router /get-mcp-records [get]
 func (c *ApiController) GetMcpRecords() {
 	owner := c.Ctx.Input.Query("owner")
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil || !(c.IsGlobalAdmin() || (user.IsAdmin && user.Owner == owner)) {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
@@ -504,7 +505,7 @@ func (c *ApiController) GetMcpRecords() {
 }
 
 func (c *ApiController) requireMcpApprovalAdmin(owner string) (*object.User, bool) {
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil || !(c.IsGlobalAdmin() || (user.IsAdmin && user.Owner == owner)) {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return nil, false
@@ -522,7 +523,7 @@ func (c *ApiController) requireMcpApprovalAdmin(owner string) (*object.User, boo
 // @Description get the tool calls through the MCP gateway that wait for or got an approval
 // @Param   owner query string true  "The organization"
 // @Param   state query string false "Pending, Approved, Rejected or Used"
-// @Success 200 {array} object.McpApproval The Response object
+// @Success 200 {array} ee.McpApproval The Response object
 // @router /get-mcp-approvals [get]
 func (c *ApiController) GetMcpApprovals() {
 	owner := c.Ctx.Input.Query("owner")
@@ -530,7 +531,7 @@ func (c *ApiController) GetMcpApprovals() {
 		return
 	}
 
-	approvals, err := object.GetMcpApprovals(owner, c.Ctx.Input.Query("state"))
+	approvals, err := ee.GetMcpApprovals(owner, c.Ctx.Input.Query("state"))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -543,7 +544,7 @@ func (c *ApiController) GetMcpApprovals() {
 // @Tag Server API
 // @Description get a tool call that waits for or got an approval
 // @Param   id query string true "The ID of the approval"
-// @Success 200 {object} object.McpApproval The Response object
+// @Success 200 {object} ee.McpApproval The Response object
 // @router /get-mcp-approval [get]
 func (c *ApiController) GetMcpApproval() {
 	id := c.Ctx.Input.Query("id")
@@ -552,7 +553,7 @@ func (c *ApiController) GetMcpApproval() {
 		return
 	}
 
-	approval, err := object.GetMcpApproval(id)
+	approval, err := ee.GetMcpApproval(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -577,12 +578,12 @@ func (c *ApiController) DecideMcpApproval() {
 		return
 	}
 
-	affected, err := object.DecideMcpApproval(id, user, c.Ctx.Input.Query("approved") == "true", c.Ctx.Input.Query("comment"))
+	affected, err := ee.DecideMcpApproval(id, user, c.Ctx.Input.Query("approved") == "true", c.Ctx.Input.Query("comment"))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(affected)
+	c.Data["json"] = WrapActionResponse(affected)
 	c.ServeJSON()
 }
 
@@ -593,7 +594,7 @@ func (c *ApiController) DecideMcpApproval() {
 // @Success 200 {array} object.UserMcpServer The Response object
 // @router /get-my-mcp-servers [get]
 func (c *ApiController) GetMyMcpServers() {
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil || object.IsAppUser(user.GetId()) {
 		c.ResponseError(c.T("general:Please login first"))
 		return

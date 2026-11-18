@@ -23,6 +23,7 @@ import (
 
 	"github.com/beego/beego/v2/core/utils/pagination"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/builder"
@@ -35,7 +36,7 @@ import (
 // @Success 200 {array} object.User The Response object
 // @router /get-global-users [get]
 func (c *ApiController) GetGlobalUsers() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -345,7 +346,7 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	// a console form showing the masked phone, email and ID card sends them back unchanged
-	object.RestoreMaskedPersonalInfo(&user, oldUser)
+	ee.RestoreMaskedPersonalInfo(&user, oldUser)
 
 	isDelegatedAdmin := false
 	if scope := c.getDelegatedScope(); scope != nil {
@@ -384,7 +385,7 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	if err = object.CheckUserSod(oldUser, &user, c.GetAcceptLanguage()); err != nil {
+	if err = ee.CheckUserSod(oldUser, &user, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
@@ -506,7 +507,7 @@ func (c *ApiController) UpdateUser() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(affected)
+	c.Data["json"] = WrapActionResponse(affected)
 	c.ServeJSON()
 }
 
@@ -549,13 +550,13 @@ func (c *ApiController) AddUser() {
 		user.RegisterType = "Add User"
 	}
 	if user.RegisterSource == "" {
-		currentUser := c.getCurrentUser()
+		currentUser := c.GetCurrentUser()
 		if currentUser != nil {
 			user.RegisterSource = currentUser.GetId()
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddUser(&user, c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.AddUser(&user, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
@@ -592,7 +593,7 @@ func (c *ApiController) DeleteUser() {
 		user = *storedUser
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
+	c.Data["json"] = WrapActionResponse(object.DeleteUser(&user))
 	c.ServeJSON()
 }
 
@@ -726,7 +727,7 @@ func (c *ApiController) SetPassword() {
 	}
 
 	scope := c.getDelegatedScope()
-	isDelegatedAdmin := code == "" && scope.CanManageUser(user) && scope.Can(object.DelegatedActionPasswords)
+	isDelegatedAdmin := code == "" && scope.CanManageUser(user) && scope.Can(ee.DelegatedActionPasswords)
 	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && code == "" {
 		c.ResponseError(c.T("general:Please login first"), "Please login first")
@@ -1250,7 +1251,7 @@ func (c *ApiController) VerifyIdentification() {
 
 	var verified bool
 	if provider.Type == object.ProviderTypePlugin {
-		pluginProvider, err := object.GetPluginIdvProvider(provider, user.Phone)
+		pluginProvider, err := ee.GetPluginIdvProvider(provider, user.Phone)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

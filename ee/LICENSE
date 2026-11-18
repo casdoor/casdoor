@@ -1,0 +1,68 @@
+Casdoor Enterprise License
+
+Copyright (c) 2026-present Casdoor Inc. All rights reserved.
+
+1. Scope
+
+This license applies to every file in a directory named "ee" in Casdoor and in its source and binary distributions,
+such as "ee/" and "web/src/ee/", and to the parts of a Casdoor build compiled from them (the "Enterprise Code"). All
+other files of Casdoor are licensed under the Apache License 2.0, see the LICENSE file in the root directory.
+
+The Enterprise Code implements the features of the commercial and enterprise editions of Casdoor. A "License Key" is
+a Casdoor license issued by Casdoor Inc. or one of its affiliates or authorized resellers, under the agreement by which
+it was obtained (the "Agreement").
+
+2. Use
+
+(a) You may use the Enterprise Code in production only within a License Key for an edition, or a feature, that
+includes it, and within the limits of that License Key and of the Agreement, such as the number of deployments,
+instances or users.
+
+(b) Casdoor builds contain the Enterprise Code. You may run them in production without a License Key, as long as you
+only use the features that Casdoor makes available without a License Key.
+
+(c) A License Key that has expired still covers the versions of Casdoor released before its expiry, unless the
+Agreement says otherwise.
+
+(d) Without a License Key, you may copy, modify and run the Enterprise Code for development, testing and evaluation,
+but not in production.
+
+3. Modifications and distribution
+
+(a) You may modify the Enterprise Code and publish your modifications, provided that the modified Enterprise Code is
+used only as permitted by section 2.
+
+(b) You may redistribute unmodified copies of Casdoor as a whole, in source or binary form, including the Enterprise
+Code, provided that this license is kept with it and applies to the recipients.
+
+(c) If you send modifications of the Enterprise Code to Casdoor Inc., you grant Casdoor Inc. a perpetual, worldwide,
+royalty-free, irrevocable license to use, modify, distribute and sublicense them under any terms.
+
+4. Restrictions
+
+Except as permitted above, you may not:
+
+(a) copy, distribute, sublicense, sell, rent or lease the Enterprise Code or any work based on it;
+
+(b) use the Enterprise Code to provide its features to third parties as a hosted, managed or embedded service, or as
+part of another product, without an Agreement that permits it;
+
+(c) remove, disable, modify or circumvent the License Key checks of Casdoor, or use the Enterprise Code without them;
+
+(d) remove or alter this license or any copyright notice.
+
+5. Third-party components
+
+Third-party components used by the Enterprise Code are licensed under their own licenses.
+
+6. Termination
+
+Your rights under this license end automatically if you breach it. Sections 4, 6 and 7 survive termination.
+
+7. Disclaimer and limitation of liability
+
+THE ENTERPRISE CODE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT, EXCEPT AS THE AGREEMENT
+PROVIDES OTHERWISE. IN NO EVENT SHALL CASDOOR INC., ITS AFFILIATES OR THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ENTERPRISE CODE OR THE USE OR OTHER DEALINGS IN IT.

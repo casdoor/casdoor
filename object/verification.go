@@ -376,7 +376,7 @@ func CheckSigninCode(user *User, dest, code, lang string) error {
 
 	switch result.Code {
 	case VerificationSuccess:
-		return resetUserSigninErrorTimes(user)
+		return ResetUserSigninErrorTimes(user)
 	case wrongCodeError:
 		return recordSigninErrorInfo(user, lang)
 	default:
@@ -499,7 +499,7 @@ func CheckFaceIdWithLimit(user *User, check func() error, lang string) error {
 		return err
 	}
 
-	return resetUserSigninErrorTimes(user)
+	return ResetUserSigninErrorTimes(user)
 }
 
 func CheckFaceId(user *User, faceId []float64, lang string) error {

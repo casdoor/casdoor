@@ -22,14 +22,15 @@ import (
 	"github.com/beego/beego/v2/server/web"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/ee"
+	"github.com/casdoor/casdoor/ee/tlsserver"
+	"github.com/casdoor/casdoor/ee/tracing"
 	"github.com/casdoor/casdoor/ldap"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/radius"
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/service"
-	"github.com/casdoor/casdoor/tlsserver"
-	"github.com/casdoor/casdoor/tracing"
 	"github.com/casdoor/casdoor/upgrade"
 	"github.com/casdoor/casdoor/util"
 )
@@ -96,9 +97,9 @@ func runServer() {
 	object.InitSamlAssertionStore()
 	object.InitExpirePermissions()
 	object.InitUpdateSubscriptionStates()
-	object.InitSecurityPolicyJobs()
-	object.InitPrivilegedAccessJobs()
-	object.InitAccessReviewJobs()
+	ee.InitSecurityPolicyJobs()
+	ee.InitPrivilegedAccessJobs()
+	ee.InitAccessReviewJobs()
 	tracing.Init()
 
 	object.InitSiteMap()
@@ -170,7 +171,7 @@ func runServer() {
 
 	// Start webhook delivery worker
 	object.StartWebhookDeliveryWorker()
-	object.StartProvisioningWorker()
+	ee.StartProvisioningWorker()
 
 	if len(object.SiteMap) != 0 {
 		service.Start()

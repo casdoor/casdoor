@@ -125,6 +125,6 @@ func (c *ApiController) AddRecord() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddRecord(&record))
+	c.Data["json"] = WrapActionResponse(object.AddRecord(&record))
 	c.ServeJSON()
 }

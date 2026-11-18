@@ -18,7 +18,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 
@@ -29,8 +32,8 @@ import (
 
 // the steps after the check before installing at which Casdoor reads the meta of the version again
 const (
-	marketplaceStepInstalled   = "installed"
-	marketplaceStepFailed      = "failed"
+	MarketplaceStepInstalled   = "installed"
+	MarketplaceStepFailed      = "failed"
 	marketplaceStepUninstalled = "uninstalled"
 	// an admin opened the integration in the Marketplace page
 	marketplaceStepView = "view"
@@ -88,9 +91,9 @@ func refreshMarketplaceStatus() {
 		return
 	}
 	var err error
-	for _, serverUrl := range getMarketplaceServerUrls() {
+	for _, serverUrl := range GetMarketplaceServerUrls() {
 		var data []byte
-		data, err = fetchMarketplaceFileWithTimeout(serverUrl+"/status.json", false, marketplacePageTimeout)
+		data, err = FetchMarketplaceFileWithTimeout(serverUrl+"/status.json", false, marketplacePageTimeout)
 		if err != nil {
 			continue
 		}
@@ -109,30 +112,30 @@ func refreshMarketplaceStatus() {
 
 // the stages an install fails at
 const (
-	installStageRevoked   = "revoked"
-	installStageDownload  = "download"
+	InstallStageRevoked   = "revoked"
+	InstallStageDownload  = "download"
 	installStageVariables = "variables"
 	installStageCreate    = "create"
 	installStageSave      = "save"
 )
 
 // integrationRevokedError is an install the Marketplace server refused because the version has been withdrawn
-type integrationRevokedError struct {
+type IntegrationRevokedError struct {
 	error
 }
 
 // readMarketplaceVersionMetaStep reads the meta of a version again when its install has ended or it is uninstalled,
 // so the Marketplace knows how installs end. As with the check before installing, the address has only the
 // integration, the version and the step. It runs in the background and nothing waits for it.
-func readMarketplaceVersionMetaStep(id string, version string, withLicense bool, step string, stage string) {
+func ReadMarketplaceVersionMetaStep(id string, version string, withLicense bool, step string, stage string) {
 	query := url.Values{"step": {step}}
 	if stage != "" {
 		query.Set("stage", stage)
 	}
 	path := fmt.Sprintf("integrations/%s/%s/meta.json?%s", url.PathEscape(id), url.PathEscape(version), query.Encode())
 	go func() {
-		for _, serverUrl := range getMarketplaceServerUrls() {
-			_, err := fetchMarketplaceFileWithLicense(joinMarketplaceUrl(serverUrl, path), withLicense)
+		for _, serverUrl := range GetMarketplaceServerUrls() {
+			_, err := FetchMarketplaceFileWithLicense(JoinMarketplaceUrl(serverUrl, path), withLicense)
 			if err == nil {
 				return
 			}
@@ -172,10 +175,10 @@ func getMarketplaceVersionMeta(item *MarketplaceIntegration, version *Marketplac
 	}
 
 	var err error
-	for _, serverUrl := range getMarketplaceServerUrls() {
+	for _, serverUrl := range GetMarketplaceServerUrls() {
 		var data []byte
 		// a paid integration opened without a license gets the meta without its checksum
-		data, err = fetchMarketplaceFileWithTimeout(joinMarketplaceUrl(serverUrl, path), item.Edition != "" && edition.GetLicenseText() != "", timeout)
+		data, err = FetchMarketplaceFileWithTimeout(JoinMarketplaceUrl(serverUrl, path), item.Edition != "" && edition.GetLicenseText() != "", timeout)
 		if err != nil {
 			continue
 		}
@@ -206,4 +209,56 @@ func metaPath(bundlePath string) string {
 		}
 	}
 	return "meta.json"
+}
+
+// The paid integrations aren't on the CDN: the Marketplace server lists them in paid-index.json and gives their
+// files only to a Casdoor that sends a commercial or enterprise license, written into the files it gives.
+var defaultMarketplaceServerUrls = []string{"https://marketplace.casdoor.com/data", "https://marketplace.casdoor.cn/data"}
+
+const licenseHeader = "X-Casdoor-License"
+
+func GetMarketplaceServerUrls() []string {
+	serverUrl := conf.GetConfigString("marketplaceServerUrl")
+	if serverUrl == "" {
+		return defaultMarketplaceServerUrls
+	}
+	return []string{strings.TrimSuffix(serverUrl, "/")}
+}
+
+func FetchMarketplaceFile(fileUrl string) ([]byte, error) {
+	return FetchMarketplaceFileWithLicense(fileUrl, false)
+}
+
+func FetchMarketplaceFileWithLicense(fileUrl string, withLicense bool) ([]byte, error) {
+	return FetchMarketplaceFileWithTimeout(fileUrl, withLicense, 30*time.Second)
+}
+
+func FetchMarketplaceFileWithTimeout(fileUrl string, withLicense bool, timeout time.Duration) ([]byte, error) {
+	req, err := http.NewRequest("GET", fileUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+	if withLicense {
+		license := edition.GetLicenseText()
+		if license == "" {
+			return nil, edition.Require(edition.Commercial, edition.FeaturePaidIntegrations)
+		}
+		req.Header.Set(licenseHeader, license)
+	}
+
+	client := &http.Client{Timeout: timeout}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 1000))
+		if resp.StatusCode == http.StatusForbidden && len(body) > 0 {
+			return nil, fmt.Errorf("%s", strings.TrimSpace(string(body)))
+		}
+		return nil, fmt.Errorf("failed to get %s, status code: %d", fileUrl, resp.StatusCode)
+	}
+	return io.ReadAll(io.LimitReader(resp.Body, 32<<20))
 }

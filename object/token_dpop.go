@@ -154,7 +154,7 @@ func ValidateDPoPProof(proofToken, method, htu, accessToken string) (string, err
 // GetDPoPHtu constructs the full DPoP htu URL for a given host and path.
 // It uses the same origin-detection logic as the rest of the backend.
 func GetDPoPHtu(host, path string) string {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 	return originBackend + path
 }
 
@@ -181,7 +181,7 @@ func getRefreshDPoPJkt(token *Token, dpopProof string, host string, path string)
 // authorization code is minted at the authorization, before the client shows its DPoP key.
 func bindTokenToDPoPKey(application *Application, token *Token, jkt string) error {
 	signingApplication := getSigningApplication(application, token.Organization)
-	cert, err := getCertByApplication(signingApplication)
+	cert, err := GetCertByApplication(signingApplication)
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func bindTokenToDPoPKey(application *Application, token *Token, jkt string) erro
 		return fmt.Errorf("the cert of the application: %s does not exist", signingApplication.GetId())
 	}
 
-	method := getJwtSigningMethod(signingApplication)
+	method := GetJwtSigningMethod(signingApplication)
 	key, err := getJwtSigningKey(method, cert)
 	if err != nil {
 		return err

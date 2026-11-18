@@ -106,7 +106,7 @@ func (c *ApiController) UpdateAgent() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateAgent(id, &agent))
+	c.Data["json"] = WrapActionResponse(object.UpdateAgent(id, &agent))
 	c.ServeJSON()
 }
 
@@ -125,7 +125,7 @@ func (c *ApiController) AddAgent() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddAgent(&agent))
+	c.Data["json"] = WrapActionResponse(object.AddAgent(&agent))
 	c.ServeJSON()
 }
 
@@ -144,6 +144,6 @@ func (c *ApiController) DeleteAgent() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteAgent(&agent))
+	c.Data["json"] = WrapActionResponse(object.DeleteAgent(&agent))
 	c.ServeJSON()
 }

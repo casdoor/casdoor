@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/object"
 	ldap "github.com/casdoor/ldapserver"
 	"github.com/lor00x/goldap/message"
@@ -93,7 +94,7 @@ func getTLSconfig(ldapsCertId string) (*tls.Config, error) {
 	if rawCert == nil {
 		return nil, fmt.Errorf("cert is empty")
 	}
-	cert, err := object.GetCertTlsCertificate(rawCert)
+	cert, err := ee.GetCertTlsCertificate(rawCert)
 	if err != nil {
 		return &tls.Config{}, err
 	}

@@ -25,21 +25,21 @@ import (
 
 // docxBuilder writes a Word document (OOXML) with headings, paragraphs, tables, PNG images and page numbers in the
 // footer, enough for a report without a document library
-type docxBuilder struct {
+type DocxBuilder struct {
 	body   strings.Builder
 	images [][]byte
 }
 
-type docxCell struct {
+type DocxCell struct {
 	Text  string
 	Color string
 	Bold  bool
 }
 
 const (
-	docxColorPass = "15803D"
-	docxColorWarn = "B45309"
-	docxColorFail = "B91C1C"
+	DocxColorPass = "15803D"
+	DocxColorWarn = "B45309"
+	DocxColorFail = "B91C1C"
 	docxColorGray = "6B7280"
 )
 
@@ -49,7 +49,7 @@ func docxEscape(text string) string {
 	return buf.String()
 }
 
-func docxRun(text string, bold bool, color string, size int) string {
+func DocxRun(text string, bold bool, color string, size int) string {
 	props := ""
 	if bold {
 		props += "<w:b/><w:bCs/>"
@@ -74,7 +74,7 @@ func docxRun(text string, bold bool, color string, size int) string {
 	return strings.Join(runs, "")
 }
 
-func (d *docxBuilder) paragraph(style string, align string, content string) {
+func (d *DocxBuilder) StyledParagraph(style string, align string, content string) {
 	props := ""
 	if style != "" {
 		props += fmt.Sprintf(`<w:pStyle w:val="%s"/>`, style)
@@ -88,41 +88,41 @@ func (d *docxBuilder) paragraph(style string, align string, content string) {
 	d.body.WriteString("<w:p>" + props + content + "</w:p>")
 }
 
-func (d *docxBuilder) Title(text string) {
-	d.paragraph("Title", "", docxRun(text, false, "", 0))
+func (d *DocxBuilder) Title(text string) {
+	d.StyledParagraph("Title", "", DocxRun(text, false, "", 0))
 }
 
-func (d *docxBuilder) Heading(level int, text string) {
-	d.paragraph(fmt.Sprintf("Heading%d", level), "", docxRun(text, false, "", 0))
+func (d *DocxBuilder) Heading(level int, text string) {
+	d.StyledParagraph(fmt.Sprintf("Heading%d", level), "", DocxRun(text, false, "", 0))
 }
 
-func (d *docxBuilder) Paragraph(text string) {
-	d.paragraph("", "", docxRun(text, false, "", 0))
+func (d *DocxBuilder) Paragraph(text string) {
+	d.StyledParagraph("", "", DocxRun(text, false, "", 0))
 }
 
-func (d *docxBuilder) Note(text string) {
-	d.paragraph("Note", "", docxRun(text, false, "", 0))
+func (d *DocxBuilder) Note(text string) {
+	d.StyledParagraph("Note", "", DocxRun(text, false, "", 0))
 }
 
 // Rich writes a paragraph of runs, each one a text with its own bold and color
-func (d *docxBuilder) Rich(cells ...docxCell) {
+func (d *DocxBuilder) Rich(cells ...DocxCell) {
 	content := ""
 	for _, cell := range cells {
-		content += docxRun(cell.Text, cell.Bold, cell.Color, 0)
+		content += DocxRun(cell.Text, cell.Bold, cell.Color, 0)
 	}
-	d.paragraph("", "", content)
+	d.StyledParagraph("", "", content)
 }
 
-func (d *docxBuilder) Bullet(text string) {
-	d.paragraph("ListBullet", "", docxRun("•\t"+text, false, "", 0))
+func (d *DocxBuilder) Bullet(text string) {
+	d.StyledParagraph("ListBullet", "", DocxRun("•\t"+text, false, "", 0))
 }
 
-func (d *docxBuilder) PageBreak() {
+func (d *DocxBuilder) PageBreak() {
 	d.body.WriteString(`<w:p><w:r><w:br w:type="page"/></w:r></w:p>`)
 }
 
 // Table writes a table whose first row is the shaded header repeated on every page; widths are in percent
-func (d *docxBuilder) Table(headers []string, widths []int, rows [][]docxCell) {
+func (d *DocxBuilder) Table(headers []string, widths []int, rows [][]DocxCell) {
 	const total = 9638 // the text width of an A4 page with 2 cm margins, in twentieths of a point
 	d.body.WriteString(`<w:tbl><w:tblPr><w:tblStyle w:val="ReportTable"/><w:tblW w:w="5000" w:type="pct"/><w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>`)
 	for _, width := range widths {
@@ -140,34 +140,34 @@ func (d *docxBuilder) Table(headers []string, widths []int, rows [][]docxCell) {
 	if len(headers) > 0 {
 		d.body.WriteString(`<w:tr><w:trPr><w:tblHeader/><w:cantSplit/></w:trPr>`)
 		for i, header := range headers {
-			d.body.WriteString(cell(widths[i], docxRun(header, true, "", 0), true))
+			d.body.WriteString(cell(widths[i], DocxRun(header, true, "", 0), true))
 		}
 		d.body.WriteString(`</w:tr>`)
 	}
 	for _, row := range rows {
 		d.body.WriteString(`<w:tr><w:trPr><w:cantSplit/></w:trPr>`)
 		for i := range widths {
-			value := docxCell{}
+			value := DocxCell{}
 			if i < len(row) {
 				value = row[i]
 			}
-			d.body.WriteString(cell(widths[i], docxRun(value.Text, value.Bold, value.Color, 0), false))
+			d.body.WriteString(cell(widths[i], DocxRun(value.Text, value.Bold, value.Color, 0), false))
 		}
 		d.body.WriteString(`</w:tr>`)
 	}
 	d.body.WriteString(`</w:tbl>`)
-	d.paragraph("Spacer", "", "")
+	d.StyledParagraph("Spacer", "", "")
 }
 
 // Image places a PNG as wide as the given centimeters, keeping its aspect ratio
-func (d *docxBuilder) Image(png []byte, pixelWidth int, pixelHeight int, widthCm float64) {
+func (d *DocxBuilder) Image(png []byte, pixelWidth int, pixelHeight int, widthCm float64) {
 	d.images = append(d.images, png)
 	index := len(d.images)
 	cx := int64(widthCm * 360000)
 	cy := cx * int64(pixelHeight) / int64(pixelWidth)
 	drawing := fmt.Sprintf(`<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="%d" cy="%d"/><wp:docPr id="%d" name="Chart %d"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="%d" name="image%d.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImage%d"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="%d" cy="%d"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`,
 		cx, cy, index, index, index, index, index, cx, cy)
-	d.paragraph("", "center", drawing)
+	d.StyledParagraph("", "center", drawing)
 }
 
 const docxNamespaces = `xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"`
@@ -201,7 +201,7 @@ func docxStyles() string {
 }
 
 // Bytes packs the document, the footer shows the given text and "page X of Y" in the language
-func (d *docxBuilder) Bytes(title string, footer string, pageFormat string) ([]byte, error) {
+func (d *DocxBuilder) Bytes(title string, footer string, pageFormat string) ([]byte, error) {
 	buf := &bytes.Buffer{}
 	w := zip.NewWriter(buf)
 	add := func(name string, content string) error {
@@ -230,11 +230,11 @@ func (d *docxBuilder) Bytes(title string, footer string, pageFormat string) ([]b
 			pageText += field("NUMPAGES")
 		}
 		if part != "" {
-			pageText += docxRun(part, false, "", 0)
+			pageText += DocxRun(part, false, "", 0)
 		}
 	}
 	footerXml := `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:ftr ` + docxNamespaces + `><w:p><w:pPr><w:pStyle w:val="Footer"/></w:pPr>` + docxRun(footer+"    ", false, "", 0) + pageText + `</w:p></w:ftr>`
+<w:ftr ` + docxNamespaces + `><w:p><w:pPr><w:pStyle w:val="Footer"/></w:pPr>` + DocxRun(footer+"    ", false, "", 0) + pageText + `</w:p></w:ftr>`
 
 	now := time.Now().UTC().Format("2006-01-02T15:04:05Z")
 	parts := []struct{ name, content string }{

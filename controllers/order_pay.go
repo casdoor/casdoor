@@ -163,6 +163,6 @@ func (c *ApiController) CancelOrder() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.CancelOrder(order))
+	c.Data["json"] = WrapActionResponse(object.CancelOrder(order))
 	c.ServeJSON()
 }

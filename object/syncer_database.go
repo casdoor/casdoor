@@ -36,7 +36,7 @@ func (syncer *Syncer) isSshTunneled() bool {
 	return syncer.SshType != "" && (syncer.DatabaseType == "mysql" || syncer.DatabaseType == "postgres" || syncer.DatabaseType == "mssql")
 }
 
-func (syncer *Syncer) isDatabaseSyncer() bool {
+func (syncer *Syncer) IsDatabaseSyncer() bool {
 	switch GetSyncerProvider(syncer).(type) {
 	case *DatabaseSyncerProvider, *KeycloakSyncerProvider:
 		return true
@@ -45,7 +45,7 @@ func (syncer *Syncer) isDatabaseSyncer() bool {
 }
 
 func CheckSyncerDatabaseHost(syncer *Syncer) error {
-	if !syncer.isDatabaseSyncer() || syncer.DatabaseType == "sqlite3" || syncer.DatabaseType == "sqlite" {
+	if !syncer.IsDatabaseSyncer() || syncer.DatabaseType == "sqlite3" || syncer.DatabaseType == "sqlite" {
 		return nil
 	}
 	if syncer.isSshTunneled() {
@@ -61,7 +61,7 @@ func CheckSyncerDatabaseHost(syncer *Syncer) error {
 }
 
 func CheckSyncerDatabaseTarget(syncer *Syncer) error {
-	if !syncer.isDatabaseSyncer() {
+	if !syncer.IsDatabaseSyncer() {
 		return nil
 	}
 
@@ -221,7 +221,7 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 // GetOriginalUsers retrieves all users from the database
 func (p *DatabaseSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 	var results []map[string]sql.NullString
-	err := p.Syncer.Ormer.Engine.Table(p.Syncer.getTable()).Find(&results)
+	err := p.Syncer.Ormer.Engine.Table(p.Syncer.GetTable()).Find(&results)
 	if err != nil {
 		return nil, err
 	}
@@ -242,8 +242,8 @@ func (p *DatabaseSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 
 // AddUser adds a new user to the database
 func (p *DatabaseSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
-	m := p.Syncer.getMapFromOriginalUser(user)
-	affected, err := p.Syncer.Ormer.Engine.Table(p.Syncer.getTable()).Insert(m)
+	m := p.Syncer.GetMapFromOriginalUser(user)
+	affected, err := p.Syncer.Ormer.Engine.Table(p.Syncer.GetTable()).Insert(m)
 	if err != nil {
 		return false, err
 	}
@@ -252,16 +252,16 @@ func (p *DatabaseSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
 
 // UpdateUser updates an existing user in the database
 func (p *DatabaseSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
-	key := p.Syncer.getTargetTablePrimaryKey()
+	key := p.Syncer.GetTargetTablePrimaryKey()
 	if !util.FilterSQLIdentifier(key) {
 		return false, fmt.Errorf("object.UpdateUser: invalid primary key column name: %s", key)
 	}
 
-	m := p.Syncer.getMapFromOriginalUser(user)
+	m := p.Syncer.GetMapFromOriginalUser(user)
 	pkValue := m[key]
 	delete(m, key)
 
-	affected, err := p.Syncer.Ormer.Engine.Table(p.Syncer.getTable()).Where(fmt.Sprintf("%s = ?", key), pkValue).Update(&m)
+	affected, err := p.Syncer.Ormer.Engine.Table(p.Syncer.GetTable()).Where(fmt.Sprintf("%s = ?", key), pkValue).Update(&m)
 	if err != nil {
 		return false, err
 	}

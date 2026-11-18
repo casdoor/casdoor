@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 
 	"github.com/casdoor/casdoor/edition"
-	"github.com/casdoor/casdoor/gm"
+	"github.com/casdoor/casdoor/ee/gm"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -113,7 +113,7 @@ func checkOrganizationEnterpriseEdition(organization *Organization) error {
 	if len(policy.DelegatedAdmins) > 0 {
 		return edition.Require(edition.Enterprise, edition.FeatureDelegatedAdmin)
 	}
-	if policy.CertLogin.isEnabled() {
+	if policy.CertLogin.IsEnabled() {
 		return edition.Require(edition.Enterprise, edition.FeatureCertLogin)
 	}
 	return nil

@@ -120,7 +120,7 @@ func (c *ApiController) UpdateEnforcer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateEnforcer(id, &enforcer))
+	c.Data["json"] = WrapActionResponse(object.UpdateEnforcer(id, &enforcer))
 	c.ServeJSON()
 }
 
@@ -143,7 +143,7 @@ func (c *ApiController) AddEnforcer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddEnforcer(&enforcer))
+	c.Data["json"] = WrapActionResponse(object.AddEnforcer(&enforcer))
 	c.ServeJSON()
 }
 
@@ -162,7 +162,7 @@ func (c *ApiController) DeleteEnforcer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteEnforcer(&enforcer))
+	c.Data["json"] = WrapActionResponse(object.DeleteEnforcer(&enforcer))
 	c.ServeJSON()
 }
 
@@ -263,7 +263,7 @@ func (c *ApiController) UpdatePolicy() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(affected)
+	c.Data["json"] = WrapActionResponse(affected)
 	c.ServeJSON()
 }
 
@@ -290,7 +290,7 @@ func (c *ApiController) AddPolicy() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(affected)
+	c.Data["json"] = WrapActionResponse(affected)
 	c.ServeJSON()
 }
 
@@ -317,7 +317,7 @@ func (c *ApiController) RemovePolicy() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(affected)
+	c.Data["json"] = WrapActionResponse(affected)
 	c.ServeJSON()
 }
 

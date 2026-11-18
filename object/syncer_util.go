@@ -385,7 +385,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]sql.NullStrin
 	return users
 }
 
-func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]string {
+func (syncer *Syncer) GetMapFromOriginalUser(user *OriginalUser) map[string]string {
 	m := map[string]string{}
 	m["Name"] = user.Name
 	m["CreatedTime"] = user.CreatedTime

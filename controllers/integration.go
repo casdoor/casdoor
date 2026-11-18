@@ -20,6 +20,7 @@ import (
 	"path/filepath"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -79,7 +80,7 @@ func (c *ApiController) DownloadMarketplaceFile() {
 	integrationId := c.Ctx.Input.Query("integrationId")
 	path := c.Ctx.Input.Query("path")
 
-	data, err := object.GetMarketplaceDownload(integrationId, path)
+	data, err := ee.GetMarketplaceDownload(integrationId, path)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -228,6 +229,6 @@ func (c *ApiController) DeleteIntegration() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UninstallIntegration(&integration, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.UninstallIntegration(&integration, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

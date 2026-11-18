@@ -47,6 +47,8 @@ COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/server_${BUILDX_ARCH} ./ser
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/swagger ./swagger
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
+COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/LICENSE ./LICENSE
+COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/ee/LICENSE ./ee/LICENSE
 
 HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 \
     CMD curl -fsS "http://127.0.0.1:${httpport:-8000}/api/health" > /dev/null || exit 1
@@ -69,6 +71,8 @@ COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT /web/build ./web/build
+COPY --from=BACK /go/src/casdoor/LICENSE ./LICENSE
+COPY --from=BACK /go/src/casdoor/ee/LICENSE ./ee/LICENSE
 
 HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=3 \
     CMD curl -fsS "http://127.0.0.1:${httpport:-8000}/api/health" > /dev/null || exit 1

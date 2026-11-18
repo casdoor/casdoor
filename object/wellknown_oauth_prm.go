@@ -37,7 +37,7 @@ var McpScopesSupported = []string{"openid", "profile", "email", "read", "write"}
 
 // GetOauthProtectedResourceMetadata returns RFC 9728 Protected Resource Metadata for global discovery
 func GetOauthProtectedResourceMetadata(host string) OauthProtectedResourceMetadata {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 
 	return OauthProtectedResourceMetadata{
 		Resource:               originBackend,
@@ -69,7 +69,7 @@ func GetOauthProtectedResourceMetadataByOrganization(host string, organizationNa
 
 // GetBuiltinMcpUrl returns the URL of the built-in MCP server, "/api/mcp/orgs/:organization" for an organization
 func GetBuiltinMcpUrl(host string, organizationName string) string {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 	if organizationName == "" {
 		return fmt.Sprintf("%s/api/mcp", originBackend)
 	}
@@ -88,7 +88,7 @@ func IsBuiltinMcpPath(urlPath string) bool {
 
 // GetOauthProtectedResourceMetadataByApplication returns RFC 9728 Protected Resource Metadata for application-specific discovery
 func GetOauthProtectedResourceMetadataByApplication(host string, applicationName string) OauthProtectedResourceMetadata {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 
 	// For application-specific discovery, the resource identifier includes the application name
 	resourceIdentifier := fmt.Sprintf("%s/.well-known/%s", originBackend, applicationName)
@@ -133,7 +133,7 @@ func GetOauthProtectedResourceMetadataByServer(host string, owner string, name s
 
 // GetServerProxyUrl returns the URL MCP clients connect to for an MCP server behind the proxy of Casdoor
 func GetServerProxyUrl(host string, owner string, name string) string {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 	return fmt.Sprintf("%s/api/server/%s/%s", originBackend, url.PathEscape(owner), url.PathEscape(name))
 }
 
@@ -141,7 +141,7 @@ func GetServerProxyUrl(host string, owner string, name string) string {
 // resource of the global, an organization's or an application's protected resource metadata, or the URL of the MCP
 // endpoint itself
 func IsBuiltinMcpResource(host string, resource string) bool {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 	originBackend = strings.TrimSuffix(originBackend, "/")
 	resource = strings.TrimSuffix(resource, "/")
 

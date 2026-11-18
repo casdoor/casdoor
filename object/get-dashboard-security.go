@@ -22,8 +22,8 @@ import (
 )
 
 const (
-	dashboardInactiveDays  = 90
-	dashboardCertAlertDays = 30
+	DashboardInactiveDays  = 90
+	DashboardCertAlertDays = 30
 	dashboardSigninDays    = 14
 	dashboardRecentDays    = 7
 )
@@ -72,8 +72,8 @@ func GetDashboardSecurity(owner string) (*DashboardSecurity, error) {
 	}
 	now := time.Now()
 	res := &DashboardSecurity{
-		InactiveDays:      dashboardInactiveDays,
-		CertAlertDays:     dashboardCertAlertDays,
+		InactiveDays:      DashboardInactiveDays,
+		CertAlertDays:     DashboardCertAlertDays,
 		RecentDays:        dashboardRecentDays,
 		NearestCertExpiry: -1,
 		Policies:          map[string]int{},
@@ -112,7 +112,7 @@ func countDashboardUsers(res *DashboardSecurity, owner string, now time.Time) er
 		return err
 	}
 
-	cutoff := now.AddDate(0, 0, -dashboardInactiveDays).Format(time.RFC3339)
+	cutoff := now.AddDate(0, 0, -DashboardInactiveDays).Format(time.RFC3339)
 	session = ormer.Engine.Table(table).Where("is_deleted = ? AND is_forbidden = ?", false, false).
 		And("((last_signin_time != '' AND last_signin_time < ?) OR ((last_signin_time = '' OR last_signin_time IS NULL) AND created_time < ?))", cutoff, cutoff)
 	if owner != "" {
@@ -226,7 +226,7 @@ func countDashboardCerts(res *DashboardSecurity, owner string, now time.Time) er
 		}
 		res.Certs++
 		days := int(expireTime.Sub(now).Hours() / 24)
-		if days < dashboardCertAlertDays {
+		if days < DashboardCertAlertDays {
 			res.CertsExpiring++
 		}
 		if res.NearestCertExpiry < 0 || days < res.NearestCertExpiry {

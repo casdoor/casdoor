@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/casdoor/casdoor/gm"
+	"github.com/casdoor/casdoor/ee/gm"
 	"golang.org/x/net/publicsuffix"
 )
 

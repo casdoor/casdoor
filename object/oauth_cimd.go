@@ -285,7 +285,7 @@ func getCertByApplicationOfToken(application *Application, tokenString string) (
 		}
 	}
 
-	return getCertByApplication(application)
+	return GetCertByApplication(application)
 }
 
 func fetchClientIdMetadataDocument(clientId string) (*ClientIdMetadataDocument, error) {

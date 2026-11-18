@@ -12,7 +12,7 @@ import {useRequestOrganization} from "@/hooks/use-organization";
 import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
-import {canDelegated, isDelegatedAdmin} from "@/lib/delegated-admin";
+import {canDelegated, isDelegatedAdmin} from "@/ee/lib/delegated-admin";
 import {newUser} from "@/pages/defaults";
 
 /**

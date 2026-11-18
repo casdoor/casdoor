@@ -80,7 +80,7 @@ func (c *ApiController) GetProviders() {
 // @Success 200 {array} object.Provider The Response object
 // @router /get-global-providers [get]
 func (c *ApiController) GetGlobalProviders() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -257,7 +257,7 @@ func (c *ApiController) UpdateProvider() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateProvider(id, &provider))
+	c.Data["json"] = WrapActionResponse(object.UpdateProvider(id, &provider))
 	c.ServeJSON()
 }
 
@@ -293,7 +293,7 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddProvider(&provider))
+	c.Data["json"] = WrapActionResponse(object.AddProvider(&provider))
 	c.ServeJSON()
 }
 
@@ -317,6 +317,6 @@ func (c *ApiController) DeleteProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteProvider(&provider))
+	c.Data["json"] = WrapActionResponse(object.DeleteProvider(&provider))
 	c.ServeJSON()
 }

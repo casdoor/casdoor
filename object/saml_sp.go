@@ -40,7 +40,7 @@ func IsValidSamlRedirectURL(redirectURL, host string) bool {
 	if err != nil || parsed.Host == "" {
 		return false
 	}
-	_, origin := getOriginFromHost(host)
+	_, origin := GetOriginFromHost(host)
 	originParsed, err := url.Parse(origin)
 	if err != nil {
 		return false
@@ -193,7 +193,7 @@ func GenerateSamlRequest(id, relayState, host, lang string) (auth string, method
 }
 
 func buildSp(provider *Provider, samlResponse string, host string) (*saml2.SAMLServiceProvider, error) {
-	_, origin := getOriginFromHost(host)
+	_, origin := GetOriginFromHost(host)
 
 	certStore, err := buildSpCertificateStore(provider)
 	if err != nil {

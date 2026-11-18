@@ -82,7 +82,7 @@ func (c *ApiController) GetKeys() {
 // @Success 200 {array} object.Key The Response object
 // @router /get-global-keys [get]
 func (c *ApiController) GetGlobalKeys() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -166,7 +166,7 @@ func (c *ApiController) UpdateKey() {
 		return
 	}
 	if oldKey == nil {
-		c.Data["json"] = wrapActionResponse(false)
+		c.Data["json"] = WrapActionResponse(false)
 		c.ServeJSON()
 		return
 	}
@@ -182,7 +182,7 @@ func (c *ApiController) UpdateKey() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateKey(id, &key))
+	c.Data["json"] = WrapActionResponse(object.UpdateKey(id, &key))
 	c.ServeJSON()
 }
 
@@ -205,7 +205,7 @@ func (c *ApiController) AddKey() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddKey(&key))
+	c.Data["json"] = WrapActionResponse(object.AddKey(&key))
 	c.ServeJSON()
 }
 
@@ -224,6 +224,6 @@ func (c *ApiController) DeleteKey() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteKey(&key))
+	c.Data["json"] = WrapActionResponse(object.DeleteKey(&key))
 	c.ServeJSON()
 }

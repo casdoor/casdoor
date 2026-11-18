@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/server/web/context"
-	"github.com/casdoor/casdoor/tracing"
+	"github.com/casdoor/casdoor/ee/tracing"
 	"github.com/casdoor/casdoor/util"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"

@@ -31,12 +31,13 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/edition"
+	"github.com/casdoor/casdoor/ee"
+	"github.com/casdoor/casdoor/ee/tracing"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
-	"github.com/casdoor/casdoor/tracing"
 	"github.com/casdoor/casdoor/util"
 	"go.opentelemetry.io/otel/attribute"
 	"golang.org/x/oauth2"
@@ -393,7 +394,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError(err.Error(), nil)
 			return
 		}
-		object.CheckSigninRisk(user, clientIp, c.Ctx.Request.Header.Get("X-Casdoor-Device"), c.Ctx.Request.UserAgent())
+		ee.CheckSigninRisk(user, clientIp, c.Ctx.Request.Header.Get("X-Casdoor-Device"), c.Ctx.Request.UserAgent())
 
 		if authTime != 0 {
 			c.SetSession("authTime", authTime)
@@ -805,9 +806,9 @@ func (c *ApiController) Login() {
 
 	// a magic link posts no username, the one-time token in the link is the credential.
 	// The passcode of a sign-in that already asked for MFA is answered further below
-	isMagicLinkSignin := authForm.SigninMethod == "Magic link" && c.getMfaUserSession() == ""
+	isMagicLinkSignin := authForm.SigninMethod == "Magic link" && c.GetMfaUserSession() == ""
 	// a certificate (UKey) sign-in posts the ticket of /api/login/cert, or a certificate with its signature of a challenge
-	isCertSignin := authForm.SigninMethod == object.SigninMethodCertificate && c.getMfaUserSession() == ""
+	isCertSignin := authForm.SigninMethod == object.SigninMethodCertificate && c.GetMfaUserSession() == ""
 
 	if authForm.Username != "" || isMagicLinkSignin || isCertSignin {
 		var user *object.User
@@ -1019,21 +1020,21 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			err = object.CheckCredentialStuffing(authForm.Organization, clientIp, c.GetAcceptLanguage())
+			err = ee.CheckCredentialStuffing(authForm.Organization, clientIp, c.GetAcceptLanguage())
 			if err == nil {
 				_, passwordSpan := c.traceStep("signin.password", attribute.String("casdoor.organization", authForm.Organization), attribute.Bool("casdoor.ldap", isSigninViaLdap))
 				user, err = object.CheckUserPassword(authForm.Organization, lookupUsername, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
 				tracing.End(passwordSpan, err)
 				if err != nil && !isSigninViaLdap {
 					// a user imported without a password signs in with the one of the old system
-					if migratedUser, migrateErr := object.MigratePasswordOnSignin(authForm.Organization, lookupUsername, password); migrateErr == nil && migratedUser != nil {
+					if migratedUser, migrateErr := ee.MigratePasswordOnSignin(authForm.Organization, lookupUsername, password); migrateErr == nil && migratedUser != nil {
 						user, err = migratedUser, nil
 					}
 				}
 				if err != nil {
-					object.RecordCredentialStuffingFailure(authForm.Organization, clientIp, lookupUsername)
+					ee.RecordCredentialStuffingFailure(authForm.Organization, clientIp, lookupUsername)
 				} else if !isSigninViaLdap && user.Ldap == "" {
-					object.MarkWeakPasswordOnSignin(user, password)
+					ee.MarkWeakPasswordOnSignin(user, password)
 				}
 			}
 		}
@@ -1135,7 +1136,7 @@ func (c *ApiController) Login() {
 			idpInfo.State = authForm.CallbackState
 			var idProvider idp.IdProvider
 			if provider.Type == object.ProviderTypePlugin {
-				idProvider, err = object.GetPluginIdProvider(provider, authForm.RedirectUri)
+				idProvider, err = ee.GetPluginIdProvider(provider, authForm.RedirectUri)
 			} else {
 				idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
 			}
@@ -1485,9 +1486,9 @@ func (c *ApiController) Login() {
 				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
 		}
-	} else if c.getMfaUserSession() != "" {
+	} else if c.GetMfaUserSession() != "" {
 		var user *object.User
-		user, err = object.GetUser(c.getMfaUserSession())
+		user, err = object.GetUser(c.GetMfaUserSession())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -1609,7 +1610,7 @@ func (c *ApiController) Login() {
 				authForm.Provider = authForm.ProviderBack
 			}
 
-			user := c.getCurrentUser()
+			user := c.GetCurrentUser()
 			if user == nil {
 				c.ResponseError(c.T("auth:Unauthorized operation"))
 				return
@@ -1646,7 +1647,7 @@ func (c *ApiController) Login() {
 	}
 
 	if authForm.Language != "" {
-		user := c.getCurrentUser()
+		user := c.GetCurrentUser()
 		if user != nil {
 			user.Language = authForm.Language
 			_, err = object.UpdateUser(user.GetId(), user, []string{"language"}, user.IsAdmin)

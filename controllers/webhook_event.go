@@ -197,6 +197,6 @@ func (c *ApiController) DeleteWebhookEvent() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteWebhookEvent(&event))
+	c.Data["json"] = WrapActionResponse(object.DeleteWebhookEvent(&event))
 	c.ServeJSON()
 }

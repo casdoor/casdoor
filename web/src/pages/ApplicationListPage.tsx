@@ -10,7 +10,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as ApplicationBackend from "@/backend/ApplicationBackend";
 import * as Setting from "@/lib/setting";
-import {isDelegatedAdmin} from "@/lib/delegated-admin";
+import {isDelegatedAdmin} from "@/ee/lib/delegated-admin";
 import {newApplication} from "@/pages/defaults";
 
 /** the columns of the import template, "<label>#<field>" like the other imports; client ID, secret and redirect URIs are

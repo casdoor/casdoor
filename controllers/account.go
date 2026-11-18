@@ -25,6 +25,7 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/captcha"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -839,12 +840,12 @@ func (c *ApiController) GetAccount() {
 	}
 	u.AccessToken = accessToken
 
-	delegatedAdmin, err := object.GetDelegatedAdminInfo(user)
+	delegatedAdmin, err := ee.GetDelegatedAdminInfo(user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	pendingAccessReviews, err := object.GetPendingReviewItemCount(user.Owner, user.Name)
+	pendingAccessReviews, err := ee.GetPendingReviewItemCount(user.Owner, user.Name)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

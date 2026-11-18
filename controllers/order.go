@@ -174,7 +174,7 @@ func (c *ApiController) UpdateOrder() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateOrder(id, &order))
+	c.Data["json"] = WrapActionResponse(object.UpdateOrder(id, &order))
 	c.ServeJSON()
 }
 
@@ -193,7 +193,7 @@ func (c *ApiController) AddOrder() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddOrder(&order))
+	c.Data["json"] = WrapActionResponse(object.AddOrder(&order))
 	c.ServeJSON()
 }
 
@@ -212,6 +212,6 @@ func (c *ApiController) DeleteOrder() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteOrder(&order))
+	c.Data["json"] = WrapActionResponse(object.DeleteOrder(&order))
 	c.ServeJSON()
 }

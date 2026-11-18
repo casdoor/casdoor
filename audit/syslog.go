@@ -55,6 +55,9 @@ var syslogFormats = map[string]bool{
 	"LEEF": true,
 }
 
+// FormatSiemEventHook writes an event in CEF or LEEF, set by the enterprise features in ee/
+var FormatSiemEventHook func(format string, event *Event, eventTime time.Time) string
+
 // IsEnterpriseSyslogFormat tells the formats that need an enterprise edition license
 func IsEnterpriseSyslogFormat(format string) bool {
 	return format == "CEF" || format == "LEEF"
@@ -228,10 +231,10 @@ func (p *SyslogProvider) formatMessage(event *Event) string {
 	message := strings.NewReplacer("\r", " ", "\n", " ").Replace(event.Message)
 
 	var line string
-	if p.settings.format == "CEF" {
-		line = fmt.Sprintf("<%d>%s %s %s", priority, eventTime.Format(time.Stamp), p.hostname, formatCef(event, eventTime))
-	} else if p.settings.format == "LEEF" {
-		line = fmt.Sprintf("<%d>%s %s %s", priority, eventTime.Format(time.Stamp), p.hostname, formatLeef(event, eventTime))
+	if p.settings.format == "CEF" && FormatSiemEventHook != nil {
+		line = fmt.Sprintf("<%d>%s %s %s", priority, eventTime.Format(time.Stamp), p.hostname, FormatSiemEventHook("CEF", event, eventTime))
+	} else if p.settings.format == "LEEF" && FormatSiemEventHook != nil {
+		line = fmt.Sprintf("<%d>%s %s %s", priority, eventTime.Format(time.Stamp), p.hostname, FormatSiemEventHook("LEEF", event, eventTime))
 	} else if p.settings.format == "RFC 3164" {
 		line = fmt.Sprintf("<%d>%s %s casdoor[%s]: %s", priority, eventTime.Format(time.Stamp), p.hostname, p.procId, message)
 	} else {

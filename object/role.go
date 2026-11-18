@@ -313,7 +313,7 @@ func fillSourceGroups(roles []*Role, sources map[string][]string) {
 	}
 }
 
-func getRolesByUser(userId string) ([]*Role, error) {
+func GetRolesByUser(userId string) ([]*Role, error) {
 	roles, sources, err := getRolesByUserInternal(userId)
 	if err != nil {
 		return nil, err

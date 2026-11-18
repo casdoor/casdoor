@@ -137,7 +137,7 @@ func (c *ApiController) AddModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddModelWithCheck(&model))
+	c.Data["json"] = WrapActionResponse(object.AddModelWithCheck(&model))
 	c.ServeJSON()
 }
 
@@ -156,6 +156,6 @@ func (c *ApiController) DeleteModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteModel(&model))
+	c.Data["json"] = WrapActionResponse(object.DeleteModel(&model))
 	c.ServeJSON()
 }

@@ -122,7 +122,7 @@ func (c *ApiController) UpdateToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token, c.IsGlobalAdmin()))
+	c.Data["json"] = WrapActionResponse(object.UpdateToken(id, &token, c.IsGlobalAdmin()))
 	c.ServeJSON()
 }
 
@@ -145,7 +145,7 @@ func (c *ApiController) AddToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddToken(&token))
+	c.Data["json"] = WrapActionResponse(object.AddToken(&token))
 	c.ServeJSON()
 }
 
@@ -168,7 +168,7 @@ func (c *ApiController) DeleteToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
+	c.Data["json"] = WrapActionResponse(object.DeleteToken(&token))
 	c.ServeJSON()
 }
 

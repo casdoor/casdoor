@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/v2/core/utils/pagination"
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -129,7 +130,7 @@ func (c *ApiController) GetApplication() {
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	object.CheckEntryIp(clientIp, nil, application, nil, c.GetAcceptLanguage())
 
-	if scope := c.getDelegatedScope(); scope.Can(object.DelegatedActionApplications) && scope.HasApplication(application) {
+	if scope := c.getDelegatedScope(); scope.Can(ee.DelegatedActionApplications) && scope.HasApplication(application) {
 		c.ResponseOk(application)
 		return
 	}
@@ -264,7 +265,7 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
-	if err = object.ValidateFormFill(application.FormFill, c.GetAcceptLanguage()); err != nil {
+	if err = ee.ValidateFormFill(application.FormFill, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
@@ -283,7 +284,7 @@ func (c *ApiController) UpdateApplication() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application, c.IsGlobalAdmin(), c.GetAcceptLanguage(), columns))
+	c.Data["json"] = WrapActionResponse(object.UpdateApplication(id, &application, c.IsGlobalAdmin(), c.GetAcceptLanguage(), columns))
 	c.ServeJSON()
 }
 
@@ -327,7 +328,7 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
-	if err = object.ValidateFormFill(application.FormFill, c.GetAcceptLanguage()); err != nil {
+	if err = ee.ValidateFormFill(application.FormFill, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
@@ -360,7 +361,7 @@ func (c *ApiController) AddApplication() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddApplication(&application, c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.AddApplication(&application, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
@@ -379,6 +380,6 @@ func (c *ApiController) DeleteApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))
+	c.Data["json"] = WrapActionResponse(object.DeleteApplication(&application))
 	c.ServeJSON()
 }

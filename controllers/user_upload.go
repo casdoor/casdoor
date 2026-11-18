@@ -61,7 +61,7 @@ func (c *ApiController) UploadUsers() {
 		return
 	}
 
-	userObj := c.getCurrentUser()
+	userObj := c.GetCurrentUser()
 	if userObj == nil {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return

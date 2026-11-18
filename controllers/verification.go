@@ -259,7 +259,7 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(object.GetUserForbiddenMessage(user, c.GetAcceptLanguage()))
 			return
 		}
-	} else if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
+	} else if mfaUserSession := c.GetMfaUserSession(); mfaUserSession != "" {
 		// mfaUserSession != "", means method is MfaAuthVerification
 		user, err = object.GetUser(mfaUserSession)
 		if err != nil {
@@ -268,7 +268,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 	} else if vform.Method == ResetVerification {
 		// For reset verification, get the current logged-in user
-		user = c.getCurrentUser()
+		user = c.GetCurrentUser()
 	} else if vform.Method == LoginVerification || vform.Method == MagicLinkVerification {
 		// For login verification, try to find user by email/phone for CAPTCHA check
 		// This is a preliminary lookup; the actual validation happens later in the switch statement
@@ -414,7 +414,7 @@ func (c *ApiController) SendVerificationCode() {
 				return
 			}
 		} else if vform.Method == ResetVerification {
-			user = c.getCurrentUser()
+			user = c.GetCurrentUser()
 		} else if vform.Method == MfaAuthVerification {
 			if user == nil {
 				c.ResponseError(c.T("general:Please sign in first"))
@@ -485,7 +485,7 @@ func (c *ApiController) SendVerificationCode() {
 			}
 		} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
 			if vform.CountryCode == "" {
-				if user = c.getCurrentUser(); user != nil {
+				if user = c.GetCurrentUser(); user != nil {
 					vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 				}
 			}

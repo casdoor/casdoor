@@ -6,7 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
 import {CodeInput} from "@/components/auth/CodeInput";
-import {PushWait} from "@/components/auth/mfa/PushWait";
+import {PushWait} from "@/ee/components/auth/mfa/PushWait";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Setting from "@/lib/setting";
 import {

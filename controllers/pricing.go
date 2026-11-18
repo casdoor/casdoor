@@ -111,7 +111,7 @@ func (c *ApiController) UpdatePricing() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePricing(id, &pricing))
+	c.Data["json"] = WrapActionResponse(object.UpdatePricing(id, &pricing))
 	c.ServeJSON()
 }
 
@@ -130,7 +130,7 @@ func (c *ApiController) AddPricing() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPricing(&pricing))
+	c.Data["json"] = WrapActionResponse(object.AddPricing(&pricing))
 	c.ServeJSON()
 }
 
@@ -149,6 +149,6 @@ func (c *ApiController) DeletePricing() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePricing(&pricing))
+	c.Data["json"] = WrapActionResponse(object.DeletePricing(&pricing))
 	c.ServeJSON()
 }

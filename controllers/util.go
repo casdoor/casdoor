@@ -301,7 +301,7 @@ func (c *ApiController) checkKeyPermission(oldKey, key *object.Key) bool {
 		return true
 	}
 
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return false

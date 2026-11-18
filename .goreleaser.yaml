@@ -44,6 +44,9 @@ archives:
       - goos: windows
         format: zip
     files:
+      - LICENSE
+      - src: 'ee/LICENSE'
+        dst: './ee/LICENSE'
       - src: 'web/build'
         dst: './web/build'
       - src: 'conf/app.conf'

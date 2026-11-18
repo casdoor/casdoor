@@ -73,7 +73,10 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 	case "Okta":
 		return &OktaSyncerProvider{Syncer: syncer}
 	case "Plugin":
-		return &PluginSyncerProvider{Syncer: syncer}
+		if NewPluginSyncerProviderHook != nil {
+			return NewPluginSyncerProviderHook(syncer)
+		}
+		return &DatabaseSyncerProvider{Syncer: syncer}
 	case "SCIM":
 		return &SCIMSyncerProvider{Syncer: syncer}
 	case "AWS IAM":

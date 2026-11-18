@@ -36,7 +36,7 @@ import {MfaItemsTable} from "@/components/auth/mfa/MfaItemsTable";
 import {isAccountItemVisible} from "@/lib/account-items";
 import {PasswordModal} from "@/components/user/PasswordModal";
 import {ResetModal} from "@/components/user/ResetModal";
-import {PersonalDataActions, RevealButton} from "@/components/user/PersonalInfo";
+import {PersonalDataActions, RevealButton} from "@/ee/components/user/PersonalInfo";
 import {TransactionTable} from "@/components/user/TransactionTable";
 import {WebauthnCredentialTable} from "@/components/user/WebauthnCredentialTable";
 import {useAccount} from "@/hooks/use-account";
@@ -49,7 +49,7 @@ import * as MfaBackend from "@/backend/MfaBackend";
 import * as TransactionBackend from "@/backend/TransactionBackend";
 import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
-import {canDelegated, isDelegatedAdmin, isDelegatedAdminOf} from "@/lib/delegated-admin";
+import {canDelegated, isDelegatedAdmin, isDelegatedAdminOf} from "@/ee/lib/delegated-admin";
 
 /** the value a Radix tab needs for the account item whose `tab` is the empty string */
 const DEFAULT_TAB = "__default__";

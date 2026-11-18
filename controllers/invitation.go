@@ -134,7 +134,7 @@ func (c *ApiController) UpdateInvitation() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateInvitation(id, &invitation, c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.UpdateInvitation(id, &invitation, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
@@ -153,7 +153,7 @@ func (c *ApiController) AddInvitation() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddInvitation(&invitation, c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.AddInvitation(&invitation, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
@@ -172,7 +172,7 @@ func (c *ApiController) DeleteInvitation() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteInvitation(&invitation))
+	c.Data["json"] = WrapActionResponse(object.DeleteInvitation(&invitation))
 	c.ServeJSON()
 }
 

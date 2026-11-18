@@ -106,7 +106,7 @@ func (c *ApiController) UpdateAdapter() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateAdapter(id, &adapter))
+	c.Data["json"] = WrapActionResponse(object.UpdateAdapter(id, &adapter))
 	c.ServeJSON()
 }
 
@@ -129,7 +129,7 @@ func (c *ApiController) AddAdapter() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddAdapter(&adapter))
+	c.Data["json"] = WrapActionResponse(object.AddAdapter(&adapter))
 	c.ServeJSON()
 }
 
@@ -148,7 +148,7 @@ func (c *ApiController) DeleteAdapter() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteAdapter(&adapter))
+	c.Data["json"] = WrapActionResponse(object.DeleteAdapter(&adapter))
 	c.ServeJSON()
 }
 

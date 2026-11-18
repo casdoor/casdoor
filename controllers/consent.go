@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/casdoor/casdoor/ee"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -97,7 +98,7 @@ func (c *ApiController) RevokeConsent() {
 		c.ResponseError(err.Error())
 		return
 	}
-	err = object.AddConsentLog(userObj, consent.Application, "revoke", consent.GrantedScopes, nil, util.GetClientIpFromRequest(c.Ctx.Request), c.Ctx.Request.UserAgent())
+	err = ee.AddConsentLog(userObj, consent.Application, "revoke", consent.GrantedScopes, nil, util.GetClientIpFromRequest(c.Ctx.Request), c.Ctx.Request.UserAgent())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -198,7 +199,7 @@ func (c *ApiController) GrantConsent() {
 	}
 
 	if record := object.GetConsentRecordOfUser(userObj, application); record != nil {
-		err = object.AddConsentLog(userObj, application.GetId(), "grant", record.GrantedScopes, record.DeniedScopes, util.GetClientIpFromRequest(c.Ctx.Request), c.Ctx.Request.UserAgent())
+		err = ee.AddConsentLog(userObj, application.GetId(), "grant", record.GrantedScopes, record.DeniedScopes, util.GetClientIpFromRequest(c.Ctx.Request), c.Ctx.Request.UserAgent())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

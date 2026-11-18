@@ -30,8 +30,8 @@ import * as OrganizationBackend from "@/backend/OrganizationBackend";
 import * as TransactionBackend from "@/backend/TransactionBackend";
 import * as Setting from "@/lib/setting";
 import {EditionNotice} from "@/components/common/EditionNotice";
-import {SecurityPolicyTab} from "@/components/organization/SecurityPolicyTab";
-import {EnterprisePolicyTab} from "@/components/organization/EnterprisePolicyTab";
+import {SecurityPolicyTab} from "@/ee/components/organization/SecurityPolicyTab";
+import {EnterprisePolicyTab} from "@/ee/components/organization/EnterprisePolicyTab";
 
 const PASSWORD_TYPES = ["plain", "salt", "sha512-salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id", "pbkdf2-django", "pbkdf2-sm3"];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];

@@ -67,7 +67,7 @@ func (token *Token) GetActor() *ActClaim {
 	return actor
 }
 
-func getActorJson(actor *ActClaim) string {
+func GetActorJson(actor *ActClaim) string {
 	if actor == nil {
 		return ""
 	}

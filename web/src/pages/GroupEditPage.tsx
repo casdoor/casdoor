@@ -8,7 +8,7 @@ import {useAccount} from "@/hooks/use-account";
 import {useGroupOptions, useOrganizationOptions, useUserNameOptions} from "@/hooks/use-options";
 import * as GroupBackend from "@/backend/GroupBackend";
 import * as Setting from "@/lib/setting";
-import {isDelegatedAdmin, isDelegatedRootGroup} from "@/lib/delegated-admin";
+import {isDelegatedAdmin, isDelegatedRootGroup} from "@/ee/lib/delegated-admin";
 
 export default function GroupEditPage() {
   const {organizationName = "", groupName = ""} = useParams();

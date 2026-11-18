@@ -258,7 +258,7 @@ type Attribute struct {
 }
 
 func GetSamlMeta(application *Application, host string, enablePostBinding bool) (*IdpEntityDescriptor, error) {
-	cert, err := getCertByApplication(application)
+	cert, err := GetCertByApplication(application)
 	if err != nil {
 		return nil, err
 	}
@@ -274,7 +274,7 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
-	originFrontend, originBackend := getOriginFromHost(host)
+	originFrontend, originBackend := GetOriginFromHost(host)
 
 	idpLocation := ""
 	idpBinding := ""
@@ -456,7 +456,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	// get certificate string
-	cert, err := getCertByApplication(application)
+	cert, err := GetCertByApplication(application)
 	if err != nil {
 		return "", "", "", err
 	}
@@ -481,7 +481,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		method = "POST"
 	}
 
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 
 	// build signedResponse
 	sessionIndex := fmt.Sprintf("_%s", util.GenerateUUID())
@@ -721,7 +721,7 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 }
 
 func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string, username string, loginHint string) string {
-	originF, _ := getOriginFromHost(host)
+	originF, _ := GetOriginFromHost(host)
 	baseURL := fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, url.PathEscape(owner), url.PathEscape(application), relayState, url.QueryEscape(samlRequest))
 	if username != "" {
 		baseURL += fmt.Sprintf("&username=%s", url.QueryEscape(username))

@@ -16,6 +16,9 @@ package object
 
 import (
 	"errors"
+	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pquerna/otp"
@@ -132,4 +135,23 @@ func NewTotpMfaUtil(config *MfaProps) *TotpMfa {
 		secretSize: 20,
 		digits:     otp.DigitsSix,
 	}
+}
+
+func parseTotpSecret(value string) (string, uint, otp.Digits) {
+	secret, query, found := strings.Cut(value, "?")
+	period, digits := uint(MfaTotpPeriodInSeconds), otp.DigitsSix
+	if !found {
+		return secret, period, digits
+	}
+	values, err := url.ParseQuery(query)
+	if err != nil {
+		return secret, period, digits
+	}
+	if p, err := strconv.Atoi(values.Get("period")); err == nil && p > 0 {
+		period = uint(p)
+	}
+	if values.Get("digits") == "8" {
+		digits = otp.DigitsEight
+	}
+	return secret, period, digits
 }

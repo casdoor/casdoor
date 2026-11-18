@@ -305,7 +305,7 @@ func (syncer *Syncer) getTableColumnsTypeMap() map[string]string {
 	return m
 }
 
-func (syncer *Syncer) getTable() string {
+func (syncer *Syncer) GetTable() string {
 	if syncer.DatabaseType == "mssql" {
 		return fmt.Sprintf("[%s]", syncer.Table)
 	} else {
@@ -313,7 +313,7 @@ func (syncer *Syncer) getTable() string {
 	}
 }
 
-func (syncer *Syncer) getKeyColumn() *TableColumn {
+func (syncer *Syncer) GetKeyColumn() *TableColumn {
 	var column *TableColumn
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.IsKey {
@@ -337,12 +337,12 @@ func (syncer *Syncer) getKeyColumn() *TableColumn {
 }
 
 func (syncer *Syncer) getLocalPrimaryKey() string {
-	column := syncer.getKeyColumn()
+	column := syncer.GetKeyColumn()
 	return util.CamelToSnakeCase(column.CasdoorName)
 }
 
-func (syncer *Syncer) getTargetTablePrimaryKey() string {
-	column := syncer.getKeyColumn()
+func (syncer *Syncer) GetTargetTablePrimaryKey() string {
+	column := syncer.GetKeyColumn()
 	return column.Name
 }
 

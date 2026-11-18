@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/certificate"
-	"github.com/casdoor/casdoor/gm"
+	"github.com/casdoor/casdoor/ee/gm"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -186,7 +186,7 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 		}
 	}
 
-	err = cert.populateContent()
+	err = cert.PopulateContent()
 	if err != nil {
 		return false, err
 	}
@@ -223,7 +223,7 @@ func CheckCertName(cert *Cert, oldId string, lang string) error {
 }
 
 func AddCert(cert *Cert) (bool, error) {
-	err := cert.populateContent()
+	err := cert.PopulateContent()
 	if err != nil {
 		return false, err
 	}
@@ -249,9 +249,12 @@ func (p *Cert) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }
 
-func (p *Cert) populateContent() error {
+func (p *Cert) PopulateContent() error {
 	if p.IsHsmKey() {
-		return p.populateHsmContent()
+		if PopulateHsmContentHook == nil {
+			return fmt.Errorf("HSM keys need the enterprise features")
+		}
+		return PopulateHsmContentHook(p)
 	}
 
 	if p.Certificate != "" && p.PrivateKey != "" {
@@ -358,7 +361,7 @@ func RenewCert(cert *Cert) (bool, error) {
 	return UpdateCert(cert.GetId(), cert)
 }
 
-func getCertByApplication(application *Application) (*Cert, error) {
+func GetCertByApplication(application *Application) (*Cert, error) {
 	if application.Cert != "" {
 		return GetCertEx(util.GetId(application.Organization, application.Cert))
 	} else {

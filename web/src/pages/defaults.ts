@@ -5,7 +5,7 @@
 import dayjs from "dayjs";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
-import {getDelegatedAdmin, isDelegatedAdmin} from "@/lib/delegated-admin";
+import {getDelegatedAdmin, isDelegatedAdmin} from "@/ee/lib/delegated-admin";
 import {SignupTableDefaultCssMap} from "@/lib/signup-css";
 import type {Account} from "@/hooks/use-account";
 

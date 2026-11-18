@@ -29,7 +29,7 @@ import (
 // @Success 200 {array} object.Site The Response object
 // @router /get-global-sites [get]
 func (c *ApiController) GetGlobalSites() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -117,7 +117,7 @@ func (c *ApiController) GetSite() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-site [post]
 func (c *ApiController) UpdateSite() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -130,7 +130,7 @@ func (c *ApiController) UpdateSite() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSite(id, &site))
+	c.Data["json"] = WrapActionResponse(object.UpdateSite(id, &site))
 	c.ServeJSON()
 }
 
@@ -142,7 +142,7 @@ func (c *ApiController) UpdateSite() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-site [post]
 func (c *ApiController) AddSite() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -153,7 +153,7 @@ func (c *ApiController) AddSite() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSite(&site))
+	c.Data["json"] = WrapActionResponse(object.AddSite(&site))
 	c.ServeJSON()
 }
 
@@ -165,7 +165,7 @@ func (c *ApiController) AddSite() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /delete-site [post]
 func (c *ApiController) DeleteSite() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -176,6 +176,6 @@ func (c *ApiController) DeleteSite() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSite(&site))
+	c.Data["json"] = WrapActionResponse(object.DeleteSite(&site))
 	c.ServeJSON()
 }

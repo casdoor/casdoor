@@ -31,7 +31,7 @@ import (
 // @Success 200 {array} object.RadiusClient The Response object
 // @router /get-radius-clients [get]
 func (c *ApiController) GetRadiusClients() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -77,7 +77,7 @@ func (c *ApiController) GetRadiusClients() {
 // @Success 200 {object} object.RadiusClient The Response object
 // @router /get-radius-client [get]
 func (c *ApiController) GetRadiusClient() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -99,7 +99,7 @@ func (c *ApiController) GetRadiusClient() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-radius-client [post]
 func (c *ApiController) AddRadiusClient() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -120,7 +120,7 @@ func (c *ApiController) AddRadiusClient() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddRadiusClient(&client))
+	c.Data["json"] = WrapActionResponse(object.AddRadiusClient(&client))
 	c.ServeJSON()
 }
 
@@ -133,7 +133,7 @@ func (c *ApiController) AddRadiusClient() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-radius-client [post]
 func (c *ApiController) UpdateRadiusClient() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -152,7 +152,7 @@ func (c *ApiController) UpdateRadiusClient() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateRadiusClient(id, &client))
+	c.Data["json"] = WrapActionResponse(object.UpdateRadiusClient(id, &client))
 	c.ServeJSON()
 }
 
@@ -164,7 +164,7 @@ func (c *ApiController) UpdateRadiusClient() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /delete-radius-client [post]
 func (c *ApiController) DeleteRadiusClient() {
-	if !c.requireGlobalAdmin() {
+	if !c.RequireGlobalAdmin() {
 		return
 	}
 
@@ -175,7 +175,7 @@ func (c *ApiController) DeleteRadiusClient() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteRadiusClient(&client))
+	c.Data["json"] = WrapActionResponse(object.DeleteRadiusClient(&client))
 	c.ServeJSON()
 }
 

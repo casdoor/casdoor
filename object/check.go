@@ -242,7 +242,7 @@ func checkSigninErrorTimes(user *User, lang string) error {
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if minutes > 0 {
-			return newSigninError(SigninReasonAccountFrozen, fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), minutes))
+			return NewSigninError(SigninReasonAccountFrozen, fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), minutes))
 		}
 
 		// reset the error times
@@ -297,7 +297,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 
 	if organization.MasterPassword != "" {
 		if password == organization.MasterPassword || credManager.IsPasswordCorrect(password, organization.MasterPassword, organization.PasswordSalt) {
-			return resetUserSigninErrorTimes(user)
+			return ResetUserSigninErrorTimes(user)
 		}
 	}
 
@@ -315,7 +315,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		}
 	}
 
-	return resetUserSigninErrorTimes(user)
+	return ResetUserSigninErrorTimes(user)
 }
 
 func CheckPasswordComplexityByOrg(organization *Organization, password string, lang string, username ...string) string {
@@ -399,7 +399,7 @@ func CheckLdapUserPassword(user *User, password string, lang string, options ...
 		}
 		return recordSigninErrorInfo(user, lang, enableCaptcha)
 	}
-	return resetUserSigninErrorTimes(user)
+	return ResetUserSigninErrorTimes(user)
 }
 
 func CheckUserPassword(organization string, username string, password string, lang string, options ...bool) (*User, error) {
@@ -417,16 +417,16 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if user == nil || user.IsDeleted {
-		return nil, newSigninError(SigninReasonUserNotFound, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username)))
+		return nil, NewSigninError(SigninReasonUserNotFound, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username)))
 	}
 
 	if user.IsForbidden {
-		return nil, newSigninError(SigninReasonAccountDisabled, GetUserForbiddenMessage(user, lang))
+		return nil, NewSigninError(SigninReasonAccountDisabled, GetUserForbiddenMessage(user, lang))
 	}
 
 	// Prevent direct login for guest users without upgrading
 	if user.Tag == "guest-user" {
-		return nil, newSigninError(SigninReasonAccountDisabled, i18n.Translate(lang, "check:Guest users must upgrade their account by setting a username and password before they can sign in directly"))
+		return nil, NewSigninError(SigninReasonAccountDisabled, i18n.Translate(lang, "check:Guest users must upgrade their account by setting a username and password before they can sign in directly"))
 	}
 
 	if isSigninViaLdap {
@@ -534,7 +534,7 @@ func CheckApiPermission(userId string, organization string, path string, method 
 			continue
 		}
 
-		userHit := permission.isUserHit(userId)
+		userHit := permission.IsUserHit(userId)
 		groupHit := permission.isGroupHit(userId)
 		roleHit := permission.isRoleHit(userId)
 
@@ -587,7 +587,7 @@ func CheckApiPermission(userId string, organization string, path string, method 
 			}
 		}
 		if roleHit {
-			targetRoles, err := getRolesByUser(userId)
+			targetRoles, err := GetRolesByUser(userId)
 			if err != nil {
 				return false, err
 			}
@@ -777,7 +777,7 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 			continue
 		}
 
-		userHit := permission.isUserHit(userId)
+		userHit := permission.IsUserHit(userId)
 		groupHit := permission.isGroupHit(userId)
 		roleHit := permission.isRoleHit(userId)
 
@@ -830,7 +830,7 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 			}
 		}
 		if roleHit {
-			targetRoles, err := getRolesByUser(userId)
+			targetRoles, err := GetRolesByUser(userId)
 			if err != nil {
 				return false, err
 			}

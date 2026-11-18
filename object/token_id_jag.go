@@ -246,7 +246,7 @@ func checkIdJagPermission(user *User, application *Application) (bool, error) {
 
 func signIdJag(application *Application, organization string, claims IdJagClaims) (string, error) {
 	signingApplication := getSigningApplication(application, organization)
-	cert, err := getCertByApplication(signingApplication)
+	cert, err := GetCertByApplication(signingApplication)
 	if err != nil {
 		return "", err
 	}
@@ -255,7 +255,7 @@ func signIdJag(application *Application, organization string, claims IdJagClaims
 	}
 
 	var key interface{}
-	token := jwt.NewWithClaims(getJwtSigningMethod(signingApplication), claims)
+	token := jwt.NewWithClaims(GetJwtSigningMethod(signingApplication), claims)
 	key, err = getJwtSigningKey(token.Method, cert)
 	if err != nil {
 		return "", err

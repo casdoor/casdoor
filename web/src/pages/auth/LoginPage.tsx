@@ -14,7 +14,7 @@ import {SigninMethodTabs} from "@/components/auth/SigninMethodTabs";
 import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, getAgreementDefaultValue, isSigninAgreementShown} from "@/components/auth/AgreementModal";
 import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
-import {CertLoginPanel, CertLoginParams} from "@/components/auth/CertLoginPanel";
+import {CertLoginPanel, CertLoginParams} from "@/ee/components/auth/CertLoginPanel";
 import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
 import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCommonModal";
 import {FaceRecognitionModal} from "@/components/common/FaceRecognitionModal";

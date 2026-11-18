@@ -88,7 +88,7 @@ jobs:
             "name": "casdoor-web",
             "version": "0.0.0-c${GITHUB_SHA}",
             "description": "The built frontend of Casdoor commit ${GITHUB_SHA}, for serving it from a CDN",
-            "license": "Apache-2.0",
+            "license": "SEE LICENSE IN LICENSE",
             "homepage": "https://casdoor.org",
             "repository": {
               "type": "git",
@@ -96,6 +96,7 @@ jobs:
             }
           }
           EOF
+          printf '%s\n' "The code built from the directories named ee (web/src/ee) is licensed under the Casdoor Enterprise License: https://github.com/casdoor/casdoor/blob/${GITHUB_SHA}/ee/LICENSE" "Everything else is licensed under the Apache License 2.0: https://github.com/casdoor/casdoor/blob/${GITHUB_SHA}/LICENSE" > LICENSE
           if npm view "casdoor-web@0.0.0-c${GITHUB_SHA}" version >/dev/null 2>&1; then
             echo "casdoor-web@0.0.0-c${GITHUB_SHA} is already published, skipping"
           else

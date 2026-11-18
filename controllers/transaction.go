@@ -149,7 +149,7 @@ func (c *ApiController) UpdateTransaction() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateTransaction(id, &transaction, c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.UpdateTransaction(id, &transaction, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
@@ -179,7 +179,7 @@ func (c *ApiController) AddTransaction() {
 	}
 
 	if !affected {
-		c.Data["json"] = wrapActionResponse(false)
+		c.Data["json"] = WrapActionResponse(false)
 		c.ServeJSON()
 		return
 	}
@@ -202,6 +202,6 @@ func (c *ApiController) DeleteTransaction() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteTransaction(&transaction, c.GetAcceptLanguage()))
+	c.Data["json"] = WrapActionResponse(object.DeleteTransaction(&transaction, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

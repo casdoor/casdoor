@@ -25,7 +25,7 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/edition"
-	"github.com/casdoor/casdoor/gm"
+	"github.com/casdoor/casdoor/ee/gm"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-jose/go-jose/v4"
 )
@@ -118,7 +118,7 @@ func getOriginFromHostInternal(host string) (string, string) {
 	}
 }
 
-func getOriginFromHost(host string) (string, string) {
+func GetOriginFromHost(host string) (string, string) {
 	originF, originB := getOriginFromHostInternal(host)
 
 	originFrontend := conf.GetConfigString("originFrontend")
@@ -130,7 +130,7 @@ func getOriginFromHost(host string) (string, string) {
 }
 
 func GetOidcIssuer(host string) string {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 	return originBackend
 }
 
@@ -176,7 +176,7 @@ func getOrganizationEndpoints(registrationEndpoint string, authorizationEndpoint
 }
 
 func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
-	originFrontend, originBackend := getOriginFromHost(host)
+	originFrontend, originBackend := GetOriginFromHost(host)
 
 	// Issuer must match the `iss` claim in JWT tokens so that clients can validate tokens correctly
 	issuer := originBackend
@@ -291,7 +291,7 @@ func getJsonWebKeySetCerts(applicationName string) ([]*Cert, error) {
 		applicationId := util.GetId("admin", applicationName)
 		application, err := GetApplication(applicationId)
 		if err == nil && application != nil {
-			cert, err := getCertByApplication(application)
+			cert, err := GetCertByApplication(application)
 			if err == nil && cert != nil {
 				certs = []*Cert{cert}
 			}
@@ -407,10 +407,10 @@ func getJsonWebKey(cert *Cert) *jose.JSONWebKey {
 	if cert.Type != "x509" {
 		return nil
 	}
-	return newJsonWebKey(cert, cert.Certificate, cert.GetKeyId())
+	return NewJsonWebKey(cert, cert.Certificate, cert.GetKeyId())
 }
 
-func newJsonWebKey(cert *Cert, certificate string, keyId string) *jose.JSONWebKey {
+func NewJsonWebKey(cert *Cert, certificate string, keyId string) *jose.JSONWebKey {
 	if certificate == "" {
 		return nil
 	}
@@ -475,7 +475,7 @@ func GetWebFinger(resource string, rels []string, host string, applicationName s
 }
 
 func GetDeviceAuthResponse(deviceCode string, userCode string, cancelToken string, host string, expiresIn int) DeviceAuthResponse {
-	originFrontend, _ := getOriginFromHost(host)
+	originFrontend, _ := GetOriginFromHost(host)
 
 	return DeviceAuthResponse{
 		DeviceCode:      deviceCode,

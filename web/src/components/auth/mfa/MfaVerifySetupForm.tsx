@@ -18,7 +18,7 @@ import {
   mfaSetup,
 } from "@/components/auth/mfa/constants";
 import * as MfaBackend from "@/backend/MfaBackend";
-import {PushWait} from "@/components/auth/mfa/PushWait";
+import {PushWait} from "@/ee/components/auth/mfa/PushWait";
 import {SelectField} from "@/components/common/SelectField";
 import * as Setting from "@/lib/setting";
 

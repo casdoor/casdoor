@@ -335,7 +335,7 @@ Casdoor is free and open source. If it saves you time, consider supporting its d
 
 ## 📄 License
 
-Casdoor is licensed under the [Apache License 2.0](LICENSE).
+Casdoor is licensed under the [Apache License 2.0](LICENSE), except for the directories named `ee` (`ee/` and `web/src/ee/`), which hold the commercial and enterprise edition features and are licensed under the [Casdoor Enterprise License](ee/LICENSE). Casdoor builds include them: without a license key they stay off and Casdoor runs as the open source edition.
 
 ---
 

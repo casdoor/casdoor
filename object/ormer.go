@@ -413,32 +413,7 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(SigninTrace))
-	if err != nil {
-		panic(err)
-	}
-
 	err = a.Engine.Sync2(new(McpRecord))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(McpApproval))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(ProvisionedAccount))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(ProvisioningTask))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(ConsentLog))
 	if err != nil {
 		panic(err)
 	}
@@ -528,11 +503,6 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(CertLoginTicket))
-	if err != nil {
-		panic(err)
-	}
-
 	err = a.Engine.Sync2(new(Ldap))
 	if err != nil {
 		panic(err)
@@ -608,23 +578,10 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(PrivilegedAccount))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(AccessReview))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(PrivilegedRequest))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(AccessReviewItem))
-	if err != nil {
-		panic(err)
+	for _, table := range editionTables {
+		err = a.Engine.Sync2(table)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

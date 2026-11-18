@@ -1023,7 +1023,7 @@ func GetTokenExchangeToken(application *Application, clientSecret string, subjec
 		CodeIsUsed:   true,
 		Resource:     targetAudience,
 		GrantType:    "urn:ietf:params:oauth:grant-type:token-exchange",
-		Actor:        getActorJson(actor),
+		Actor:        GetActorJson(actor),
 	}
 
 	_, err = AddToken(token)

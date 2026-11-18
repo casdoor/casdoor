@@ -103,7 +103,7 @@ func (application *Application) GetEmailProvider(method string) (*Provider, erro
 	if err != nil || provider != nil {
 		return provider, err
 	}
-	return getDefaultEmailProvider()
+	return GetDefaultEmailProvider()
 }
 
 func (application *Application) GetSmsProvider(method string, countryCode string) (*Provider, error) {

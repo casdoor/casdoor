@@ -4,7 +4,7 @@ import {Outlet} from "react-router-dom";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {EnableMfaNotification} from "@/components/auth/EnableMfaNotification";
 import {LicenseBanner} from "@/components/common/EditionNotice";
-import {DelegatedAdminBanner} from "@/components/common/DelegatedAdminBanner";
+import {DelegatedAdminBanner} from "@/ee/components/common/DelegatedAdminBanner";
 import {CommandPalette, useCommandPalette} from "@/components/common/CommandPalette";
 import {ConsoleTour} from "@/components/common/ConsoleTour";
 import {EditionTour} from "@/components/common/EditionTour";

@@ -40,7 +40,7 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 		if err != nil {
 			return nil, err
 		}
-		client = action.NewSmsClient(provider.SubType, module, hosts, provider.getActionConfig())
+		client = action.NewSmsClient(provider.SubType, module, hosts, provider.GetActionConfig())
 	} else if provider.Type == sender.Twilio {
 		// For Twilio, the message body is pre-formatted in SendSms using the template.
 		// Pass "%s" as the template so go-sms-sender's fmt.Sprintf passes the content through unchanged.

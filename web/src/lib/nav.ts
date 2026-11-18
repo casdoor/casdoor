@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import * as Conf from "@/Conf";
 import * as Setting from "@/lib/setting";
-import {canDelegated, isDelegatedAdmin} from "@/lib/delegated-admin";
+import {canDelegated, isDelegatedAdmin} from "@/ee/lib/delegated-admin";
 import type {Account} from "@/hooks/use-account";
 
 export interface NavItem {

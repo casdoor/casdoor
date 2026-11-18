@@ -68,7 +68,7 @@ func generateLogoutToken(application *Application, user *User, signinToken *Toke
 	}
 
 	signingApplication := getSigningApplication(application, user.Owner)
-	cert, err := getCertByApplication(signingApplication)
+	cert, err := GetCertByApplication(signingApplication)
 	if err != nil {
 		return "", err
 	}
@@ -77,7 +77,7 @@ func generateLogoutToken(application *Application, user *User, signinToken *Toke
 	}
 
 	var key interface{}
-	token := jwt.NewWithClaims(getJwtSigningMethod(signingApplication), claims)
+	token := jwt.NewWithClaims(GetJwtSigningMethod(signingApplication), claims)
 	key, err = getJwtSigningKey(token.Method, cert)
 	if err != nil {
 		return "", err

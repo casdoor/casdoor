@@ -31,6 +31,6 @@ type SigninError struct {
 
 func (e *SigninError) Error() string { return e.msg }
 
-func newSigninError(reason, msg string) *SigninError {
+func NewSigninError(reason, msg string) *SigninError {
 	return &SigninError{Reason: reason, msg: msg}
 }

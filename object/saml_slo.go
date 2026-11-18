@@ -47,7 +47,7 @@ type SamlLogoutRequest struct {
 }
 
 func getSamlSingleLogoutLocation(application *Application, host string) string {
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 	return fmt.Sprintf("%s/api/saml/logout/%s/%s", originBackend, application.Owner, application.Name)
 }
 
@@ -216,7 +216,7 @@ func newSamlLogoutRequest(application *Application, samlSession *SamlSession, ho
 	// The SP knows the IdP by the entity id it signed in with, which the host of a forced logout may not give
 	originBackend := samlSession.IdpEntityId
 	if originBackend == "" {
-		_, originBackend = getOriginFromHost(host)
+		_, originBackend = GetOriginFromHost(host)
 	}
 
 	request := &etree.Element{Space: "samlp", Tag: "LogoutRequest"}
@@ -247,7 +247,7 @@ func GetSamlLogoutResponse(application *Application, request *SamlLogoutRequest,
 		return "", fmt.Errorf("the SAML single logout URL: %s of the application: %s is not allowed", application.SamlSingleLogoutUrl, application.GetId())
 	}
 
-	_, originBackend := getOriginFromHost(host)
+	_, originBackend := GetOriginFromHost(host)
 
 	response := &etree.Element{Space: "samlp", Tag: "LogoutResponse"}
 	response.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol")
@@ -274,7 +274,7 @@ func GetSamlLogoutResponse(application *Application, request *SamlLogoutRequest,
 }
 
 func getSamlLogoutSigningContext(application *Application) (*dsig.SigningContext, error) {
-	cert, err := getCertByApplication(application)
+	cert, err := GetCertByApplication(application)
 	if err != nil {
 		return nil, err
 	}

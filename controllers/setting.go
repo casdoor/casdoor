@@ -59,6 +59,6 @@ func (c *ApiController) UpdateSetting() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSetting(&setting))
+	c.Data["json"] = WrapActionResponse(object.UpdateSetting(&setting))
 	c.ServeJSON()
 }

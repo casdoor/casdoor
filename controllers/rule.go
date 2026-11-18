@@ -113,7 +113,7 @@ func (c *ApiController) AddRule() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(object.AddRule(&rule))
+	c.Data["json"] = WrapActionResponse(object.AddRule(&rule))
 	c.ServeJSON()
 }
 
@@ -140,7 +140,7 @@ func (c *ApiController) UpdateRule() {
 	}
 
 	id := c.Ctx.Input.Query("id")
-	c.Data["json"] = wrapActionResponse(object.UpdateRule(id, &rule))
+	c.Data["json"] = WrapActionResponse(object.UpdateRule(id, &rule))
 	c.ServeJSON()
 }
 
@@ -159,7 +159,7 @@ func (c *ApiController) DeleteRule() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteRule(&rule))
+	c.Data["json"] = WrapActionResponse(object.DeleteRule(&rule))
 	c.ServeJSON()
 }
 

@@ -92,7 +92,7 @@ func getTrustedOriginFrontend(host string) (string, bool) {
 		return "", false
 	}
 
-	originFrontend, _ := getOriginFromHost(host)
+	originFrontend, _ := GetOriginFromHost(host)
 	return originFrontend, true
 }
 

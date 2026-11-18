@@ -198,7 +198,7 @@ func (setting *Setting) apply() {
 	currentHeadHtml.Store(&headHtmlState{html: setting.HeadHtml, updatedTime: updatedTime})
 }
 
-func getDefaultEmailProvider() (*Provider, error) {
+func GetDefaultEmailProvider() (*Provider, error) {
 	setting, err := GetSetting()
 	if err != nil || setting == nil || setting.DefaultEmailProvider == "" {
 		return nil, err

@@ -108,7 +108,7 @@ func (c *ApiController) UpdateServer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateServer(id, &server))
+	c.Data["json"] = WrapActionResponse(object.UpdateServer(id, &server))
 	c.ServeJSON()
 }
 
@@ -132,7 +132,7 @@ func (c *ApiController) SyncMcpTool() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.SyncMcpTool(id, &server, isCleared))
+	c.Data["json"] = WrapActionResponse(object.SyncMcpTool(id, &server, isCleared))
 	c.ServeJSON()
 }
 
@@ -151,7 +151,7 @@ func (c *ApiController) AddServer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddServer(&server))
+	c.Data["json"] = WrapActionResponse(object.AddServer(&server))
 	c.ServeJSON()
 }
 
@@ -170,7 +170,7 @@ func (c *ApiController) DeleteServer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteServer(&server))
+	c.Data["json"] = WrapActionResponse(object.DeleteServer(&server))
 	c.ServeJSON()
 }
 
@@ -187,7 +187,7 @@ func (c *ApiController) GetMcpAccessToken() {
 	organizationName := c.Ctx.Input.Query("owner")
 	applicationName := c.Ctx.Input.Query("applicationName")
 
-	user := c.getCurrentUser()
+	user := c.GetCurrentUser()
 	if user == nil {
 		c.ResponseError("user is not logged in")
 		return
