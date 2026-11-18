@@ -582,7 +582,20 @@ func isGothEmailVerified(gothUser goth.User, provider string) bool {
 			return v == "true"
 		}
 	}
+	if provider == "azureadv2" || provider == "microsoftonline" {
+		return isMicrosoftEmailVerified(gothUser)
+	}
 	return gothEmailVerifiedProviders[provider]
+}
+
+// isMicrosoftEmailVerified trusts the Graph mail only when it is the user's own UPN, whose
+// domain the tenant has proven it owns; the mail attribute alone can be set to anything.
+func isMicrosoftEmailVerified(gothUser goth.User) bool {
+	upn, _ := gothUser.RawData["userPrincipalName"].(string)
+	if upn == "" || strings.Contains(upn, "#EXT#") {
+		return false
+	}
+	return strings.EqualFold(gothUser.Email, upn)
 }
 
 func getName(firstName, lastName string) string {
