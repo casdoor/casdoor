@@ -379,6 +379,11 @@ func addWebhookRecord(webhook *Webhook, record *Record, statusCode int, respBody
 		respBody = respBody[0:300]
 	}
 
+	requestUri := webhook.Url
+	if webhook.isProviderType() {
+		requestUri = fmt.Sprintf("%s: %s", webhook.Type, webhook.Provider)
+	}
+
 	webhookRecord := &Record{
 		Owner:        record.Owner,
 		Name:         util.GenerateId(),
@@ -388,7 +393,7 @@ func addWebhookRecord(webhook *Webhook, record *Record, statusCode int, respBody
 
 		Method:      webhook.Method,
 		Action:      "send-webhook",
-		RequestUri:  webhook.Url,
+		RequestUri:  requestUri,
 		StatusCode:  statusCode,
 		Response:    respBody,
 		Language:    record.Language,
@@ -442,7 +447,17 @@ func SendWebhooks(record *Record) error {
 		}
 
 		var user *User
-		if webhook.IsUserExtended {
+		if webhook.isProviderType() {
+			if isFailedRecord(record) {
+				continue
+			}
+
+			user, err = getWebhookReceiverUser(record)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("webhook %s: failed to get user: %w", webhook.GetId(), err))
+				continue
+			}
+		} else if webhook.IsUserExtended {
 			user, err = getUser(record.Organization, record.User)
 			if err != nil {
 				errs = append(errs, fmt.Errorf("webhook %s: failed to get user: %w", webhook.GetId(), err))

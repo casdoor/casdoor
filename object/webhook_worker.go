@@ -207,7 +207,13 @@ func deliverWebhookEvent(event *WebhookEvent) bool {
 	event.AttemptCount++
 
 	// Attempt to send the webhook
-	statusCode, respBody, err := sendWebhook(webhook, &record, extendedUser)
+	var statusCode int
+	var respBody string
+	if webhook.isProviderType() {
+		statusCode, respBody, err = sendProviderWebhook(webhook, &record, extendedUser)
+	} else {
+		statusCode, respBody, err = sendWebhook(webhook, &record, extendedUser)
+	}
 
 	// Add webhook record for backward compatibility (only if non-200 status)
 	if statusCode != 200 {

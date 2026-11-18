@@ -5,7 +5,8 @@ import {EditableTable} from "@/components/crud/EditableTable";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
-import {useOrganizationOptions} from "@/hooks/use-options";
+import {SearchableSelect} from "@/components/common/SearchableSelect";
+import {useOrganizationOptions, useProviderList} from "@/hooks/use-options";
 import {useRequestOrganization} from "@/hooks/use-organization";
 import * as WebhookBackend from "@/backend/WebhookBackend";
 import {buildWebhookPreview} from "@/lib/webhook-preview";
@@ -13,6 +14,10 @@ import * as Setting from "@/lib/setting";
 
 const METHODS = ["POST", "GET", "PUT", "DELETE"];
 const CONTENT_TYPES = ["application/json", "application/x-www-form-urlencoded"];
+const TYPES = ["HTTP", "Email", "SMS", "Notification"];
+
+const isHttp = (ctx: {record: any}) => !TYPES.slice(1).includes(ctx.record.type);
+const isProvider = (ctx: {record: any}) => !isHttp(ctx);
 
 export default function WebhookEditPage() {
   const {webhookName = ""} = useParams();
@@ -30,17 +35,51 @@ export default function WebhookEditPage() {
       disabled: () => !Setting.isAdminUser(account),
     },
     {type: "text", name: "name", labelKey: "general:Name", required: true},
-    {type: "text", name: "url", labelKey: "general:URL"},
+    {
+      type: "custom",
+      name: "type",
+      labelKey: "general:Type",
+      render: (ctx, update) => (
+        <SearchableSelect
+          value={ctx.record.type || "HTTP"}
+          onChange={(value) => {
+            update("type", value);
+            update("provider", "");
+          }}
+          options={TYPES.map((item) => ({value: item, label: item}))}
+        />
+      ),
+    },
+    {
+      type: "custom",
+      name: "provider",
+      labelKey: "general:Provider",
+      when: isProvider,
+      render: (ctx, update) => (
+        <WebhookProviderSelect
+          organization={ctx.record.organization}
+          category={ctx.record.type}
+          value={ctx.record.provider}
+          onChange={(value) => update("provider", value)}
+        />
+      ),
+    },
+    {type: "tags", name: "receivers", labelKey: "webhook:Receivers", when: isProvider, placeholder: "$user"},
+    {type: "text", name: "title", labelKey: "general:Title", when: (ctx) => ctx.record.type === "Email"},
+    {type: "textarea", name: "content", labelKey: "webhook:Message content", when: isProvider, rows: 6},
+    {type: "text", name: "url", labelKey: "general:URL", when: isHttp},
     {
       type: "select",
       name: "method",
       labelKey: "general:Method",
+      when: isHttp,
       options: () => METHODS.map((item) => ({value: item, label: item})),
     },
     {
       type: "select",
       name: "contentType",
       labelKey: "webhook:Content type",
+      when: isHttp,
       options: () => CONTENT_TYPES.map((item) => ({value: item, label: item})),
     },
     {
@@ -54,6 +93,7 @@ export default function WebhookEditPage() {
       type: "custom",
       name: "headers",
       labelKey: "webhook:Headers",
+      when: isHttp,
       block: true,
       render: (ctx, update) => (
         <EditableTable
@@ -85,6 +125,7 @@ export default function WebhookEditPage() {
       type: "multiselect",
       name: "objectFields",
       labelKey: "webhook:Object fields",
+      when: isHttp,
       creatable: true,
       // antd offers "All" above the field list as a catch-all
       options: () => [
@@ -96,6 +137,7 @@ export default function WebhookEditPage() {
       type: "multiselect",
       name: "tokenFields",
       labelKey: "webhook:Extended user fields",
+      when: isHttp,
       creatable: true,
       options: () => Setting.getUserCommonFields().map((item: string) => ({value: item, label: item})),
     },
@@ -103,6 +145,7 @@ export default function WebhookEditPage() {
       type: "custom",
       name: "preview",
       labelKey: "general:Preview",
+      when: isHttp,
       block: true,
       render: (ctx) => (
         <CodeEditor
@@ -114,7 +157,7 @@ export default function WebhookEditPage() {
         />
       ),
     },
-    {type: "switch", name: "isUserExtended", labelKey: "webhook:Is user extended"},
+    {type: "switch", name: "isUserExtended", labelKey: "webhook:Is user extended", when: isHttp},
     {type: "switch", name: "singleOrgOnly", labelKey: "webhook:Single org only"},
     {type: "switch", name: "isEnabled", labelKey: "general:Is enabled"},
   ];
@@ -131,4 +174,15 @@ export default function WebhookEditPage() {
       editUrl={(record) => `/webhooks/${record.name}`}
     />
   );
+}
+
+/** the backend only sends with the organization's own providers, and with the shared ones for "built-in" */
+function WebhookProviderSelect({organization, category, value, onChange}: {organization: string; category: string; value: string; onChange: (value: string) => void}) {
+  const providers = useProviderList(organization);
+  const options = providers
+    .filter((item: any) => item.category === category)
+    .filter((item: any) => item.owner === organization || (organization === "built-in" && item.owner === "admin"))
+    .map((item: any) => ({value: item.name, label: item.displayName ? `${item.displayName} (${item.name})` : item.name}));
+
+  return <SearchableSelect value={value ?? ""} onChange={onChange} options={options} />;
 }
