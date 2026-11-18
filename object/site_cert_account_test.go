@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,20 +13,26 @@
 // limitations under the License.
 
 //go:build !skipCi
-// +build !skipCi
 
-package certificate
+package object
 
 import (
 	"testing"
 
 	"github.com/beego/beego/v2/server/web"
+	"github.com/casdoor/casdoor/certificate"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetClient(t *testing.T) {
+func TestGenerateEccKey(t *testing.T) {
+	eccKeyStr := encodeEccKey(generateEccKey())
+	println(eccKeyStr)
+	util.WriteStringToPath(eccKeyStr, "acme_account.key")
+}
+
+func TestGetAcmeClient(t *testing.T) {
 	err := web.LoadAppConfig("ini", "../conf/app.conf")
 	if err != nil {
 		panic(err)
@@ -37,9 +43,9 @@ func TestGetClient(t *testing.T) {
 	eccKey := util.ReadStringFromPath("acme_account.key")
 	println(eccKey)
 
-	client, err := GetAcmeClient("acme2@casbin.org", eccKey, false)
+	client, err := getAcmeClient("acme2@casbin.org", eccKey, false, true)
 	assert.Nil(t, err)
-	pem, key, err := ObtainCertificateAli(client, "casbin.com", accessKeyId, accessKeySecret)
+	pem, key, err := certificate.ObtainCertificateAli(client, "casbin.com", "", "")
 	assert.Nil(t, err)
 	println(pem)
 	println()
