@@ -50,6 +50,16 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 	return res
 }
 
+// managesForbidden reports whether the syncer reads the account status from the upstream directory into IsForbidden
+func (syncer *Syncer) managesForbidden() bool {
+	switch syncer.Type {
+	case "WeCom", "DingTalk", "Lark", "Okta", "SCIM", "Azure AD", "Google Workspace", "Active Directory", "AWS IAM", "Keycloak":
+		return true
+	default:
+		return false
+	}
+}
+
 func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	provider := GetSyncerProvider(syncer)
 	return provider.UpdateUser(user)
@@ -108,6 +118,10 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool,
 		columns = append(columns, "lark")
 	}
 
+	if syncer.managesForbidden() && !util.InSlice(columns, "is_forbidden") {
+		columns = append(columns, "is_forbidden")
+	}
+
 	affected, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(&oldUser, key), oldUser.Owner).Cols(columns...).Update(user)
 	if err != nil {
 		return false, err
@@ -135,6 +149,9 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 		if tableColumn.IsHashed {
 			values = append(values, m[tableColumn.Name])
 		}
+	}
+	if syncer.managesForbidden() {
+		values = append(values, m["IsForbidden"])
 	}
 
 	s := strings.Join(values, "|")
