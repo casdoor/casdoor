@@ -832,6 +832,12 @@ func IsNeedPromptMfa(org *Organization, user *User) bool {
 			if item.Name == TotpType && user.TotpSecret == "" {
 				return true
 			}
+			if item.Name == RadiusType && !user.MfaRadiusEnabled {
+				return true
+			}
+			if item.Name == PushType && !user.MfaPushEnabled {
+				return true
+			}
 		}
 	}
 	return false
