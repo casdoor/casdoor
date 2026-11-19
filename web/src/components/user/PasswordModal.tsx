@@ -81,16 +81,18 @@ export function PasswordModal({user, userName, organization, account, disabled, 
     let encryptedNewPassword = newPassword;
 
     if (organization.passwordObfuscatorType && organization.passwordObfuscatorType !== "Plain") {
-      const [oldPasswordCipher, oldPasswordError] = Obfuscator.encryptByPasswordObfuscator(
-        organization.passwordObfuscatorType,
-        organization.passwordObfuscatorKey,
-        oldPassword,
-      );
-      if (oldPasswordError) {
-        Setting.showMessage("error", oldPasswordError);
-        return;
+      if (oldPassword !== "") {
+        const [oldPasswordCipher, oldPasswordError] = Obfuscator.encryptByPasswordObfuscator(
+          organization.passwordObfuscatorType,
+          organization.passwordObfuscatorKey,
+          oldPassword,
+        );
+        if (oldPasswordError) {
+          Setting.showMessage("error", oldPasswordError);
+          return;
+        }
+        encryptedOldPassword = oldPasswordCipher;
       }
-      encryptedOldPassword = oldPasswordCipher;
 
       const [newPasswordCipher, newPasswordCipherError] = Obfuscator.encryptByPasswordObfuscator(
         organization.passwordObfuscatorType,

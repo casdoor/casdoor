@@ -772,7 +772,7 @@ func (c *ApiController) SetPassword() {
 
 	isAdmin := c.IsAdmin() || isDelegatedAdmin
 	if isAdmin {
-		if oldPassword != "" {
+		if oldPassword != "" && requestUserId == userId {
 			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 			if err != nil {
 				c.ResponseError(err.Error())
