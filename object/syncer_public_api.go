@@ -14,7 +14,16 @@
 
 package object
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
+
+var (
+	originalDatabaseWriteSlots       = make(chan struct{}, 16)
+	originalDatabaseWriteRetryDelays = []time.Duration{0, 2 * time.Second, 10 * time.Second}
+	originalDatabaseWriteTimeout     = 30 * time.Second
+)
 
 func getDbSyncerForUser(user *User) (*Syncer, error) {
 	syncers, err := GetSyncers("admin")
@@ -38,11 +47,6 @@ func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 
 	for _, syncer := range syncers {
 		if syncer.Organization == organization && syncer.IsEnabled {
-			err = syncer.initAdapter()
-			if err != nil {
-				return nil, err
-			}
-
 			return syncer, nil
 		}
 	}
@@ -50,39 +54,89 @@ func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 }
 
 func AddUserToOriginalDatabase(user *User) error {
-	syncer, err := getEnabledSyncerForOrganization(user.Owner)
-	if err != nil {
-		return err
-	}
-
-	if syncer == nil {
-		return nil
-	}
-
-	if !syncer.writesUsersBack() {
-		return nil
-	}
-
-	updatedOUser := syncer.createOriginalUserFromUser(user)
-	_, err = syncer.addUser(updatedOUser)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("Add from user to oUser: %v\n", updatedOUser)
-	return nil
+	return writeUserToOriginalDatabase(user, true)
 }
 
 func UpdateUserToOriginalDatabase(user *User) error {
+	return writeUserToOriginalDatabase(user, false)
+}
+
+func writeUserToOriginalDatabase(user *User, isAdd bool) error {
 	syncer, err := getEnabledSyncerForOrganization(user.Owner)
 	if err != nil {
 		return err
 	}
-	if syncer == nil {
+	if syncer == nil || !syncer.writesUsersBack() {
 		return nil
 	}
 
-	if !syncer.writesUsersBack() {
+	select {
+	case originalDatabaseWriteSlots <- struct{}{}:
+	default:
+		fmt.Printf("writeUserToOriginalDatabase() skipped user [%s] because too many writes are pending, the next sync of syncer [%s] will write it\n", user.GetId(), syncer.GetId())
+		return nil
+	}
+
+	userCopy := *user
+	go func() {
+		defer func() { <-originalDatabaseWriteSlots }()
+
+		var err error
+		for i, delay := range originalDatabaseWriteRetryDelays {
+			time.Sleep(delay)
+			err = writeUserToOriginalDatabaseWithTimeout(*syncer, &userCopy, isAdd)
+			if err == nil {
+				return
+			}
+			fmt.Printf("writeUserToOriginalDatabase() attempt %d for user [%s] failed: %s\n", i+1, userCopy.GetId(), err.Error())
+		}
+
+		recordSyncerError(syncer, fmt.Errorf("failed to write user [%s] back to the original database: %s", userCopy.GetId(), err.Error()))
+	}()
+
+	return nil
+}
+
+func writeUserToOriginalDatabaseWithTimeout(syncer Syncer, user *User, isAdd bool) error {
+	done := make(chan error, 1)
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				syncer.Close()
+				done <- fmt.Errorf("panic: %v", r)
+			}
+		}()
+
+		err := syncer.writeUserBack(user, isAdd)
+		closeErr := syncer.Close()
+		if err == nil {
+			err = closeErr
+		}
+		done <- err
+	}()
+
+	select {
+	case err := <-done:
+		return err
+	case <-time.After(originalDatabaseWriteTimeout):
+		return fmt.Errorf("timed out after %s", originalDatabaseWriteTimeout)
+	}
+}
+
+func (syncer *Syncer) writeUserBack(user *User, isAdd bool) error {
+	err := syncer.initAdapter()
+	if err != nil {
+		return err
+	}
+
+	if isAdd {
+		oUser := syncer.createOriginalUserFromUser(user)
+		_, err = syncer.addUser(oUser)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("Add from user to oUser: %v\n", oUser)
 		return nil
 	}
 
@@ -90,13 +144,16 @@ func UpdateUserToOriginalDatabase(user *User) error {
 	if err != nil {
 		return err
 	}
+	if newUser == nil {
+		return nil
+	}
 
-	updatedOUser := syncer.createOriginalUserFromUser(newUser)
-	_, err = syncer.updateUser(updatedOUser)
+	oUser := syncer.createOriginalUserFromUser(newUser)
+	_, err = syncer.updateUser(oUser)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+	fmt.Printf("Update from user to oUser: %v\n", oUser)
 	return nil
 }
