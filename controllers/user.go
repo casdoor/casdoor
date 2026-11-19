@@ -195,7 +195,11 @@ func (c *ApiController) GetUser() {
 		}
 	} else {
 		if owner == "" {
-			owner = util.GetOwnerFromId(id)
+			owner, _, err = util.GetOwnerAndNameFromIdWithError(id)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 
 		switch {

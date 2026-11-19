@@ -108,9 +108,13 @@ func (c *ApiController) GetPlan() {
 // @router /update-plan [post]
 func (c *ApiController) UpdatePlan() {
 	id := c.Ctx.Input.Query("id")
-	owner := util.GetOwnerFromId(id)
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	var plan object.Plan
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
