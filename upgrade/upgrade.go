@@ -102,8 +102,6 @@ type UpgradeInfo struct {
 	AllowVendorUpgrade bool           `json:"allowVendorUpgrade"`
 	AssetName          string         `json:"assetName"`
 	LastResult         *UpgradeResult `json:"lastResult"`
-	// the license has expired before the latest version was released, which would run as the community edition
-	LosesPaidFeatures bool `json:"losesPaidFeatures,omitempty"`
 }
 
 var (
@@ -353,7 +351,6 @@ func GetUpgradeInfo() *UpgradeInfo {
 	info.LatestUrl = release.HtmlUrl
 	info.PublishedAt = release.PublishedAt
 	info.HasNewVersion = isNewerVersion(release.TagName, currentVersion)
-	info.LosesPaidFeatures = info.HasNewVersion && edition.UpdatesEnded() && !edition.CoversRelease(release.PublishedAt)
 	info.CanUpgrade = info.DeploymentType == DeploymentRelease && !info.IsUpgradeDisabled && info.HasNewVersion &&
 		getAssetName() != "" && release.getAsset(getAssetName()) != nil && release.getAsset(getChecksumsName(release.TagName)) != nil
 	return info

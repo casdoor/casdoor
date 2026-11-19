@@ -344,13 +344,6 @@ function UpgradeCard() {
           </Alert>
         ) : null}
         {renderLastResult()}
-        {info.losesPaidFeatures ? (
-          <Alert variant="warning">
-            <AlertDescription>
-              {i18next.t("system:The license expired before this version was released, after upgrading to it the paid features and paid integrations are turned off")}
-            </AlertDescription>
-          </Alert>
-        ) : null}
         {renderUpgrade()}
         {info.allowVendorUpgrade ? (
           <p className="text-muted-foreground">{i18next.t("system:Casdoor support may upgrade this Casdoor by itself, set by allowVendorUpgrade in app.conf")}</p>
@@ -518,7 +511,7 @@ function LicenseCard() {
         ) : null}
         {license.id && license.expireTime ? (
           <p className="text-muted-foreground">
-            {i18next.t("system:After the license expires, this version keeps its paid features, but the versions, new features and paid integration updates released after it are not included")}
+            {i18next.t("system:The license is for its term: when it expires, the paid features stop and Casdoor runs as the community edition, renew it before then")}
           </p>
         ) : null}
         {license.instanceId ? (
