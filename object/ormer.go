@@ -498,6 +498,16 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(MfaTotpStep))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(MfaStepUp))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(MagicLink))
 	if err != nil {
 		panic(err)

@@ -65,10 +65,10 @@ func (c *ApiController) checkVerifyCodeOrOrgMasterCode(user *object.User, dest s
 	return object.CheckVerifyCodeOrMasterCodeWithLimitAndIp(user, organization.MasterVerificationCode, clientIp, dest, code, c.GetAcceptLanguage())
 }
 
-func (c *ApiController) verifyMfaPasscode(user *object.User, mfaUtil object.MfaInterface, passcode string) error {
+func (c *ApiController) verifyMfaPasscode(user *object.User, mfaProps *object.MfaProps, passcode string) error {
 	passed, err := c.checkOrgMasterVerificationCode(user, passcode)
 	if err != nil || passed {
 		return err
 	}
-	return mfaUtil.Verify(passcode, c.GetAcceptLanguage())
+	return object.VerifyMfaPasscode(user, mfaProps, passcode, c.GetAcceptLanguage())
 }

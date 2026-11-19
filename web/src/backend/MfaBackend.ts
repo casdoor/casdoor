@@ -115,3 +115,43 @@ export function answerMfaPushChallenge(id: string, approve: boolean) {
     },
   }).then(res => res.json());
 }
+
+export function getStepUpMethods(clientId: string) {
+  return fetch(`${Setting.ServerUrl}/api/mfa/step-up/methods?clientId=${encodeURIComponent(clientId)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function sendStepUpCode(clientId: string, mfaType: string) {
+  const formData = new FormData();
+  formData.append("clientId", clientId);
+  formData.append("mfaType", mfaType);
+  return fetch(`${Setting.ServerUrl}/api/mfa/step-up/send-code`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function verifyStepUp(values: {clientId: string; mfaType: string; passcode: string; action?: string}) {
+  const formData = new FormData();
+  formData.append("clientId", values.clientId);
+  formData.append("mfaType", values.mfaType);
+  formData.append(values.mfaType === "recovery" ? "recoveryCode" : "passcode", values.passcode);
+  formData.append("action", values.action ?? "");
+  return fetch(`${Setting.ServerUrl}/api/mfa/step-up/verify`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

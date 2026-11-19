@@ -111,6 +111,11 @@ p, *, *, GET, /api/export-own-data, *, *
 p, *, *, POST, /api/delete-own-account, *, *
 p, *, *, GET, /api/mfa/push/challenge, *, *
 p, *, *, POST, /api/mfa/push/answer, *, *
+p, *, *, GET, /api/mfa/step-up/methods, *, *
+p, *, *, POST, /api/mfa/step-up/send-code, *, *
+p, *, *, POST, /api/mfa/step-up/verify, *, *
+p, *, *, POST, /api/mfa/step-up/redeem, *, *
+p, *, *, GET, /api/get-step-up-records, *, *
 p, *, *, GET, /api/get-captcha, *, *
 p, *, *, GET, /api/get-altcha-challenge, *, *
 p, *, *, POST, /api/verify-captcha, *, *

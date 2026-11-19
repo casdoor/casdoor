@@ -279,6 +279,17 @@
     "You are not the global admin, you can't unlink other users": "Ви не глобальний адміністратор, не можете від’єднувати інших користувачів",
     "You can't unlink yourself, you are not a member of any application": "Ви не можете від’єднати себе, ви не є учасником жодного додатка"
   },
+  "mfa": {
+    "Step-up verification is not enabled for the application: %s": "Step-up перевірку не увімкнено для програми: %s",
+    "The MFA type: %s is not allowed for step-up verification by the application": "Тип MFA %s не дозволено програмою для step-up перевірки",
+    "The step-up token has already been used": "Step-up токен уже використано",
+    "The step-up token is invalid: %s": "Step-up токен недійсний: %s",
+    "The step-up token was issued for another action": "Step-up токен видано для іншої дії",
+    "The token is not a step-up token": "Токен не є step-up токеном",
+    "The user has no recovery codes": "У користувача немає кодів відновлення",
+    "The user has not enabled the MFA type: %s": "Користувач не увімкнув тип MFA: %s",
+    "This code has already been used, please wait for the next one": "Цей код уже використано, дочекайтеся наступного"
+  },
   "organization": {
     "Only admin can modify the %s.": "Лише адміністратор може змінити %s.",
     "The %s is immutable.": "%s незмінний.",

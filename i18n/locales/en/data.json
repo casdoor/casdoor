@@ -279,6 +279,17 @@
     "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
     "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
   },
+  "mfa": {
+    "Step-up verification is not enabled for the application: %s": "Step-up verification is not enabled for the application: %s",
+    "The MFA type: %s is not allowed for step-up verification by the application": "The MFA type: %s is not allowed for step-up verification by the application",
+    "The step-up token has already been used": "The step-up token has already been used",
+    "The step-up token is invalid: %s": "The step-up token is invalid: %s",
+    "The step-up token was issued for another action": "The step-up token was issued for another action",
+    "The token is not a step-up token": "The token is not a step-up token",
+    "The user has no recovery codes": "The user has no recovery codes",
+    "The user has not enabled the MFA type: %s": "The user has not enabled the MFA type: %s",
+    "This code has already been used, please wait for the next one": "This code has already been used, please wait for the next one"
+  },
   "organization": {
     "Only admin can modify the %s.": "Only admin can modify the %s.",
     "The %s is immutable.": "The %s is immutable.",

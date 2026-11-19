@@ -1544,7 +1544,7 @@ func (c *ApiController) Login() {
 			}
 
 			_, mfaSpan := c.traceStep("signin.mfa", attribute.String("casdoor.mfa_type", authForm.MfaType))
-			err = object.VerifyMfaWithLimit(user, func() error { return c.verifyMfaPasscode(user, mfaUtil, authForm.Passcode) }, c.GetAcceptLanguage())
+			err = object.VerifyMfaWithLimit(user, func() error { return c.verifyMfaPasscode(user, mfaProps, authForm.Passcode) }, c.GetAcceptLanguage())
 			tracing.End(mfaSpan, err)
 			if err != nil {
 				c.responseSigninError(err, object.SigninReasonMfaFailed)

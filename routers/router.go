@@ -485,6 +485,11 @@ func InitAPI() {
 	web.Router("/api/mfa/push/answer", &eecontrollers.ApiController{}, "POST:AnswerMfaPushChallenge")
 	web.Router("/api/delete-mfa", &controllers.ApiController{}, "POST:DeleteMfa")
 	web.Router("/api/set-preferred-mfa", &controllers.ApiController{}, "POST:SetPreferredMfa")
+	web.Router("/api/mfa/step-up/methods", &controllers.ApiController{}, "GET:GetStepUpMethods")
+	web.Router("/api/mfa/step-up/send-code", &controllers.ApiController{}, "POST:SendStepUpCode")
+	web.Router("/api/mfa/step-up/verify", &controllers.ApiController{}, "POST:VerifyStepUp")
+	web.Router("/api/mfa/step-up/redeem", &controllers.ApiController{}, "POST:RedeemStepUpToken")
+	web.Router("/api/get-step-up-records", &controllers.ApiController{}, "GET:GetStepUpRecords")
 
 	web.Router("/api/grant-consent", &controllers.ApiController{}, "POST:GrantConsent")
 	web.Router("/api/revoke-consent", &controllers.ApiController{}, "POST:RevokeConsent")

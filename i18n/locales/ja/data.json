@@ -279,6 +279,17 @@
     "You are not the global admin, you can't unlink other users": "あなたはグローバル管理者ではありません、他のユーザーとのリンクを解除することはできません",
     "You can't unlink yourself, you are not a member of any application": "あなたは自分自身をアンリンクすることはできません、あなたはどのアプリケーションのメンバーでもありません"
   },
+  "mfa": {
+    "Step-up verification is not enabled for the application: %s": "アプリ %s ではステップアップ認証が有効になっていません",
+    "The MFA type: %s is not allowed for step-up verification by the application": "MFA 方式 %s はこのアプリのステップアップ認証で許可されていません",
+    "The step-up token has already been used": "このステップアップトークンは使用済みです",
+    "The step-up token is invalid: %s": "ステップアップトークンが無効です: %s",
+    "The step-up token was issued for another action": "このステップアップトークンは別の操作用に発行されました",
+    "The token is not a step-up token": "このトークンはステップアップトークンではありません",
+    "The user has no recovery codes": "ユーザーにはリカバリーコードがありません",
+    "The user has not enabled the MFA type: %s": "ユーザーは MFA 方式 %s を有効にしていません",
+    "This code has already been used, please wait for the next one": "このコードは使用済みです。次のコードを待ってください"
+  },
   "organization": {
     "Only admin can modify the %s.": "管理者のみが%sを変更できます。",
     "The %s is immutable.": "%sは不変です。",

@@ -15,6 +15,7 @@ import {ApplicationFormFillTab} from "@/ee/components/application/ApplicationFor
 import {ApplicationProvisioningTab} from "@/ee/components/application/ApplicationProvisioningTab";
 import {ApplicationSamlTab} from "@/components/application/ApplicationSamlTab";
 import {ApplicationSecurityTab} from "@/components/application/ApplicationSecurityTab";
+import {ApplicationStepUpMfaTab} from "@/components/application/ApplicationStepUpMfaTab";
 import {ApplicationUiCustomizationTab} from "@/components/application/ApplicationUiCustomizationTab";
 import type {MenuMode} from "@/components/application/types";
 import {EditPageShell} from "@/components/crud/EditPageShell";
@@ -36,6 +37,7 @@ const TAB_KEYS = [
   "providers",
   "ui-customization",
   "security",
+  "step-up-mfa",
   "reverse-proxy",
   "provisioning",
 ];
@@ -194,6 +196,7 @@ export default function ApplicationEditPage() {
           <TabsTrigger value="providers">{i18next.t("application:Providers")}</TabsTrigger>
           <TabsTrigger value="ui-customization">{i18next.t("application:UI Customization")}</TabsTrigger>
           <TabsTrigger value="security">{i18next.t("application:Security")}</TabsTrigger>
+          <TabsTrigger value="step-up-mfa">{i18next.t("application:Step-up MFA")}</TabsTrigger>
           <TabsTrigger value="reverse-proxy">{i18next.t("application:Reverse Proxy")}</TabsTrigger>
           <TabsTrigger value="form-fill">{i18next.t("application:Form autofill")}</TabsTrigger>
           <TabsTrigger value="provisioning">{i18next.t("application:Provisioning")}</TabsTrigger>
@@ -251,6 +254,10 @@ export default function ApplicationEditPage() {
             account={account}
             certs={certs}
           />
+        </TabsContent>
+
+        <TabsContent value="step-up-mfa" className={tabClassName}>
+          <ApplicationStepUpMfaTab application={application} updateField={updateField} mode={mode} />
         </TabsContent>
 
         <TabsContent value="reverse-proxy" className={tabClassName}>
