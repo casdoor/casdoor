@@ -89,6 +89,8 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   const [removingMfa, setRemovingMfa] = React.useState(false);
   // the signup application drives the 3rd-party login rows and the reset-code flow
   const [application, setApplication] = React.useState<any>(null);
+  // until the user's organization is known, the page cannot tell which rows are hidden
+  const [applicationLoaded, setApplicationLoaded] = React.useState(false);
   const [transactions, setTransactions] = React.useState<any[]>([]);
 
   const organizations = useOrganizationOptions();
@@ -119,11 +121,14 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     if (mode === "add" || !organizationName || !userName) {
       return;
     }
-    ApplicationBackend.getUserApplication(organizationName, userName).then((res: any) => {
-      if (res.status === "ok") {
-        setApplication(res.data ?? null);
-      }
-    });
+    setApplicationLoaded(false);
+    ApplicationBackend.getUserApplication(organizationName, userName)
+      .then((res: any) => {
+        if (res.status === "ok") {
+          setApplication(res.data ?? null);
+        }
+      })
+      .finally(() => setApplicationLoaded(true));
     TransactionBackend.getTransactions(organizationName, "", "", "user", userName).then((res: any) => {
       if (res.status === "ok") {
         setTransactions(res.data ?? []);
@@ -148,7 +153,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
     return <UnauthorizedPage />;
   }
 
-  if (loading || user === null || (self && !account)) {
+  if (loading || user === null || (self && !account) || (mode !== "add" && !applicationLoaded)) {
     return <Loading />;
   }
 
@@ -1232,7 +1237,7 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         isSelfOrAdmin={isSelfOrAdmin}
         user={user}
       >
-        {visibleAccountItems.length === 0 ? (
+        {configuredItemNames.size === 0 ? (
           // the organization configures no account items (or has not loaded yet);
           // showing every row beats showing an empty form
           <div className={formGridClass}>

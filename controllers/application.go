@@ -169,6 +169,17 @@ func (c *ApiController) GetUserApplication() {
 		return
 	}
 
+	if application.Organization != user.Owner {
+		organization, err := object.GetOrganizationByUser(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if organization != nil {
+			application.OrganizationObj = organization
+		}
+	}
+
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }
 

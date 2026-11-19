@@ -274,7 +274,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 				return application
 			}
 
-			if user.Owner == application.Organization {
+			if user.Owner == application.Organization || (application.OrganizationObj != nil && user.Owner == application.OrganizationObj.Name) {
 				isOrgUser = true
 			}
 		}
