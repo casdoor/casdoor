@@ -132,7 +132,17 @@ func (c *ApiController) Enforce() {
 			return
 		}
 	} else if resourceId != "" {
-		permissions, err = object.GetPermissionsByResource(resourceId)
+		isGlobalAdmin, user := c.isGlobalAdmin()
+		if user == nil {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+
+		permissionOwner := user.Owner
+		if isGlobalAdmin {
+			permissionOwner = ""
+		}
+		permissions, err = object.GetPermissionsByResource(permissionOwner, resourceId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

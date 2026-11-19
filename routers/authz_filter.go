@@ -343,6 +343,17 @@ func getObject(ctx *context.Context) (string, string, error) {
 					return util.GetOwnerAndNameFromIdWithError(id)
 				}
 			}
+
+			// a resource ID has no owner, the controller checks the permissions of the caller's organization
+			if ctx.Input.Query("resourceId") != "" {
+				user, err := object.GetUserOrAppUser(getUsername(ctx))
+				if err != nil {
+					return "", "", err
+				}
+				if user != nil {
+					return user.Owner, "", nil
+				}
+			}
 		}
 
 		isOwnerObjPath := checkIsOrgOwnerObject(path)

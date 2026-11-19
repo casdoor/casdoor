@@ -432,9 +432,14 @@ func GetPermissionsByRole(roleId string) ([]*Permission, error) {
 	return res, nil
 }
 
-func GetPermissionsByResource(resourceId string) ([]*Permission, error) {
+// GetPermissionsByResource returns the permissions of the organization on the resource, of all organizations when owner is empty.
+func GetPermissionsByResource(owner string, resourceId string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := ormer.Engine.Where("resources like ?", "%"+resourceId+"\"%").Find(&permissions)
+	session := ormer.Engine.Where("resources like ?", "%"+resourceId+"\"%")
+	if owner != "" {
+		session = session.And("owner = ?", owner)
+	}
+	err := session.Find(&permissions)
 	if err != nil {
 		return permissions, err
 	}
