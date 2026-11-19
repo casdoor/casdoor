@@ -20,7 +20,9 @@ import (
 	"crypto/sha512"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/json"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"hash"
 	"reflect"
@@ -68,6 +70,65 @@ type Claims struct {
 	SigninMethod string `json:"signinMethod,omitempty"`
 	OidcIdTokenClaims
 	jwt.RegisteredClaims
+}
+
+// casdoorClaimNames are the claims Casdoor puts into tokens itself, a custom claim of another type under one of these names
+// still makes the token invalid
+var casdoorClaimNames = map[string]bool{
+	"iss": true, "sub": true, "aud": true, "exp": true, "nbf": true, "iat": true, "jti": true,
+	"tokenType": true, "nonce": true, "tag": true, "scope": true, "azp": true, "provider": true, "act": true, "cnf": true,
+	"signinMethod": true, "auth_time": true, "at_hash": true, "c_hash": true, "sid": true,
+}
+
+// UnmarshalJSON accepts JWT-Custom tokens whose custom claims use the name of a user field with another type, such as
+// "roles" and "permissions" as lists of names: those become roles and permissions with only the name, other such claims
+// are left out of the parsed user
+func (c *Claims) UnmarshalJSON(data []byte) error {
+	type plainClaims Claims
+	err := json.Unmarshal(data, (*plainClaims)(c))
+	var typeErr *json.UnmarshalTypeError
+	if !errors.As(err, &typeErr) {
+		return err
+	}
+
+	raw := map[string]json.RawMessage{}
+	if json.Unmarshal(data, &raw) != nil {
+		return err
+	}
+
+	for _, name := range []string{"roles", "permissions"} {
+		var names []string
+		if json.Unmarshal(raw[name], &names) != nil {
+			continue
+		}
+
+		objects := []map[string]string{}
+		for _, n := range names {
+			objects = append(objects, map[string]string{"name": n})
+		}
+		raw[name], _ = json.Marshal(objects)
+	}
+
+	for range len(raw) + 1 {
+		data, err = json.Marshal(raw)
+		if err != nil {
+			return err
+		}
+
+		*c = Claims{}
+		err = json.Unmarshal(data, (*plainClaims)(c))
+		if !errors.As(err, &typeErr) {
+			return err
+		}
+
+		name, _, _ := strings.Cut(typeErr.Field, ".")
+		if casdoorClaimNames[name] || raw[name] == nil {
+			return err
+		}
+		delete(raw, name)
+	}
+
+	return err
 }
 
 type UserShort struct {
