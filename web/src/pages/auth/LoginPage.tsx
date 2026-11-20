@@ -722,17 +722,19 @@ export default function LoginPage({type = "login", application: applicationProp,
     }
 
     const value = username.trim();
+    // a placeholder set on the "Username" signin item says what the field takes, so the empty message follows it
+    const usernamePlaceholder = ((application.signinItems ?? []) as any[]).find((item: any) => item.name === "Username")?.placeholder;
     if (isPhoneCodeMethod) {
       if (countryCode === "" && !application.organizationObj?.countryCodes?.[0]) {
         found.countryCode = i18next.t("signup:Please select your country code!");
       } else if (value === "") {
-        found.username = i18next.t("signup:Please input your phone number!");
+        found.username = usernamePlaceholder || i18next.t("signup:Please input your phone number!");
       } else if (!Setting.isValidPhone(value, countryCode)) {
         found.username = i18next.t("signup:The input is not valid Phone!");
       }
     } else if (value === "") {
       if (loginMethod !== "webAuthn") {
-        found.username = getUsernameRequiredMessage(loginMethod);
+        found.username = usernamePlaceholder || getUsernameRequiredMessage(loginMethod);
       }
     } else if (loginMethod === "verificationCode" && !Setting.isValidEmail(value) && !Setting.isValidPhone(value, getOnlyCountryCode(application))) {
       found.username = i18next.t("login:The input is not valid Email or phone number!");
