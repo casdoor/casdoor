@@ -1962,7 +1962,9 @@ func (c *ApiController) DeviceAuth() {
 		return
 	}
 
-	if !application.HasSigninMethod("Device login") {
+	// the device_code grant type is enough for an RFC 8628 client, the Device login sign-in method is the QR code on
+	// the login page and also allows the flow for the applications configured before the grant type was checked here
+	if !object.IsGrantTypeValid("urn:ietf:params:oauth:grant-type:device_code", application.GrantTypes) && !application.HasSigninMethod("Device login") {
 		c.responseDeviceAuthError(object.UnauthorizedClient, "device login is not enabled for this application")
 		return
 	}
