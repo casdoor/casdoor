@@ -232,6 +232,19 @@ export function EnterprisePolicyTab({owner, policy, onChange}: {owner: string; p
         </Button>
       </div>
 
+      {section("organization:Changes by agents", "organization:Changes by agents - Tooltip")}
+      <FormRow labelKey="edition:Approval of agent changes">
+        <SelectField
+          value={value.mcpApproval ?? ""}
+          onChange={(v) => set("mcpApproval", v)}
+          options={[
+            {id: "", name: i18next.t("organization:No approval")},
+            {id: "Delete", name: i18next.t("organization:Deletions need approval")},
+            {id: "Write", name: i18next.t("organization:All changes need approval")},
+          ]}
+        />
+      </FormRow>
+
       {section("edition:Delegated administration", "organization:Delegated administration - Tooltip")}
       <div className="col-span-full space-y-3" data-tour="delegated-admins">
         {delegatedAdmins.map((item, index) => (

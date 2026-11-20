@@ -157,6 +157,7 @@
     "Inactivity timeout": "Inactivity timeout",
     "Keycloak syncer": "Keycloak syncer",
     "MCP gateway": "MCP gateway",
+    "MCP management tools": "MCP management tools",
     "MCP tool call approval": "MCP tool call approval",
     "MLPS compliance checklist": "MLPS compliance checklist",
     "Mobile one-click login": "Mobile one-click login",
@@ -166,6 +167,7 @@
     "Privileged account management": "Privileged account management",
     "Provisioning to legacy databases": "Provisioning to legacy databases",
     "Push notification MFA": "Push notification MFA",
+    "Rollback of agent changes": "Rollback of agent changes",
     "SCIM provisioning": "SCIM provisioning",
     "Security dashboard and reports": "Security dashboard and reports",
     "Security policy": "Security policy",
@@ -225,6 +227,7 @@
     "The user: %s cannot be more than one of the system, security and audit admins": "The user: %s cannot be more than one of the system, security and audit admins",
     "The user: %s is already an admin of the organization": "The user: %s is already an admin of the organization",
     "The user: %s is listed twice as a delegated admin": "The user: %s is listed twice as a delegated admin",
+    "Unknown approval of agent changes: %s": "Unknown approval of agent changes: %s",
     "You cannot review your own access": "You cannot review your own access",
     "You have %d access items to review by %s. Open My access reviews in the console to keep or revoke them.": "You have %d access items to review by %s. Open My access reviews in the console to keep or revoke them."
   },

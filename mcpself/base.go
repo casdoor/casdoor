@@ -307,6 +307,9 @@ func (c *McpController) handlePing(req McpRequest) {
 
 func (c *McpController) handleToolsList(req McpRequest) {
 	allTools := c.getAllTools()
+	if McpExtension != nil {
+		allTools = McpExtension.ListTools(allTools)
+	}
 
 	grantedScopes, isScoped := c.GetGrantedScopes()
 	if !isScoped {
@@ -318,7 +321,7 @@ func (c *McpController) handleToolsList(req McpRequest) {
 		return
 	}
 
-	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
+	allowedTools := GetToolsForScopes(grantedScopes, getScopeRegistry())
 
 	// Filter tools based on allowed scopes
 	filteredTools := []McpTool{}
@@ -348,6 +351,18 @@ func (c *McpController) handleToolsCall(req McpRequest) {
 		return // Error already sent by checkToolPermission
 	}
 
+	if McpExtension != nil {
+		McpExtension.CallTool(c, req.ID, params.Name, params.Arguments, func() {
+			c.callTool(req.ID, params)
+		})
+		return
+	}
+	c.callTool(req.ID, params)
+}
+
+// callTool runs one of the server's own tools
+func (c *McpController) callTool(id interface{}, params McpCallToolParams) {
+	req := McpRequest{ID: id}
 	// Route to the appropriate tool handler
 	switch params.Name {
 	case "get_applications":
@@ -441,7 +456,7 @@ func (c *McpController) checkToolPermission(id interface{}, toolName string) boo
 	}
 
 	// Get allowed tools for the granted scopes
-	allowedTools := GetToolsForScopes(grantedScopes, BuiltinScopes)
+	allowedTools := GetToolsForScopes(grantedScopes, getScopeRegistry())
 
 	// Check if the requested tool is allowed
 	if !allowedTools[toolName] {
@@ -456,7 +471,7 @@ func (c *McpController) checkToolPermission(id interface{}, toolName string) boo
 // scope keeps the granted scopes and adds the required one, so that the MCP client can ask the user for it
 func (c *McpController) sendInsufficientScopeError(id interface{}, toolName string, grantedScopes []string) {
 	// Find required scope for this tool
-	requiredScope := GetRequiredScopeForTool(toolName, BuiltinScopes)
+	requiredScope := GetRequiredScopeForTool(toolName, getScopeRegistry())
 
 	challengeScopes := append([]string{}, grantedScopes...)
 	if requiredScope != "" && !util.InSlice(challengeScopes, requiredScope) {

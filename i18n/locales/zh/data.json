@@ -157,6 +157,7 @@
     "Inactivity timeout": "空闲超时",
     "Keycloak syncer": "Keycloak 同步器",
     "MCP gateway": "MCP 网关",
+    "MCP management tools": "MCP 管理工具",
     "MCP tool call approval": "MCP 工具调用审批",
     "MLPS compliance checklist": "等保核查清单",
     "Mobile one-click login": "本机号码一键登录",
@@ -166,6 +167,7 @@
     "Privileged account management": "特权账号管理",
     "Provisioning to legacy databases": "向老系统数据库供应账号",
     "Push notification MFA": "消息卡片确认登录",
+    "Rollback of agent changes": "回滚智能体的改动",
     "SCIM provisioning": "SCIM 账号供应",
     "Security dashboard and reports": "安全态势和报表",
     "Security policy": "组织安全策略",
@@ -225,6 +227,7 @@
     "The user: %s cannot be more than one of the system, security and audit admins": "用户 %s 不能同时担任系统管理员、安全管理员、审计管理员中的两个",
     "The user: %s is already an admin of the organization": "用户 %s 已经是组织管理员",
     "The user: %s is listed twice as a delegated admin": "用户 %s 被重复设为分级管理员",
+    "Unknown approval of agent changes: %s": "未知的智能体改动审批设置：%s",
     "You cannot review your own access": "不能复核自己的权限",
     "You have %d access items to review by %s. Open My access reviews in the console to keep or revoke them.": "您有 %d 项权限要在 %s 之前复核，请在控制台的“我的权限复核”里逐项保留或回收。"
   },

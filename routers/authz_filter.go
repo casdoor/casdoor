@@ -18,6 +18,7 @@ import (
 	"bytes"
 	stdcontext "context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"path"
@@ -590,8 +591,14 @@ func getExtraInfo(ctx *context.Context, urlPath string) map[string]interface{} {
 			return nil
 		}
 
-		return map[string]interface{}{
+		extra = map[string]interface{}{
 			"detailPathUrl": req.Method,
+		}
+
+		// a tool that an extension adds calls the REST APIs inside the server, each call is authorized by itself
+		var params mcpself.McpCallToolParams
+		if req.Method == "tools/call" && json.Unmarshal(req.Params, &params) == nil && mcpself.IsExtraTool(params.Name) {
+			extra["isExtraTool"] = true
 		}
 	}
 	return extra
@@ -663,57 +670,15 @@ func ApiFilter(ctx *context.Context) {
 	}
 
 	method := ctx.Request.Method
-	extraInfo := getExtraInfo(ctx, urlPath)
-
-	objects := []Object{{}}
-	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
-		var err error
-		objects, err = getObjects(ctx)
-		if err != nil {
-			responseError(ctx, err.Error())
-			return
-		}
-	}
-	objOwner, objName := objects[0].Owner, objects[0].Name
-
 	if strings.HasPrefix(urlPath, "/api/notify-payment") {
 		urlPath = "/api/notify-payment"
 	}
+	extraInfo := getExtraInfo(ctx, urlPath)
 
-	isAllowed := true
-	for _, obj := range objects {
-		allowed, err := authz.IsAllowed(subOwner, subName, method, urlPath, obj.Owner, obj.Name, extraInfo)
-		if err != nil {
-			responseError(ctx, err.Error())
-			return
-		}
-
-		if !allowed {
-			isAllowed = false
-			objOwner, objName = obj.Owner, obj.Name
-			break
-		}
-	}
-
-	// a delegated admin may administer the users, groups and applications in their scope, the controllers check
-	// the objects against the scope
-	scope, err := checkDelegatedAdmin(ctx, subOwner, subName, method, urlPath, objects)
+	isAllowed, objOwner, objName, err := authorizeRequest(ctx, subOwner, subName, method, urlPath, extraInfo)
 	if err != nil {
 		responseError(ctx, err.Error())
 		return
-	}
-	if scope != nil && !isAllowed {
-		isAllowed = true
-		objOwner, objName = objects[0].Owner, objects[0].Name
-	}
-
-	// the separation of the system, security and audit admins narrows what an allowed admin may do
-	if isAllowed {
-		err := ee.CheckAdminDuty(subOwner, subName, method, urlPath, objOwner, objName)
-		if dutyErr, ok := err.(*ee.AdminDutyError); ok {
-			responseError(ctx, translateAdminDutyError(ctx, dutyErr))
-			return
-		}
 	}
 
 	if method != "GET" && !strings.HasSuffix(urlPath, "-entry") {
@@ -761,6 +726,77 @@ func ApiFilter(ctx *context.Context) {
 			object.AddRecord(record)
 		})
 	}
+}
+
+// authorizeRequest tells whether the subject may make the request, and the object that decided it
+func authorizeRequest(ctx *context.Context, subOwner string, subName string, method string, urlPath string, extraInfo map[string]interface{}) (bool, string, string, error) {
+	objects := []Object{{}}
+	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
+		var err error
+		objects, err = getObjects(ctx)
+		if err != nil {
+			return false, "", "", err
+		}
+	}
+	objOwner, objName := objects[0].Owner, objects[0].Name
+
+	isAllowed := true
+	for _, obj := range objects {
+		allowed, err := authz.IsAllowed(subOwner, subName, method, urlPath, obj.Owner, obj.Name, extraInfo)
+		if err != nil {
+			return false, "", "", err
+		}
+
+		if !allowed {
+			isAllowed = false
+			objOwner, objName = obj.Owner, obj.Name
+			break
+		}
+	}
+
+	// a delegated admin may administer the users, groups and applications in their scope, the controllers check
+	// the objects against the scope
+	scope, err := checkDelegatedAdmin(ctx, subOwner, subName, method, urlPath, objects)
+	if err != nil {
+		return false, "", "", err
+	}
+	if scope != nil && !isAllowed {
+		isAllowed = true
+		objOwner, objName = objects[0].Owner, objects[0].Name
+	}
+
+	// the separation of the system, security and audit admins narrows what an allowed admin may do
+	if isAllowed {
+		err := ee.CheckAdminDuty(subOwner, subName, method, urlPath, objOwner, objName)
+		if dutyErr, ok := err.(*ee.AdminDutyError); ok {
+			return false, "", "", errors.New(translateAdminDutyError(ctx, dutyErr))
+		}
+	}
+
+	return isAllowed, objOwner, objName, nil
+}
+
+// authorizeInternalRequest authorizes a request that a tool of the MCP server makes to the REST API inside the server,
+// for the user of the tool call, as the same request from outside would be
+func authorizeInternalRequest(ctx *context.Context) error {
+	subOwner, subName := "anonymous", "anonymous"
+	if username, _ := ctx.Input.GetData("currentUserId").(string); username != "" {
+		subOwner, subName = util.GetOwnerAndNameFromIdNoCheck(username)
+	}
+
+	urlPath := getUrlPath(ctx)
+	isAllowed, _, _, err := authorizeRequest(ctx, subOwner, subName, ctx.Request.Method, urlPath, nil)
+	if err != nil {
+		return err
+	}
+	if !isAllowed {
+		return errors.New(T(ctx, "auth:Unauthorized operation"))
+	}
+	return nil
+}
+
+func init() {
+	mcpself.AuthorizeRequestHook = authorizeInternalRequest
 }
 
 // dynamicClientApis are the only APIs a session signed in with the access token of a dynamically

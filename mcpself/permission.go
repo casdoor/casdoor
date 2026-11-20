@@ -104,13 +104,37 @@ var BuiltinScopes = []*object.ScopeItem{
 		Description: "Delete tokens",
 		Tools:       []string{"delete_token"},
 	},
+	{
+		Name:        "group:read",
+		DisplayName: "Read Groups",
+		Description: "View group list and details",
+		Tools:       []string{},
+	},
+	{
+		Name:        "group:write",
+		DisplayName: "Manage Groups",
+		Description: "Create, update, and delete groups",
+		Tools:       []string{},
+	},
+	{
+		Name:        "cert:read",
+		DisplayName: "Read Certs",
+		Description: "View cert list and details",
+		Tools:       []string{},
+	},
+	{
+		Name:        "cert:write",
+		DisplayName: "Manage Certs",
+		Description: "Create, update, and delete certs",
+		Tools:       []string{},
+	},
 }
 
 // ConvenienceScopes defines alias scopes that expand to multiple resource scopes
 var ConvenienceScopes = map[string][]string{
-	"read":  {"application:read", "user:read", "organization:read", "permission:read", "role:read", "provider:read", "token:read"},
-	"write": {"application:write", "user:write", "organization:write", "permission:write", "role:write", "provider:write", "token:write"},
-	"admin": {"application:read", "application:write", "user:read", "user:write", "organization:read", "organization:write", "permission:read", "permission:write", "role:read", "role:write", "provider:read", "provider:write", "token:read", "token:write"},
+	"read":  {"application:read", "user:read", "organization:read", "permission:read", "role:read", "provider:read", "token:read", "group:read", "cert:read"},
+	"write": {"application:write", "user:write", "organization:write", "permission:write", "role:write", "provider:write", "token:write", "group:write", "cert:write"},
+	"admin": {"application:read", "application:write", "user:read", "user:write", "organization:read", "organization:write", "permission:read", "permission:write", "role:read", "role:write", "provider:read", "provider:write", "token:read", "token:write", "group:read", "group:write", "cert:read", "cert:write"},
 }
 
 // GetToolsForScopes returns a map of tools allowed by the given scopes

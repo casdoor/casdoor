@@ -157,6 +157,7 @@
     "Inactivity timeout": "Тайм-аут неактивності",
     "Keycloak syncer": "Синхронізатор Keycloak",
     "MCP gateway": "Шлюз MCP",
+    "MCP management tools": "Інструменти керування MCP",
     "MCP tool call approval": "Погодження викликів інструментів MCP",
     "MLPS compliance checklist": "Контрольний список відповідності MLPS",
     "Mobile one-click login": "Вхід в один дотик за номером телефону",
@@ -166,6 +167,7 @@
     "Privileged account management": "Керування привілейованими обліковими записами",
     "Provisioning to legacy databases": "Надання облікових записів у бази старих систем",
     "Push notification MFA": "MFA через push-сповіщення",
+    "Rollback of agent changes": "Відкат змін агентів",
     "SCIM provisioning": "Надання облікових записів через SCIM",
     "Security dashboard and reports": "Панель безпеки та звіти",
     "Security policy": "Політика безпеки",
@@ -225,6 +227,7 @@
     "The user: %s cannot be more than one of the system, security and audit admins": "Користувач %s не може бути більш ніж одним з адміністраторів системи, безпеки та аудиту",
     "The user: %s is already an admin of the organization": "Користувач %s уже є адміністратором організації",
     "The user: %s is listed twice as a delegated admin": "Користувача %s двічі вказано як делегованого адміністратора",
+    "Unknown approval of agent changes: %s": "Невідоме погодження змін агентів: %s",
     "You cannot review your own access": "Ви не можете переглядати власний доступ",
     "You have %d access items to review by %s. Open My access reviews in the console to keep or revoke them.": "У вас %d доступів для перегляду до %s. Відкрийте «Мої перегляди доступу» в консолі, щоб залишити або відкликати їх."
   },

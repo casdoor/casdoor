@@ -269,6 +269,10 @@ type EnterprisePolicy struct {
 
 	DelegatedAdmins []*DelegatedAdmin `json:"delegatedAdmins"`
 	CertLogin       *CertLoginPolicy  `json:"certLogin"`
+
+	// which changes that agents make through Casdoor's own MCP server wait for an admin's approval: "" none,
+	// "Delete" the deletions, "Write" all of them
+	McpApproval string `json:"mcpApproval"`
 }
 
 // SodRule says that no user may hold two or more of the roles at once, such as the requester and the approver, and
@@ -289,7 +293,7 @@ func (policy *EnterprisePolicy) isEmpty() bool {
 	}
 	return !policy.SeparationOfDuties && len(policy.SystemAdmins) == 0 && len(policy.SecurityAdmins) == 0 && len(policy.AuditAdmins) == 0 &&
 		!policy.TamperProofRecords && len(policy.EncryptedFields) == 0 && len(policy.SodRules) == 0 && !policy.RecordConsents &&
-		len(policy.DelegatedAdmins) == 0 && !policy.CertLogin.IsEnabled()
+		len(policy.DelegatedAdmins) == 0 && !policy.CertLogin.IsEnabled() && policy.McpApproval == ""
 }
 
 // getPublic is the part of the policy that the sign-in pages need, the button of the certificate login, so that the

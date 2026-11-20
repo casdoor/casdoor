@@ -72,6 +72,8 @@ const (
 	FeatureAccessReview     = "Access reviews"
 	FeatureDelegatedAdmin   = "Delegated administration"
 	FeatureMcpApproval      = "MCP tool call approval"
+	FeatureMcpManagement    = "MCP management tools"
+	FeatureMcpRollback      = "Rollback of agent changes"
 	FeatureScimProvisioning = "SCIM provisioning"
 	FeatureDbProvisioning   = "Provisioning to legacy databases"
 )

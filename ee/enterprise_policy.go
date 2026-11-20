@@ -80,6 +80,9 @@ func ValidateEnterprisePolicy(policy *object.EnterprisePolicy, editor *object.Us
 	if err := validateCertLoginPolicy(policy.CertLogin, lang); err != nil {
 		return err
 	}
+	if !util.InSlice([]string{"", "Delete", "Write"}, policy.McpApproval) {
+		return fmt.Errorf(i18n.Translate(lang, "enterprise:Unknown approval of agent changes: %s"), policy.McpApproval)
+	}
 	for _, rule := range policy.SodRules {
 		if rule == nil || rule.Name == "" || (len(rule.Roles) < 2 && len(rule.Tools) < 2) {
 			return errors.New(i18n.Translate(lang, "enterprise:A separation-of-duty rule needs a name and at least two roles or two MCP tools"))

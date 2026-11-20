@@ -157,6 +157,7 @@
     "Inactivity timeout": "無操作タイムアウト",
     "Keycloak syncer": "Keycloak 同期",
     "MCP gateway": "MCP ゲートウェイ",
+    "MCP management tools": "MCP 管理ツール",
     "MCP tool call approval": "MCP ツール呼び出しの承認",
     "MLPS compliance checklist": "等級保護（MLPS）チェックリスト",
     "Mobile one-click login": "携帯番号ワンクリックログイン",
@@ -166,6 +167,7 @@
     "Privileged account management": "特権アカウント管理",
     "Provisioning to legacy databases": "既存システムのデータベースへのプロビジョニング",
     "Push notification MFA": "プッシュ通知 MFA",
+    "Rollback of agent changes": "エージェントによる変更のロールバック",
     "SCIM provisioning": "SCIM プロビジョニング",
     "Security dashboard and reports": "セキュリティダッシュボードとレポート",
     "Security policy": "セキュリティポリシー",
@@ -225,6 +227,7 @@
     "The user: %s cannot be more than one of the system, security and audit admins": "ユーザー %s はシステム・セキュリティ・監査管理者のうち2つ以上を兼任できません",
     "The user: %s is already an admin of the organization": "ユーザー %s はすでに組織の管理者です",
     "The user: %s is listed twice as a delegated admin": "ユーザー %s が委任管理者として二重に登録されています",
+    "Unknown approval of agent changes: %s": "不明なエージェント変更の承認設定：%s",
     "You cannot review your own access": "自分のアクセス権はレビューできません",
     "You have %d access items to review by %s. Open My access reviews in the console to keep or revoke them.": "%[2]s までにレビューするアクセスが %[1]d 件あります。コンソールの「自分のアクセスレビュー」で維持または取り消してください。"
   },

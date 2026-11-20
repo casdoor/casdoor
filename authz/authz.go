@@ -206,6 +206,11 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		if detailPath, _ := extraInfo["detailPathUrl"].(string); detailPath != "tools/call" {
 			return true, nil
 		}
+
+		// a tool that an extension adds acts through the REST APIs, every call of them is authorized by itself
+		if isExtraTool, _ := extraInfo["isExtraTool"].(bool); isExtraTool {
+			return true, nil
+		}
 	}
 
 	if conf.IsDemoMode() {

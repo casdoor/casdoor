@@ -157,6 +157,7 @@
     "Inactivity timeout": "Hareketsizlik zaman aşımı",
     "Keycloak syncer": "Keycloak eşitleyicisi",
     "MCP gateway": "MCP ağ geçidi",
+    "MCP management tools": "MCP yönetim araçları",
     "MCP tool call approval": "MCP araç çağrısı onayı",
     "MLPS compliance checklist": "MLPS uyumluluk kontrol listesi",
     "Mobile one-click login": "Cep numarasıyla tek tıkla giriş",
@@ -166,6 +167,7 @@
     "Privileged account management": "Ayrıcalıklı hesap yönetimi",
     "Provisioning to legacy databases": "Eski veritabanlarına hesap sağlama",
     "Push notification MFA": "Anlık bildirimle MFA",
+    "Rollback of agent changes": "Ajan değişikliklerini geri alma",
     "SCIM provisioning": "SCIM ile hesap sağlama",
     "Security dashboard and reports": "Güvenlik panosu ve raporlar",
     "Security policy": "Güvenlik politikası",
@@ -225,6 +227,7 @@
     "The user: %s cannot be more than one of the system, security and audit admins": "%s kullanıcısı sistem, güvenlik ve denetim yöneticilerinden birden fazlası olamaz",
     "The user: %s is already an admin of the organization": "%s kullanıcısı zaten kuruluşun yöneticisi",
     "The user: %s is listed twice as a delegated admin": "%s kullanıcısı iki kez devredilmiş yönetici olarak eklenmiş",
+    "Unknown approval of agent changes: %s": "Bilinmeyen ajan değişikliği onayı: %s",
     "You cannot review your own access": "Kendi erişiminizi gözden geçiremezsiniz",
     "You have %d access items to review by %s. Open My access reviews in the console to keep or revoke them.": "%[2]s tarihine kadar gözden geçirmeniz gereken %[1]d erişim var. Tutmak veya iptal etmek için konsolda Erişim gözden geçirmelerim sayfasını açın."
   },

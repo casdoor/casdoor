@@ -139,6 +139,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
       {key: "/agents", label: i18next.t("general:Agents")},
       {key: "/servers", label: i18next.t("general:MCP Servers")},
       {key: "/mcp-approvals", label: i18next.t("server:Tool call approvals")},
+      {key: "/agent-changes", label: i18next.t("server:Agent changes")},
       {key: "/server-store", label: i18next.t("general:MCP Store")},
       {key: "/entries", label: i18next.t("general:Entries")},
       {key: "/sites", label: i18next.t("general:Sites")},

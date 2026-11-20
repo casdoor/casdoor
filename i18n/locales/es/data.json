@@ -157,6 +157,7 @@
     "Inactivity timeout": "Tiempo de espera por inactividad",
     "Keycloak syncer": "Sincronizador de Keycloak",
     "MCP gateway": "Pasarela MCP",
+    "MCP management tools": "Herramientas de gestión MCP",
     "MCP tool call approval": "Aprobación de llamadas a herramientas MCP",
     "MLPS compliance checklist": "Lista de verificación de cumplimiento MLPS",
     "Mobile one-click login": "Inicio de sesión con un clic por número móvil",
@@ -166,6 +167,7 @@
     "Privileged account management": "Gestión de cuentas privilegiadas",
     "Provisioning to legacy databases": "Aprovisionamiento a bases de datos heredadas",
     "Push notification MFA": "MFA por notificación push",
+    "Rollback of agent changes": "Reversión de cambios de agentes",
     "SCIM provisioning": "Aprovisionamiento SCIM",
     "Security dashboard and reports": "Panel de seguridad e informes",
     "Security policy": "Política de seguridad",
@@ -225,6 +227,7 @@
     "The user: %s cannot be more than one of the system, security and audit admins": "El usuario: %s no puede ser más de uno de los administradores de sistema, seguridad y auditoría",
     "The user: %s is already an admin of the organization": "El usuario %s ya es administrador de la organización",
     "The user: %s is listed twice as a delegated admin": "El usuario %s figura dos veces como administrador delegado",
+    "Unknown approval of agent changes: %s": "Aprobación de cambios de agentes desconocida: %s",
     "You cannot review your own access": "No puede revisar su propio acceso",
     "You have %d access items to review by %s. Open My access reviews in the console to keep or revoke them.": "Tiene %d accesos que revisar antes de %s. Abra Mis revisiones de acceso en la consola para mantenerlos o revocarlos."
   },
