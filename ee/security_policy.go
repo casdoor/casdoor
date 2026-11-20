@@ -119,7 +119,7 @@ func sendOrganizationEmail(organization *object.Organization, title string, cont
 	if sender == "" {
 		sender = organization.Name
 	}
-	return object.SendEmail(provider, title, content, dest, sender)
+	return object.SendEmail(organization.Name, provider, title, content, dest, sender)
 }
 
 // SendSecurityAlert emails the organization's alert addresses

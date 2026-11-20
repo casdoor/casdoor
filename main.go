@@ -66,6 +66,9 @@ func runServer() {
 
 	routers.InitAPI()
 	object.InitFlag()
+	if err := object.ValidateTenantPrivateEmailConfig(); err != nil {
+		logs.Error(err.Error())
+	}
 	object.InitAdapter()
 	object.CreateTables()
 

@@ -288,7 +288,7 @@ func SendMagicLinkToEmail(organization *Organization, user *User, provider *Prov
 
 	title := getMagicLinkEmailTitle(provider, organization)
 	content := getMagicLinkEmailContent(provider, getMagicLinkUrl(origin, token), user)
-	err = SendEmail(provider, title, content, []string{dest}, organization.DisplayName)
+	err = SendEmail(organization.Name, provider, title, content, []string{dest}, organization.DisplayName)
 	if err != nil {
 		// a link that was never mailed must not hold back the next attempt
 		_, deleteErr := ormer.Engine.Where("token_hash = ?", HashMagicLinkSecret(token)).Delete(&MagicLink{})

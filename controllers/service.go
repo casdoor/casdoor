@@ -200,8 +200,15 @@ func (c *ApiController) SendEmail() {
 	matchContent := object.ResetLinkReg.Find([]byte(content))
 	content = strings.Replace(content, string(matchContent), "", -1)
 
+	sendingOrganization := ""
+	if isGlobalAdmin, user := c.isGlobalAdmin(); user != nil {
+		sendingOrganization = user.Owner
+		if isGlobalAdmin && !object.IsAppUser(userId) && emailForm.Provider != "" && emailForm.ProviderObject.Name != "" {
+			sendingOrganization = provider.Owner
+		}
+	}
 	for _, receiver := range emailForm.Receivers {
-		err = object.SendEmail(provider, emailForm.Title, content, []string{receiver}, emailForm.Sender)
+		err = object.SendEmail(sendingOrganization, provider, emailForm.Title, content, []string{receiver}, emailForm.Sender)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

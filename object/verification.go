@@ -150,7 +150,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 		return err
 	}
 
-	err = SendEmail(provider, title, content, []string{dest}, sender)
+	err = SendEmail(organization.Name, provider, title, content, []string{dest}, sender)
 	if err != nil {
 		return err
 	}

@@ -113,6 +113,35 @@ func NewInternetOnlyHttpClient(timeout time.Duration) *http.Client {
 	}
 }
 
+// NewPrivateEndpointHttpClient checks every connection against the approved networks.
+func NewPrivateEndpointHttpClient(timeout time.Duration, networks []netip.Prefix) *http.Client {
+	refuse := func(address string) bool {
+		return !isAllowedPrivateEndpointAddress(address, networks)
+	}
+	return &http.Client{
+		Timeout:   timeout,
+		Transport: newRestrictedHttpTransport(timeout, refuse, "the destination is outside the approved networks or is reserved"),
+		CheckRedirect: func(*http.Request, []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+}
+
+// Cloud metadata and address translation can use otherwise routable IPv6 addresses.
+var privateEndpointBlockedPrefixes = []netip.Prefix{
+	nat64Prefix,
+	netip.MustParsePrefix("64:ff9b:1::/48"),
+	netip.MustParsePrefix("fd00:ec2::/32"),
+	netip.MustParsePrefix("fd20:ce::254/128"),
+}
+
+func isAllowedPrivateEndpointAddress(address string, networks []netip.Prefix) bool {
+	socketAddress, err := netip.ParseAddrPort(address)
+	addr := socketAddress.Addr()
+	return err == nil && addr.IsGlobalUnicast() && !addr.Is4In6() && !isInPrefixes(addr, nonInternetPrefixes) &&
+		!isInPrefixes(addr, privateEndpointBlockedPrefixes) && isInPrefixes(addr, networks)
+}
+
 func isNonInternetAddress(address string) bool {
 	addr, ok := parseAddr(address)
 	return !ok || isNonInternetAddr(addr)

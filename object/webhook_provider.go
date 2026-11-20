@@ -133,7 +133,7 @@ func sendProviderWebhook(webhook *Webhook, record *Record, user *User) (int, str
 	case "Email":
 		title := renderWebhookTemplate(webhook.Title, record, user, false)
 		content := renderWebhookTemplate(webhook.Content, record, user, true)
-		err = SendEmail(provider, title, content, receivers, "Casdoor")
+		err = SendEmail(webhook.Organization, provider, title, content, receivers, "Casdoor")
 	case "SMS":
 		err = SendSms(provider, renderWebhookTemplate(webhook.Content, record, user, false), receivers...)
 	case "Notification":

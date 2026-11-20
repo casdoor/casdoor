@@ -273,7 +273,7 @@ func (c *ApiController) SendInvitation() {
 	content = strings.ReplaceAll(content, "%code", invitation.Code)
 	content = strings.ReplaceAll(content, "%link", invitation.GetInvitationLink(c.Ctx.Request.Host, application.Name))
 
-	err = object.SendEmail(provider, provider.Title, content, destinations, organization.DisplayName)
+	err = object.SendEmail(organization.Name, provider, provider.Title, content, destinations, organization.DisplayName)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
