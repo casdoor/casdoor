@@ -30,13 +30,15 @@ import (
 )
 
 func InitDb() {
+	// app-built-in is created last and cannot be deleted, so when it is missing an earlier first start was
+	// killed halfway, e.g. by a liveness probe, and the rest has to be created now
 	existed := initBuiltInOrganization()
-	if !existed {
+	if !existed || !isBuiltInApplicationExisted() {
 		initBuiltInPermission()
 		initBuiltInProvider()
 		initBuiltInUser()
-		initBuiltInApplication()
 		initBuiltInLdap()
+		initBuiltInApplication()
 	}
 
 	// cert-built-in signs the tokens of the applications without a cert, including app-built-in, so nobody
@@ -44,7 +46,7 @@ func InitDb() {
 	initBuiltInCert()
 
 	existed = initBuiltInApiModel()
-	if !existed {
+	if !existed || !isBuiltInEnforcerExisted("api-enforcer-built-in") || !isBuiltInEnforcerExisted("user-enforcer-built-in") {
 		initBuiltInApiAdapter()
 		initBuiltInApiEnforcer()
 		initBuiltInUserModel()
@@ -282,6 +284,24 @@ func SetInitAdminPassword(password string, lang string) (bool, error) {
 		return false, err
 	}
 	return affected != 0, nil
+}
+
+func isBuiltInApplicationExisted() bool {
+	application, err := getApplication("admin", "app-built-in")
+	if err != nil {
+		panic(err)
+	}
+
+	return application != nil
+}
+
+func isBuiltInEnforcerExisted(name string) bool {
+	enforcer, err := GetEnforcer(util.GetId("built-in", name))
+	if err != nil {
+		panic(err)
+	}
+
+	return enforcer != nil
 }
 
 func initBuiltInApplication() {
