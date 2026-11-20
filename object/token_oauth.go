@@ -273,8 +273,9 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		}, nil
 	}
 
-	// RFC 8707: Validate resource parameter matches the one in the authorization request
-	if resource != token.Resource {
+	// RFC 8707: the client MAY repeat the resource of the authorization request; when it does, it has to match,
+	// when it does not, the token keeps the resource it was authorized for
+	if resource != "" && resource != token.Resource {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
 			ErrorDescription: fmt.Sprintf("resource parameter does not match authorization request, expected: [%s], got: [%s]", token.Resource, resource),
