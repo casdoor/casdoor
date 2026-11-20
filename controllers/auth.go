@@ -656,9 +656,13 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	return c.promptMfaSetup(user, organization)
 }
 
-func getExistUserByBindingRule(providerItem *object.ProviderItem, application *object.Application, userInfo *idp.UserInfo) (user *object.User, err error) {
+func getExistUserByBindingRule(providerItem *object.ProviderItem, provider *object.Provider, application *object.Application, userInfo *idp.UserInfo) (user *object.User, err error) {
 	if providerItem.BindingRule == nil {
-		providerItem.BindingRule = &[]string{"Email", "Phone"}
+		if provider.Type == "DingTalk" {
+			providerItem.BindingRule = &[]string{"Email", "Phone", "Name"}
+		} else {
+			providerItem.BindingRule = &[]string{"Email", "Phone"}
+		}
 	}
 	if len(*providerItem.BindingRule) == 0 {
 		return nil, nil
@@ -692,7 +696,7 @@ func getExistUserByBindingRule(providerItem *object.ProviderItem, application *o
 		// This allows OAuth providers (e.g., Wecom) to automatically associate with
 		// existing users when usernames match, particularly useful for enterprise
 		// scenarios where signup is disabled and users already exist in Casdoor
-		if rule == "Name" {
+		if rule == "Name" && (provider.Type != "DingTalk" || (userInfo.UnionId != "" && userInfo.Username == userInfo.UnionId)) {
 			user, err = object.GetUserByName(application.Organization, userInfo.Username)
 			if err != nil {
 				return nil, err
@@ -1246,7 +1250,7 @@ func (c *ApiController) Login() {
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
 			} else if provider.Category == "OAuth" || provider.Category == "SAML" {
 				// Sign up via OAuth
-				user, err = getExistUserByBindingRule(providerItem, application, userInfo)
+				user, err = getExistUserByBindingRule(providerItem, provider, application, userInfo)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
