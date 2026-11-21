@@ -98,6 +98,18 @@ func (c *ApiController) RevokeConsent() {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	// the tokens the application already holds carry the revoked scopes, so they stop working and
+	// the application has to ask again
+	_, applicationName, err := util.GetOwnerAndNameFromIdWithError(consent.Application)
+	if err != nil {
+		applicationName = consent.Application
+	}
+	_, err = object.ExpireTokenByUserAndApplication(userObj.Owner, userObj.Name, applicationName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	err = ee.AddConsentLog(userObj, consent.Application, "revoke", consent.GrantedScopes, nil, util.GetClientIpFromRequest(c.Ctx.Request), c.Ctx.Request.UserAgent())
 	if err != nil {
 		c.ResponseError(err.Error())
