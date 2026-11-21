@@ -176,7 +176,8 @@
     "Separation of duties": "Separación de funciones",
     "Signing key rotation": "Rotación de la clave de firma",
     "Tamper-proof audit records": "Registros de auditoría a prueba de manipulaciones",
-    "Three-admin separation": "Separación de administradores de sistema, seguridad y auditoría"
+    "Three-admin separation": "Separación de administradores de sistema, seguridad y auditoría",
+    "Trusted organizations": "Organizaciones de confianza"
   },
   "enforcer": {
     "the adapter: %s is not found": "no se encontró el adaptador: %s"

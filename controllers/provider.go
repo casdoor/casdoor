@@ -161,7 +161,9 @@ func (c *ApiController) GetIdpDiscovery() {
 
 	issuer := c.Ctx.Input.Query("issuer")
 
-	discovery, err := idp.GetOidcDiscoveryByAdmin(issuer, c.IsGlobalAdmin())
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	isTrusted := isGlobalAdmin || (user != nil && !object.IsTenantOwner(user.Owner))
+	discovery, err := idp.GetOidcDiscoveryByAdmin(issuer, isTrusted)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -556,7 +556,7 @@ func getSigninLookupUsername(username string, countryCode string) string {
 }
 
 func isTenantUrlProvider(provider *object.Provider) bool {
-	return provider.Owner != "admin" && provider.Owner != "built-in" && !isProxyProviderType(provider.Type)
+	return object.IsTenantOwner(provider.Owner) && !isProxyProviderType(provider.Type)
 }
 
 func isProxyProviderType(providerType string) bool {

@@ -176,7 +176,8 @@
     "Separation of duties": "Görevler ayrılığı",
     "Signing key rotation": "İmza anahtarı rotasyonu",
     "Tamper-proof audit records": "Değiştirilemez denetim kayıtları",
-    "Three-admin separation": "Sistem, güvenlik ve denetim yöneticilerinin ayrılması"
+    "Three-admin separation": "Sistem, güvenlik ve denetim yöneticilerinin ayrılması",
+    "Trusted organizations": "Güvenilen kuruluşlar"
   },
   "enforcer": {
     "the adapter: %s is not found": "bağdaştırıcı: %s bulunamadı"

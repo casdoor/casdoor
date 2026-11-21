@@ -176,7 +176,8 @@
     "Separation of duties": "Funktionstrennung",
     "Signing key rotation": "Rotation des Signaturschlüssels",
     "Tamper-proof audit records": "Manipulationssichere Audit-Protokolle",
-    "Three-admin separation": "Trennung von System-, Sicherheits- und Audit-Administratoren"
+    "Three-admin separation": "Trennung von System-, Sicherheits- und Audit-Administratoren",
+    "Trusted organizations": "Vertrauenswürdige Organisationen"
   },
   "enforcer": {
     "the adapter: %s is not found": "Der Adapter: %s wurde nicht gefunden"

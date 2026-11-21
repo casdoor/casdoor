@@ -76,6 +76,7 @@ const (
 	FeatureMcpRollback      = "Rollback of agent changes"
 	FeatureScimProvisioning = "SCIM provisioning"
 	FeatureDbProvisioning   = "Provisioning to legacy databases"
+	FeatureTrustedOrg       = "Trusted organizations"
 )
 
 const KindOnPremise = "OnPremise"

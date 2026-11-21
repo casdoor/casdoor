@@ -58,6 +58,7 @@ var (
 	IsProvisionedUserUpdateHook           func(columns []string) bool
 	ProvisionUserHook                     func(user *User)
 	RequestOrganizationProvisioningHook   func(organization string)
+	IsTrustedOrganizationHook             func(name string) bool
 )
 
 var errEnterpriseFeatures = fmt.Errorf("this needs the enterprise features of Casdoor")
@@ -239,4 +240,8 @@ func requestOrganizationProvisioning(organization string) {
 	if RequestOrganizationProvisioningHook != nil {
 		RequestOrganizationProvisioningHook(organization)
 	}
+}
+
+func isTrustedOrganization(name string) bool {
+	return IsTrustedOrganizationHook != nil && IsTrustedOrganizationHook(name)
 }

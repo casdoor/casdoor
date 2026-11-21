@@ -176,7 +176,8 @@
     "Separation of duties": "Phân tách nhiệm vụ",
     "Signing key rotation": "Xoay vòng khóa ký",
     "Tamper-proof audit records": "Nhật ký kiểm toán chống giả mạo",
-    "Three-admin separation": "Tách biệt quản trị viên hệ thống, bảo mật và kiểm toán"
+    "Three-admin separation": "Tách biệt quản trị viên hệ thống, bảo mật và kiểm toán",
+    "Trusted organizations": "Tổ chức tin cậy"
   },
   "enforcer": {
     "the adapter: %s is not found": "không tìm thấy adapter: %s"

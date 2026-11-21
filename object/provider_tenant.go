@@ -24,11 +24,15 @@ import (
 	notify "github.com/casdoor/notify2"
 )
 
-// isTenantProvider reports a provider an organization admin manages, as opposed to the global
-// ones ("admin") and the ones of "built-in", which only global admins manage. The hosts of a
-// tenant provider must not reach the intranet, like the webhooks of the organizations.
+// IsTenantOwner reports an organization whose providers an organization admin manages, as opposed to
+// "admin" and "built-in", which only global admins manage, and the organizations a global admin trusts.
+// The hosts of a tenant provider must not reach the intranet, like the webhooks of the organizations.
+func IsTenantOwner(owner string) bool {
+	return owner != "admin" && owner != "built-in" && !isTrustedOrganization(owner)
+}
+
 func isTenantProvider(provider *Provider) bool {
-	return provider.Owner != "admin" && provider.Owner != "built-in"
+	return IsTenantOwner(provider.Owner)
 }
 
 func checkTenantProviderHost(provider *Provider, host string) error {

@@ -103,7 +103,7 @@ func NewScanProviderFromProvider(provider *object.Provider) SecurityScanProvider
 }
 
 func (v SecurityScanProvider) isTenant() bool {
-	return v.Owner != "admin" && v.Owner != "built-in"
+	return object.IsTenantOwner(v.Owner)
 }
 
 func (v SecurityScanProvider) getScanHttpClient() *http.Client {

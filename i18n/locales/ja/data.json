@@ -176,7 +176,8 @@
     "Separation of duties": "職務分掌",
     "Signing key rotation": "署名鍵のローテーション",
     "Tamper-proof audit records": "改ざん防止の監査ログ",
-    "Three-admin separation": "システム・セキュリティ・監査管理者の分離"
+    "Three-admin separation": "システム・セキュリティ・監査管理者の分離",
+    "Trusted organizations": "信頼済みの組織"
   },
   "enforcer": {
     "the adapter: %s is not found": "アダプタ「%s」が見つかりません"

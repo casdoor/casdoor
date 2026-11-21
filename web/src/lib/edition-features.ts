@@ -81,6 +81,8 @@ export const EditionFeatures: EditionFeature[] = [
     stop: {object: "model", label: "model:Model text"}},
   {id: "syncers", edition: "Commercial", category: "edition:Keys and access control", name: "edition:More syncers", description: "edition:More syncers - Description",
     stop: {path: "/syncers"}},
+  {id: "trusted-organization", edition: "Commercial", category: "edition:Keys and access control", name: "edition:Trusted organizations", description: "edition:Trusted organizations - Description",
+    stop: org("advanced", "provider:Advanced", "organization:Trusted organization")},
 
   {id: "mcp-gateway", edition: "Commercial", category: "edition:AI agents", name: "edition:MCP gateway", description: "edition:MCP gateway - Description",
     stop: {object: "server", label: "server:Token header"}},

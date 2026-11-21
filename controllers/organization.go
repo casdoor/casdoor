@@ -209,6 +209,10 @@ func (c *ApiController) AddOrganization() {
 		organization.BalanceCurrency = "USD"
 	}
 
+	if isGlobalAdmin, _ := c.isGlobalAdmin(); !isGlobalAdmin {
+		organization.IsTrusted = false
+	}
+
 	if len(organization.AccountItems) == 0 {
 		organization.AccountItems = object.GetDefaultAccountItems()
 	}

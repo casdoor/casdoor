@@ -176,7 +176,8 @@
     "Separation of duties": "Separation of duties",
     "Signing key rotation": "Signing key rotation",
     "Tamper-proof audit records": "Tamper-proof audit records",
-    "Three-admin separation": "Three-admin separation"
+    "Three-admin separation": "Three-admin separation",
+    "Trusted organizations": "Trusted organizations"
   },
   "enforcer": {
     "the adapter: %s is not found": "the adapter: %s is not found"

@@ -591,6 +591,12 @@ export default function OrganizationEditPage() {
               onChange={(e) => update("trustedDbHosts", e.target.value)}
             />
           </FormRow>
+          {organization.name !== "built-in" ? (
+            <FormRow labelKey="organization:Trusted organization">
+              <Switch checked={!!organization.isTrusted} disabled={!Setting.isAdminUser(account)} onCheckedChange={(v) => update("isTrusted", v)} />
+              {organization.isTrusted ? <EditionNotice /> : null}
+            </FormRow>
+          ) : null}
           <FormRow labelKey="organization:Init score">
             <Input
               type="number"

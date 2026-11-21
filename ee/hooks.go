@@ -55,6 +55,7 @@ func init() {
 	object.IsProvisionedUserUpdateHook = isProvisionedUserUpdate
 	object.ProvisionUserHook = provisionUser
 	object.RequestOrganizationProvisioningHook = requestOrganizationProvisioning
+	object.IsTrustedOrganizationHook = isTrustedOrganization
 
 	audit.FormatSiemEventHook = func(format string, event *audit.Event, eventTime time.Time) string {
 		if format == "CEF" {

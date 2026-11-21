@@ -86,6 +86,7 @@ type Organization struct {
 	MasterVerificationCode string     `xorm:"varchar(100)" json:"masterVerificationCode"`
 	IpWhitelist            string     `xorm:"varchar(200)" json:"ipWhitelist"`
 	TrustedDbHosts         string     `xorm:"varchar(500)" json:"trustedDbHosts"`
+	IsTrusted              bool       `xorm:"bool" json:"isTrusted"`
 	InitScore              int        `json:"initScore"`
 	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
 	IsProfilePublic        bool       `json:"isProfilePublic"`
@@ -309,6 +310,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 
 	if !isGlobalAdmin {
 		organization.TrustedDbHosts = org.TrustedDbHosts
+		organization.IsTrusted = org.IsTrusted
 		organization.NavItems = org.NavItems
 		organization.UserNavItems = org.UserNavItems
 		organization.WidgetItems = org.WidgetItems

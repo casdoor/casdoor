@@ -176,7 +176,8 @@
     "Separation of duties": "职责分离",
     "Signing key rotation": "签名密钥轮换",
     "Tamper-proof audit records": "审计日志防篡改",
-    "Three-admin separation": "三员分立"
+    "Three-admin separation": "三员分立",
+    "Trusted organizations": "可信组织"
   },
   "enforcer": {
     "the adapter: %s is not found": "适配器: %s 未找到"
