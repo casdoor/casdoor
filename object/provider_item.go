@@ -26,6 +26,7 @@ type ProviderItem struct {
 	Prompted     bool      `json:"prompted"`
 	SignupGroup  string    `json:"signupGroup"`
 	Rule         string    `json:"rule"`
+	SkipMfa      bool      `json:"skipMfa"`
 	Provider     *Provider `json:"provider"`
 }
 

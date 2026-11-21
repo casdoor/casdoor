@@ -288,6 +288,8 @@
     "Signup items": "Signup items",
     "Signup items - Tooltip": "Items for users to fill in when registering new accounts",
     "Single Choice": "Single Choice",
+    "Skip MFA": "Skip MFA",
+    "Skip MFA - Tooltip": "Users who have MFA enabled are not asked for it after signing in this way. Turn it on only for a provider that already authenticates users strongly (e.g. an enterprise IdP that enforces its own MFA) or when the mailbox or phone alone is trusted enough, otherwise a stolen mailbox or third-party account is enough to sign in. An MFA setup the organization requires is still asked for",
     "Skipped the existing applications (%s)": "Skipped the existing applications (%s)",
     "Sliding session": "Sliding session",
     "Sliding session - Tooltip": "Extend the session by the cookie expiration time whenever the user comes back, so that a user who keeps using the application is not signed out. Without it, the session ends that long after the sign-in",

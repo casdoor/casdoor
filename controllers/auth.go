@@ -656,6 +656,16 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	return c.promptMfaSetup(user, organization)
 }
 
+// checkMfaEnableForSignin skips the MFA challenge of a sign-in method or a provider the
+// admin trusts, the MFA enrollment the organization requires is still asked for
+func checkMfaEnableForSignin(c *ApiController, user *object.User, organization *object.Organization, verificationType string, skipMfa bool) bool {
+	if skipMfa {
+		return c.promptMfaSetup(user, organization)
+	}
+
+	return checkMfaEnable(c, user, organization, verificationType)
+}
+
 func getExistUserByBindingRule(providerItem *object.ProviderItem, provider *object.Provider, application *object.Application, userInfo *idp.UserInfo) (user *object.User, err error) {
 	if providerItem.BindingRule == nil {
 		if provider.Type == "DingTalk" {
@@ -812,6 +822,8 @@ func (c *ApiController) Login() {
 	}
 
 	verificationType := ""
+	// the sign-in method whose "Skip MFA" applies, a password sign-in always takes the MFA challenge
+	mfaSigninMethod := ""
 
 	// a magic link posts no username, the one-time token in the link is the credential.
 	// The passcode of a sign-in that already asked for MFA is answered further below
@@ -826,6 +838,7 @@ func (c *ApiController) Login() {
 			user, err = c.checkMagicLinkSignin(&authForm)
 			if err == nil {
 				verificationType = "email"
+				mfaSigninMethod = "Magic link"
 			}
 		} else if isCertSignin {
 			user, err = c.checkCertSignin(&authForm)
@@ -934,6 +947,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			mfaSigninMethod = "Verification code"
 			if verificationCodeType == object.VerifyTypePhone {
 				verificationType = "sms"
 			} else {
@@ -1076,7 +1090,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if checkMfaEnable(c, user, organization, verificationType) {
+			if checkMfaEnableForSignin(c, user, organization, verificationType, application.IsMfaSkippedForSigninMethod(mfaSigninMethod)) {
 				return
 			}
 
@@ -1246,7 +1260,7 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				if checkMfaEnable(c, user, organization, verificationType) {
+				if checkMfaEnableForSignin(c, user, organization, verificationType, application.IsMfaSkippedForProvider(provider.Name)) {
 					return
 				}
 
@@ -1435,7 +1449,7 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				if checkMfaEnable(c, user, organization, verificationType) {
+				if checkMfaEnableForSignin(c, user, organization, verificationType, application.IsMfaSkippedForProvider(provider.Name)) {
 					return
 				}
 

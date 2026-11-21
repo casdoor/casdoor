@@ -7,6 +7,7 @@ import {SelectField} from "@/components/common/SelectField";
 import type {SearchableOption} from "@/components/common/SearchableSelect";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {FormRow} from "@/components/crud/FormRow";
+import {SkipMfaColumnTitle} from "@/components/application/SkipMfaColumnTitle";
 import type {ApplicationTabProps} from "@/components/application/types";
 import {
   enumLabel,
@@ -133,6 +134,7 @@ export function ApplicationProvidersTab({
               canSignIn: true,
               canUnlink: true,
               prompted: false,
+              skipMfa: false,
               signupGroup: "",
               rule: "None",
             };
@@ -201,6 +203,15 @@ export function ApplicationProvidersTab({
               render: (row: any, _i, patch) =>
                 LINKABLE_PROVIDER_CATEGORIES.includes(resolveProvider(row)?.category) ? (
                   <Switch checked={!!row.prompted} onCheckedChange={(v) => patch({prompted: v})} />
+                ) : null,
+            },
+            {
+              key: "skipMfa",
+              title: <SkipMfaColumnTitle />,
+              width: 110,
+              render: (row: any, _i, patch) =>
+                LINKABLE_PROVIDER_CATEGORIES.includes(resolveProvider(row)?.category) ? (
+                  <Switch checked={!!row.skipMfa} onCheckedChange={(v) => patch({skipMfa: v})} />
                 ) : null,
             },
             {

@@ -13,6 +13,7 @@ import {EditableTable} from "@/components/crud/EditableTable";
 import {ApplicationPromptPreview, ApplicationSignupSigninPreview} from "@/components/application/ApplicationPreview";
 import {AGREEMENT_UNCHECKED_RULE} from "@/components/auth/AgreementModal";
 import {FormRow} from "@/components/crud/FormRow";
+import {SkipMfaColumnTitle} from "@/components/application/SkipMfaColumnTitle";
 import {useAccount} from "@/hooks/use-account";
 import type {ApplicationTabProps} from "@/components/application/types";
 import {enumSelectOptions, type EnumMap} from "@/lib/enum-labels";
@@ -55,6 +56,9 @@ function getDefaultSigninMethodRule(name: string): string {
   const rules = Object.keys(SIGNIN_METHOD_RULES[name] ?? {});
   return rules.length > 0 ? rules[0] : "None";
 }
+
+// the methods that prove only a mailbox or a phone, a password sign-in always takes the MFA challenge
+const MFA_SKIPPABLE_SIGNIN_METHODS = ["Verification code", "Magic link"];
 
 const SIGNIN_METHOD_NAMES: {name: string; labelKey: string}[] = [
   {name: "Password", labelKey: "general:Password"},
@@ -298,6 +302,15 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
                     onChange={(v) => patch({rule: v})}
                     options={enumSelectOptions(SIGNIN_METHOD_RULES[row.name])}
                   />
+                ) : null,
+            },
+            {
+              key: "skipMfa",
+              title: <SkipMfaColumnTitle />,
+              width: 110,
+              render: (row: any, _i, patch) =>
+                MFA_SKIPPABLE_SIGNIN_METHODS.includes(row.name) ? (
+                  <Switch checked={!!row.skipMfa} onCheckedChange={(v) => patch({skipMfa: v})} />
                 ) : null,
             },
           ]}

@@ -27,6 +27,7 @@ type SigninMethod struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Rule        string `json:"rule"`
+	SkipMfa     bool   `json:"skipMfa,omitempty"`
 }
 
 const (
@@ -224,6 +225,33 @@ type Application struct {
 
 	RegistrationAccessToken string `xorm:"varchar(100)" json:"registrationAccessToken"`
 	TokenEndpointAuthMethod string `xorm:"varchar(100)" json:"tokenEndpointAuthMethod"`
+}
+
+// IsMfaSkippedForSigninMethod tells whether a sign-in by the method goes without the MFA
+// challenge, for an organization that trusts the method (e.g. the mailbox of a magic link)
+func (application *Application) IsMfaSkippedForSigninMethod(name string) bool {
+	if application == nil || name == "" {
+		return false
+	}
+
+	for _, signinMethod := range application.SigninMethods {
+		if signinMethod != nil && signinMethod.Name == name {
+			return signinMethod.SkipMfa
+		}
+	}
+
+	return false
+}
+
+// IsMfaSkippedForProvider tells whether a sign-in by the provider goes without the MFA
+// challenge, for an identity provider that already authenticates the user strongly
+func (application *Application) IsMfaSkippedForProvider(providerName string) bool {
+	if application == nil {
+		return false
+	}
+
+	providerItem := application.GetProviderItem(providerName)
+	return providerItem != nil && providerItem.SkipMfa
 }
 
 func (application *Application) HasSigninMethod(name string) bool {
