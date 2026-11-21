@@ -362,6 +362,7 @@
     "Too many requests, please try again later": "Quá nhiều yêu cầu, vui lòng thử lại sau"
   },
   "session": {
+    "The current session cannot be ended here, sign out instead": "Không thể kết thúc phiên hiện tại tại đây, hãy đăng xuất",
     "session id %s is the current session and cannot be deleted": "id phiên %s là phiên hiện tại và không thể bị xóa"
   },
   "storage": {

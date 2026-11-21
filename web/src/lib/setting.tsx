@@ -842,6 +842,7 @@ export const GetTranslatedUserItems = () => {
     {name: "Roles", label: i18next.t("general:Roles")},
     {name: "Permissions", label: i18next.t("general:Permissions")},
     {name: "3rd-party logins", label: i18next.t("user:3rd-party logins")},
+    {name: "Sessions", label: i18next.t("general:Sessions")},
     {name: "Properties", label: i18next.t("user:Properties")},
     {name: "Is online", label: i18next.t("user:Is online")},
     {name: "Is admin", label: i18next.t("user:Is admin")},

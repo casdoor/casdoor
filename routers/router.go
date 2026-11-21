@@ -323,6 +323,8 @@ func InitAPI() {
 	web.Router("/api/add-session", &controllers.ApiController{}, "POST:AddSession")
 	web.Router("/api/delete-session", &controllers.ApiController{}, "POST:DeleteSession")
 	web.Router("/api/is-session-duplicated", &controllers.ApiController{}, "GET:IsSessionDuplicated")
+	web.Router("/api/get-my-sessions", &controllers.ApiController{}, "GET:GetMySessions")
+	web.Router("/api/delete-my-session", &controllers.ApiController{}, "POST:DeleteMySession")
 
 	web.Router("/api/get-tokens", &controllers.ApiController{}, "GET:GetTokens")
 	web.Router("/api/get-token", &controllers.ApiController{}, "GET:GetToken")

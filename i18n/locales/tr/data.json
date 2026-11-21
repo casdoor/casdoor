@@ -362,6 +362,7 @@
     "Too many requests, please try again later": "Çok fazla istek, lütfen daha sonra tekrar deneyin"
   },
   "session": {
+    "The current session cannot be ended here, sign out instead": "Geçerli oturum burada sonlandırılamaz, bunun yerine çıkış yapın",
     "session id %s is the current session and cannot be deleted": "oturum kimliği %s geçerli oturumdur ve silinemez"
   },
   "storage": {

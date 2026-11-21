@@ -362,6 +362,7 @@
     "Too many requests, please try again later": "Too many requests, please try again later"
   },
   "session": {
+    "The current session cannot be ended here, sign out instead": "The current session cannot be ended here, sign out instead",
     "session id %s is the current session and cannot be deleted": "session id %s is the current session and cannot be deleted"
   },
   "storage": {

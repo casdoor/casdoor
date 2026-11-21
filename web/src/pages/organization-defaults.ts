@@ -86,6 +86,7 @@ export function newOrganization(createdTime: string) {
       {name: "Permissions", visible: true, viewRule: "Public", modifyRule: "Immutable"},
       {name: "Consents", visible: true, viewRule: "Self", modifyRule: "Self"},
       {name: "3rd-party logins", visible: true, viewRule: "Self", modifyRule: "Self"},
+      {name: "Sessions", visible: true, viewRule: "Self", modifyRule: "Self"},
       {name: "Properties", visible: false, viewRule: "Admin", modifyRule: "Admin"},
       {name: "Is online", visible: true, viewRule: "Admin", modifyRule: "Admin"},
       {name: "Is admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},

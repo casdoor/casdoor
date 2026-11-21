@@ -362,6 +362,7 @@
     "Too many requests, please try again later": "Zu viele Anfragen, bitte versuchen Sie es später erneut"
   },
   "session": {
+    "The current session cannot be ended here, sign out instead": "Die aktuelle Sitzung kann hier nicht beendet werden, melden Sie sich stattdessen ab",
     "session id %s is the current session and cannot be deleted": "Sitzungs-ID %s ist die aktuelle Sitzung und kann nicht gelöscht werden"
   },
   "storage": {

@@ -362,6 +362,7 @@
     "Too many requests, please try again later": "请求过于频繁，请稍后再试"
   },
   "session": {
+    "The current session cannot be ended here, sign out instead": "当前会话不能在这里结束，请直接退出登录",
     "session id %s is the current session and cannot be deleted": "会话ID %s 是当前会话，无法删除"
   },
   "storage": {

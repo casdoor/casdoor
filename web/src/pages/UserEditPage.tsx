@@ -26,6 +26,7 @@ import {AffiliationAddressSelect, AffiliationField, useAffiliation} from "@/comp
 import {CartTable} from "@/components/user/CartTable";
 import {CasdoorAppQrCode, CasdoorAppUrl, CasdoorAuthenticatorLink} from "@/components/user/CasdoorAppConnector";
 import {ConsentTable} from "@/components/user/ConsentTable";
+import {MySessionTable} from "@/components/user/MySessionTable";
 import {FaceIdTable} from "@/components/user/FaceIdTable";
 import {CropperDivModal, UserImageField} from "@/components/user/CropperDivModal";
 import {ThirdPartyLogins} from "@/components/user/OAuthWidget";
@@ -1174,6 +1175,12 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
         <ConsentTable table={user.applicationScopes ?? []} onUpdateTable={reload} />
       </AccountItemRow>
     ),
+    // only the user can list and end its own sessions, administrators use the Sessions page
+    "Sessions": isSelf && mode !== "add" ? (
+      <AccountItemRow name="Sessions" labelKey="general:Sessions" block>
+        <MySessionTable />
+      </AccountItemRow>
+    ) : null,
   };
 
   // organizations whose account items predate these rows still see them, in the first tab

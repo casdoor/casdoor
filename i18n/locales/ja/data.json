@@ -362,6 +362,7 @@
     "Too many requests, please try again later": "リクエストが多すぎます。しばらくしてから再試行してください"
   },
   "session": {
+    "The current session cannot be ended here, sign out instead": "現在のセッションはここでは終了できません。代わりにサインアウトしてください",
     "session id %s is the current session and cannot be deleted": "セッションID %s は現在のセッションであり、削除できません"
   },
   "storage": {

@@ -362,6 +362,7 @@
     "Too many requests, please try again later": "Забагато запитів, спробуйте пізніше"
   },
   "session": {
+    "The current session cannot be ended here, sign out instead": "Поточний сеанс не можна завершити тут, натомість вийдіть із системи",
     "session id %s is the current session and cannot be deleted": "ідентифікатор сесії %s є поточною сесією і не може бути видалений"
   },
   "storage": {
