@@ -114,10 +114,12 @@ func (c *ApiController) GetGroups() {
 // @Tag Group API
 // @Description get group
 // @Param   id     query    string  true        "The id ( owner/name ) of the group"
+// @Param   withUsers     query    string  false        "Set to false to skip loading the group's users"
 // @Success 200 {object} object.Group The Response object
 // @router /get-group [get]
 func (c *ApiController) GetGroup() {
 	id := c.Ctx.Input.Query("id")
+	withUsers := c.Ctx.Input.Query("withUsers")
 
 	group, err := object.GetGroup(id)
 	if err != nil {
@@ -130,10 +132,12 @@ func (c *ApiController) GetGroup() {
 		return
 	}
 
-	err = object.ExtendGroupWithUsers(group)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if withUsers != "false" {
+		err = object.ExtendGroupWithUsers(group)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.ResponseOk(group)
