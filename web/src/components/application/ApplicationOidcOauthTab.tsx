@@ -1,4 +1,5 @@
 
+import * as React from "react";
 import i18next from "i18next";
 import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
@@ -11,6 +12,106 @@ import type {ApplicationTabProps} from "@/components/application/types";
 import {enumSelectOptions, type EnumMap} from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 import {EditionNotice} from "@/components/common/EditionNotice";
+import {Button} from "@/components/ui/button";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
+
+/** 20 random bytes in hex, the format util.GenerateClientSecret gives new applications */
+function generateClientSecret(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(20));
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** how long the replaced secret keeps working after a rotation */
+const GRACE_PERIODS = [
+  {hours: 0, labelKey: "application:Stop working when saved"},
+  {hours: 1, labelKey: "application:Keep working for 1 hour"},
+  {hours: 24, labelKey: "application:Keep working for 1 day"},
+  {hours: 24 * 7, labelKey: "application:Keep working for 7 days"},
+  {hours: 24 * 30, labelKey: "application:Keep working for 30 days"},
+];
+
+/**
+ * The client secret with copy and regenerate. Regenerating can keep the old secret valid for a
+ * while, so the clients can be moved to the new one before the old one stops working.
+ */
+function ClientSecretField({application, updateField}: ApplicationTabProps) {
+  const [graceHours, setGraceHours] = React.useState(24);
+  const previousExpireTime = application.previousClientSecretExpireTime
+    ? new Date(application.previousClientSecretExpireTime)
+    : null;
+  const previousActive = !!application.previousClientSecret && !!previousExpireTime &&
+    previousExpireTime.getTime() > Date.now();
+
+  return (
+    <>
+      <FormRow labelKey="provider:Client secret">
+        <div className="flex gap-2">
+          <Input
+            value={application.clientSecret ?? ""}
+            onChange={(e) => updateField("clientSecret", e.target.value)}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              void navigator.clipboard.writeText(application.clientSecret ?? "");
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+            }}
+          >
+            {i18next.t("general:Copy")}
+          </Button>
+          <ConfirmButton
+            type="button"
+            variant="outline"
+            destructive={false}
+            title={i18next.t("application:Regenerate the client secret") + "?"}
+            description={
+              <span className="flex flex-col gap-3">
+                <span>{i18next.t("application:A new secret is generated, it takes effect when you save the application. The current secret can keep working for a while, so that the clients can be moved to the new one first.")}</span>
+                <SelectField
+                  value={graceHours}
+                  onChange={(v) => setGraceHours(Number(v))}
+                  options={GRACE_PERIODS.map(({hours, labelKey}) => ({id: hours, name: i18next.t(labelKey)}))}
+                  allowUnknownValue={false}
+                />
+              </span>
+            }
+            onConfirm={() => {
+              const current = application.clientSecret ?? "";
+              const keep = graceHours > 0 && current !== "" && current !== "***";
+              updateField("previousClientSecret", keep ? current : "");
+              updateField("previousClientSecretExpireTime",
+                keep ? new Date(Date.now() + graceHours * 3600 * 1000).toISOString() : "");
+              updateField("clientSecret", generateClientSecret());
+            }}
+          >
+            {i18next.t("application:Regenerate")}
+          </ConfirmButton>
+        </div>
+      </FormRow>
+      {previousActive ? (
+        <FormRow labelKey="application:Previous client secret">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              {i18next.t("application:Still accepted until {time}").replace("{time}", previousExpireTime!.toLocaleString())}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                updateField("previousClientSecret", "");
+                updateField("previousClientSecretExpireTime", "");
+              }}
+            >
+              {i18next.t("application:Stop accepting it")}
+            </Button>
+          </div>
+        </FormRow>
+      ) : null}
+    </>
+  );
+}
 
 /** the values the token endpoint matches on, so the RFC URNs are stored as such */
 const GRANT_TYPES = [
@@ -71,12 +172,7 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
       <FormRow labelKey="provider:Client ID">
         <Input value={application.clientId ?? ""} onChange={(e) => updateField("clientId", e.target.value)} />
       </FormRow>
-      <FormRow labelKey="provider:Client secret">
-        <Input
-          value={application.clientSecret ?? ""}
-          onChange={(e) => updateField("clientSecret", e.target.value)}
-        />
-      </FormRow>
+      <ClientSecretField application={application} updateField={updateField} />
       <FormRow block labelKey="application:Redirect URLs">
         <TagsInput value={application.redirectUris ?? []} onChange={(v) => updateField("redirectUris", v)} />
       </FormRow>

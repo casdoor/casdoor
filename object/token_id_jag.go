@@ -50,7 +50,7 @@ type IdJagTokenWrapper struct {
 // authorization server of an MCP server. The MCP server is a Casdoor server (or application), and only
 // the users granted by an "Allow" permission on its application get one.
 func GetIdJagToken(application *Application, clientSecret string, subjectToken string, subjectTokenType string, audience string, resource string, scope string, host string) (*IdJagTokenWrapper, *TokenError, error) {
-	if application.ClientSecret != clientSecret {
+	if !application.IsClientSecretValid(clientSecret) {
 		return nil, &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "client_secret is invalid",

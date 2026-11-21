@@ -46,7 +46,7 @@ func GetIdJagGrantToken(application *Application, clientSecret string, assertion
 	// a public client of a client ID metadata document (Claude) has nothing to authenticate with, its ID-JAG is
 	// bound to its client_id and redeemed only once
 	isPublicClient := util.InSlice(application.Tags, cimdTag) && getPrivateKeyJwtCredential(application) == nil
-	if !isPublicClient && application.ClientSecret != clientSecret {
+	if !isPublicClient && !application.IsClientSecretValid(clientSecret) {
 		return nil, &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "the client must authenticate to redeem an ID-JAG",

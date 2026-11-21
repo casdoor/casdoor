@@ -803,7 +803,7 @@ func checkRefreshClientSecret(application *Application, token *Token, clientSecr
 		return nil
 	}
 
-	if application.ClientSecret != clientSecret {
+	if !application.IsClientSecretValid(clientSecret) {
 		return &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "client_secret is invalid",
@@ -1015,7 +1015,7 @@ func parseAndValidateSubjectToken(subjectToken string, requestingClientId string
 
 // createGuestUserToken creates a new guest user and returns a token for them.
 func createGuestUserToken(application *Application, clientSecret string, verifier string, lang string) (*Token, *TokenError, error) {
-	if clientSecret != "" && application.ClientSecret != clientSecret {
+	if clientSecret != "" && !application.IsClientSecretValid(clientSecret) {
 		return nil, &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "client_secret is invalid",

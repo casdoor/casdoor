@@ -560,7 +560,7 @@ func (c *ApiController) RevokeToken() {
 		c.ResponseTokenError(object.InvalidClient, err.Error())
 		return
 	}
-	if application == nil || (clientSecret != "" && application.ClientSecret != clientSecret) {
+	if application == nil || (clientSecret != "" && !application.IsClientSecretValid(clientSecret)) {
 		c.ResponseTokenError(object.InvalidClient, c.T("token:Invalid application or wrong clientSecret"))
 		return
 	}
@@ -648,7 +648,7 @@ func (c *ApiController) ValidateOAuth(ignoreValidSecret bool) (ok bool, applicat
 		return
 	}
 
-	if application == nil || (application.ClientSecret != clientSecret && !ignoreValidSecret) {
+	if application == nil || (!application.IsClientSecretValid(clientSecret) && !ignoreValidSecret) {
 		c.ResponseTokenError(object.InvalidClient, c.T("token:Invalid application or wrong clientSecret"))
 		return
 	}
@@ -813,7 +813,7 @@ func (c *ApiController) getClientBasicAuth() (string, string, bool) {
 	}
 
 	application, err := object.GetApplicationByClientId(clientId)
-	if err == nil && application != nil && application.ClientSecret == clientSecret {
+	if err == nil && application != nil && application.IsClientSecretValid(clientSecret) {
 		return clientId, clientSecret, true
 	}
 	return decodedId, decodedSecret, true

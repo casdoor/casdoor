@@ -156,7 +156,7 @@ func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 		return "", fmt.Errorf("Application not found for client ID: %s", clientId)
 	}
 
-	if application.ClientSecret != clientSecret {
+	if !application.IsClientSecretValid(clientSecret) {
 		if fromBasicAuth {
 			// Same as above: the secret mismatch may be due to proxy-level Basic Auth credentials.
 			return "", nil

@@ -192,6 +192,10 @@ type Application struct {
 	FormSideHtml            string                 `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl       string                 `xorm:"varchar(200)" json:"formBackgroundUrl"`
 	FormBackgroundUrlMobile string                 `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
+	// PreviousClientSecret stays valid until PreviousClientSecretExpireTime (RFC3339), so that a rotated
+	// secret can be rolled out to the clients without a moment in which they all fail
+	PreviousClientSecret           string `xorm:"varchar(100)" json:"previousClientSecret"`
+	PreviousClientSecretExpireTime string `xorm:"varchar(100)" json:"previousClientSecretExpireTime"`
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
@@ -557,6 +561,9 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	}
 	if application.ClientSecret == "***" {
 		session = session.Omit("client_secret")
+	}
+	if application.PreviousClientSecret == "***" {
+		session = session.Omit("previous_client_secret")
 	}
 	affected, err := session.Update(application)
 	if err != nil {

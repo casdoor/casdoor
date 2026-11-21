@@ -281,6 +281,9 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	}
 
 	application.ClientSecret = "***"
+	if application.PreviousClientSecret != "" {
+		application.PreviousClientSecret = "***"
+	}
 	application.ClientCert = "***"
 	application.Provisioning = nil
 	application.Cert = "***"
