@@ -104,6 +104,10 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
+	if msg := CheckSignupEmailDomain(organization, authForm.Email, lang); msg != "" {
+		return msg
+	}
+
 	if application.IsSignupFieldVisible("Phone") {
 		if authForm.Phone == "" {
 			if application.IsSignupItemRequired("Phone") {
@@ -169,6 +173,22 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
+	return ""
+}
+
+func CheckSignupEmailDomain(organization *Organization, email string, lang string) string {
+	if organization == nil || email == "" {
+		return ""
+	}
+
+	domain := util.GetEmailDomain(email)
+	if domain == "" {
+		return ""
+	}
+
+	if util.IsEmailDomainInList(domain, organization.BlockedEmailDomains) || (organization.BlockDisposableEmails && util.IsDisposableEmailDomain(domain)) {
+		return fmt.Sprintf(i18n.Translate(lang, "check:The email domain: %s is not allowed to sign up"), domain)
+	}
 	return ""
 }
 

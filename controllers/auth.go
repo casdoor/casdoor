@@ -1285,6 +1285,11 @@ func (c *ApiController) Login() {
 
 					userInfo.Email = strings.ToLower(userInfo.Email)
 
+					if msg := object.CheckSignupEmailDomain(organization, userInfo.Email, c.GetAcceptLanguage()); msg != "" {
+						c.ResponseError(msg)
+						return
+					}
+
 					// an organization must not end up with two users sharing an email or a phone,
 					// the binding rule of the provider decides whether they are the same person
 					if userInfo.Email != "" {

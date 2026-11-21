@@ -108,6 +108,7 @@
     "Please register using the username corresponding to the invitation code": "招待コードに対応するユーザー名で登録してください",
     "Session outdated, please login again": "セッションが期限切れになりました。再度ログインしてください",
     "The account has already linked another %s account": "The account has already linked another %s account",
+    "The email domain: %s is not allowed to sign up": "メールドメイン: %s では登録できません",
     "The invitation code has already been used": "この招待コードは既に使用されています",
     "The password is not allowed: %s": "このパスワードは使用できません：%s",
     "The password must contain at least one special character": "パスワードには少なくとも1つの特殊文字が必要です",

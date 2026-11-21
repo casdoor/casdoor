@@ -108,6 +108,7 @@
     "Please register using the username corresponding to the invitation code": "Regístrese usando el nombre de usuario correspondiente al código de invitación",
     "Session outdated, please login again": "Sesión expirada, por favor vuelva a iniciar sesión",
     "The account has already linked another %s account": "The account has already linked another %s account",
+    "The email domain: %s is not allowed to sign up": "El dominio de correo electrónico: %s no tiene permitido registrarse",
     "The invitation code has already been used": "El código de invitación ya ha sido utilizado",
     "The password is not allowed: %s": "Esta contraseña no está permitida: %s",
     "The password must contain at least one special character": "La contraseña debe contener al menos un carácter especial",

@@ -122,6 +122,10 @@ func (c *ApiController) addMagicLinkUser(application *object.Application, magicL
 		return nil, err
 	}
 
+	if msg := object.CheckSignupEmailDomain(organization, magicLink.Email, c.GetAcceptLanguage()); msg != "" {
+		return nil, errors.New(msg)
+	}
+
 	// an application that asks the signup page for an invitation code is not signed up
 	// to without one, whichever way the signup is started
 	authForm := &form.AuthForm{Application: application.Name, Organization: application.Organization, Email: magicLink.Email}
