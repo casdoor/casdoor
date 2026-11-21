@@ -30,6 +30,10 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 		return NewResendEmailProvider(clientSecret)
 	case "Microsoft 365":
 		return NewMicrosoft365EmailProvider(clientId, clientSecret, host, port, sslMode, enableProxy, tokenUrl, scopes)
+	case "Microsoft Graph":
+		return NewMicrosoftGraphEmailProvider(clientId, clientSecret, tokenUrl, scopes, endpoint, enableProxy)
+	case "Gmail":
+		return NewGmailEmailProvider(clientSecret, host, port, sslMode, enableProxy)
 	default:
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, sslMode, enableProxy)
 	}

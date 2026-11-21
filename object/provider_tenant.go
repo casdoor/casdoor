@@ -58,6 +58,10 @@ func restrictTenantEmailProvider(provider *Provider, emailProvider email.EmailPr
 		p.SetHttpClient(getTenantHttpClient(provider))
 	case *email.Microsoft365EmailProvider:
 		p.SetHttpClient(getTenantHttpClient(provider))
+	case *email.MicrosoftGraphEmailProvider:
+		p.SetHttpClient(getTenantHttpClient(provider))
+	case *email.GmailEmailProvider:
+		p.SetHttpClient(getTenantHttpClient(provider))
 	}
 }
 

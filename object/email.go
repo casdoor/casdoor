@@ -20,11 +20,28 @@ import "github.com/casdoor/casdoor/email"
 
 // TestSmtpServer Test the SMTP server
 func TestSmtpServer(provider *Provider) error {
-	if err := checkTenantProviderHost(provider, provider.Host); err != nil {
-		return err
+	if provider.Type != "Microsoft Graph" {
+		if err := checkTenantProviderHost(provider, provider.Host); err != nil {
+			return err
+		}
 	}
 
 	sslMode := getSslMode(provider)
+	if provider.Type == "Microsoft Graph" {
+		graphEmailProvider := email.NewMicrosoftGraphEmailProvider(provider.ClientId, provider.ClientSecret, provider.CustomTokenUrl, provider.Scopes, provider.Endpoint, provider.EnableProxy)
+		restrictTenantEmailProvider(provider, graphEmailProvider)
+		_, err := graphEmailProvider.GetToken(provider.ClientId2)
+		return err
+	}
+	if provider.Type == "Gmail" {
+		gmailEmailProvider := email.NewGmailEmailProvider(provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.EnableProxy)
+		restrictTenantEmailProvider(provider, gmailEmailProvider)
+		sender, err := gmailEmailProvider.Dial(provider.ClientId2)
+		if err != nil {
+			return err
+		}
+		return sender.Close()
+	}
 	if provider.Type == "Microsoft 365" {
 		microsoft365EmailProvider := email.NewMicrosoft365EmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, sslMode, provider.EnableProxy, provider.CustomTokenUrl, provider.Scopes)
 		restrictTenantEmailProvider(provider, microsoft365EmailProvider)
@@ -46,7 +63,7 @@ func TestSmtpServer(provider *Provider) error {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest []string, sender string) error {
-	if provider.Type != "Resend" && provider.Type != "Custom HTTP Email" {
+	if provider.Type != "Resend" && provider.Type != "Custom HTTP Email" && provider.Type != "Microsoft Graph" {
 		if err := checkTenantProviderHost(provider, provider.Host); err != nil {
 			return err
 		}
@@ -57,7 +74,7 @@ func SendEmail(provider *Provider, title string, content string, dest []string, 
 	restrictTenantEmailProvider(provider, emailProvider)
 
 	fromAddress := provider.ClientId2
-	if fromAddress == "" && provider.Type != "Microsoft 365" {
+	if fromAddress == "" && provider.Type != "Microsoft 365" && provider.Type != "Microsoft Graph" && provider.Type != "Gmail" {
 		fromAddress = provider.ClientId
 	}
 

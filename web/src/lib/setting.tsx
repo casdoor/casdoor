@@ -433,6 +433,14 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_microsoftonline.png`,
       url: "https://learn.microsoft.com/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth",
     },
+    "Microsoft Graph": {
+      logo: `${StaticBaseUrl}/img/social_microsoftonline.png`,
+      url: "https://learn.microsoft.com/graph/api/user-sendmail",
+    },
+    "Gmail": {
+      logo: `${StaticBaseUrl}/img/social_google.png`,
+      url: "https://developers.google.com/workspace/gmail/imap/xoauth2-protocol",
+    },
   },
   Storage: {
     "Local File System": {
@@ -1659,6 +1667,8 @@ export function getProviderTypeOptions(category) {
         {id: "Custom HTTP Email", name: "Custom HTTP Email"},
         {id: "Resend", name: "Resend"},
         {id: "Microsoft 365", name: "Microsoft 365"},
+        {id: "Microsoft Graph", name: "Microsoft Graph"},
+        {id: "Gmail", name: "Gmail"},
       ]
     );
   } else if (category === "SMS") {

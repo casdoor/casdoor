@@ -160,7 +160,7 @@ function getClientIdLabel(provider: any): Label {
       ? label(i18next.t("provider:Service ID identifier"), i18next.t("provider:Service ID identifier - Tooltip"))
       : label(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
   } else if (provider.category === "Email") {
-    return provider.type === "Microsoft 365"
+    return ["Microsoft 365", "Microsoft Graph"].includes(provider.type)
       ? label(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))
       : label(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
   } else if (provider.category === "SMS") {
@@ -203,8 +203,11 @@ function getClientSecretLabel(provider: any): Label {
       ? label(i18next.t("provider:Service account JSON"), i18next.t("provider:Service account JSON - Tooltip"))
       : label(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
   } else if (provider.category === "Email") {
-    if (provider.type === "Microsoft 365") {
+    if (["Microsoft 365", "Microsoft Graph"].includes(provider.type)) {
       return label(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+    }
+    if (provider.type === "Gmail") {
+      return label(i18next.t("provider:Google JSON key"), i18next.t("provider:Google JSON key - Tooltip"));
     }
     return ["Azure ACS", "SendGrid", "Resend"].includes(provider.type)
       ? label(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"))
@@ -330,7 +333,7 @@ function getReceiverLabel(provider: any): Label | null {
 
 function hasClientIdRow(provider: any) {
   if ((provider.category === "Storage" && provider.type === "Google Cloud Storage") ||
-      (provider.category === "Email" && ["Azure ACS", "SendGrid", "Resend"].includes(provider.type)) ||
+      (provider.category === "Email" && ["Azure ACS", "SendGrid", "Resend", "Gmail"].includes(provider.type)) ||
       (provider.category === "Face ID" && provider.type === "Local UniFace") ||
       (provider.category === "Notification" && ["Line", "Telegram", "Bark", "Discord", "Slack", "Pushbullet", "Pushover", "Lark", "Microsoft Teams", "WeCom"].includes(provider.type))) {
     return false;
@@ -803,6 +806,13 @@ export default function ProviderEditPage() {
       patch.port = 587;
       patch.customTokenUrl = "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token";
       patch.scopes = "https://outlook.office365.com/.default";
+    } else if (value === "Microsoft Graph") {
+      patch.endpoint = "https://graph.microsoft.com/v1.0";
+      patch.customTokenUrl = "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token";
+      patch.scopes = "https://graph.microsoft.com/.default";
+    } else if (value === "Gmail") {
+      patch.host = "smtp.gmail.com";
+      patch.port = 587;
     } else if (value === "Custom HTTP") {
       patch.method = "GET";
       patch.title = "";
@@ -1047,17 +1057,17 @@ export default function ProviderEditPage() {
 
   const renderEmailFields = () => (
     <React.Fragment>
-      {["Custom HTTP Email", "SendGrid"].includes(provider.type) ? (
+      {["Custom HTTP Email", "SendGrid", "Microsoft Graph"].includes(provider.type) ? (
         <FormRow label={i18next.t("provider:Endpoint")} tooltip={i18next.t("provider:Region endpoint for Internet")}>
           <Input value={provider.endpoint ?? ""} onChange={(e) => updateProviderField("endpoint", e.target.value)} />
         </FormRow>
       ) : null}
-      {provider.type !== "Resend" ? (
+      {!["Resend", "Microsoft Graph"].includes(provider.type) ? (
         <FormRow label={i18next.t("general:Host")} tooltip={i18next.t("provider:Host - Tooltip")}>
           <Input value={provider.host ?? ""} onChange={(e) => updateProviderField("host", e.target.value)} />
         </FormRow>
       ) : null}
-      {!["Azure ACS", "Custom HTTP Email", "SendGrid", "Resend"].includes(provider.type) ? (
+      {!["Azure ACS", "Custom HTTP Email", "SendGrid", "Resend", "Microsoft Graph"].includes(provider.type) ? (
         <React.Fragment>
           <FormRow label={i18next.t("general:Port")} tooltip={i18next.t("provider:Port - Tooltip")}>
             <Input type="number" value={provider.port ?? 0} onChange={(e) => updateProviderField("port", e.target.value)} />
@@ -1075,7 +1085,7 @@ export default function ProviderEditPage() {
           </FormRow>
         </React.Fragment>
       ) : null}
-      {provider.type === "Microsoft 365" ? (
+      {["Microsoft 365", "Microsoft Graph"].includes(provider.type) ? (
         <React.Fragment>
           <FormRow labelKey="provider:Token URL">
             <Input value={provider.customTokenUrl ?? ""} onChange={(e) => updateProviderField("customTokenUrl", e.target.value)} />
@@ -1862,7 +1872,11 @@ export default function ProviderEditPage() {
             </FormRow>
           ) : null}
           <FormRow label={getClientSecretLabel(provider).label} tooltip={getClientSecretLabel(provider).tooltip}>
-            <Input value={provider.clientSecret ?? ""} onChange={(e) => updateProviderField("clientSecret", e.target.value)} />
+            {provider.category === "Email" && provider.type === "Gmail" ? (
+              <Textarea rows={4} value={provider.clientSecret ?? ""} onChange={(e) => updateProviderField("clientSecret", e.target.value)} />
+            ) : (
+              <Input value={provider.clientSecret ?? ""} onChange={(e) => updateProviderField("clientSecret", e.target.value)} />
+            )}
           </FormRow>
         </React.Fragment>
       ) : null}

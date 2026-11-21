@@ -2056,6 +2056,8 @@
     "From name - Tooltip": "Name of \"From\"",
     "Get phone number": "Get phone number",
     "Get phone number - Tooltip": "If sync phone number is enabled, you should enable google people api first and add scope https://www.googleapis.com/auth/user.phonenumbers.read",
+    "Google JSON key": "Google JSON key",
+    "Google JSON key - Tooltip": "The JSON key of a service account with domain-wide delegation for the https://mail.google.com/ scope, which sends as the from address of your Google Workspace, or an \"authorized_user\" JSON key (client ID, client secret and refresh token) of the mailbox itself",
     "HTTP body mapping": "HTTP body mapping",
     "HTTP body mapping - Tooltip": "HTTP body mapping",
     "HTTP body template": "HTTP body template",
