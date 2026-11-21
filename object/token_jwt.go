@@ -381,7 +381,7 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		MfaEmailEnabled:  user.MfaEmailEnabled,
 
 		Ldap:       user.Ldap,
-		Properties: user.Properties,
+		Properties: getTokenProperties(user.Properties),
 
 		Roles:       user.Roles,
 		Permissions: user.Permissions,
@@ -391,6 +391,25 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		SigninWrongTimes:    user.SigninWrongTimes,
 	}
 
+	return res
+}
+
+func isOAuthTokenProperty(key string) bool {
+	return strings.HasPrefix(key, "oauth_") && (strings.HasSuffix(key, "_accessToken") || strings.HasSuffix(key, "_refreshToken"))
+}
+
+func getTokenProperties(properties map[string]string) map[string]string {
+	if properties == nil {
+		return nil
+	}
+
+	res := make(map[string]string, len(properties))
+	for key, value := range properties {
+		if isOAuthTokenProperty(key) {
+			continue
+		}
+		res[key] = value
+	}
 	return res
 }
 
