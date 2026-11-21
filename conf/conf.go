@@ -46,6 +46,10 @@ func GetConfigString(key string) string {
 		return value
 	}
 
+	if path, ok := os.LookupEnv(key + "_FILE"); ok {
+		return readConfigFile(key, path)
+	}
+
 	res, _ := web.AppConfig.String(key)
 	if res == "" {
 		if key == "staticBaseUrl" {
@@ -57,6 +61,15 @@ func GetConfigString(key string) string {
 	}
 
 	return res
+}
+
+func readConfigFile(key string, path string) string {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		panic(fmt.Errorf("failed to read %s_FILE: %w", key, err))
+	}
+
+	return strings.TrimRight(string(content), "\r\n")
 }
 
 func GetConfigBool(key string) bool {
