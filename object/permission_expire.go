@@ -80,10 +80,9 @@ func ExpirePermissions() error {
 }
 
 // InitExpirePermissions runs the permission expiration job once at startup and then
-// hourly, so that expired permissions are revoked promptly without requiring manual
-// intervention.
+// every minute, so that a permission granted for an hour does not outlive it by much.
 func InitExpirePermissions() {
-	schedule := "0 * * * *"
+	schedule := "* * * * *"
 
 	go func() {
 		if err := ExpirePermissions(); err != nil {

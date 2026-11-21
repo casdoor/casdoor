@@ -1,10 +1,12 @@
 import * as React from "react";
 import i18next from "i18next";
+import dayjs from "dayjs";
 import {useParams} from "react-router-dom";
 import {EditionNotice, useFeatureMissing} from "@/components/common/EditionNotice";
 import {SearchableSelect} from "@/components/common/SearchableSelect";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {SimpleEditPage, type EditField} from "@/components/crud/SimpleEditPage";
 import {useAccount} from "@/hooks/use-account";
 import {
@@ -31,6 +33,14 @@ import {
 } from "@/lib/enum-labels";
 import * as Setting from "@/lib/setting";
 
+
+/** a permission can be granted for a while: it is disabled and its policies removed when it expires */
+const EXPIRE_PRESETS = [
+  {hours: 1, labelKey: "permission:1 hour"},
+  {hours: 24, labelKey: "invitation:1 day"},
+  {hours: 24 * 7, labelKey: "invitation:7 days"},
+  {hours: 24 * 30, labelKey: "invitation:30 days"},
+];
 
 export default function PermissionEditPage() {
   const {organizationName = "", permissionName = ""} = useParams();
@@ -216,7 +226,29 @@ export default function PermissionEditPage() {
     {type: "text", name: "submitter", labelKey: "permission:Submitter", disabled: () => true},
     {type: "text", name: "approver", labelKey: "permission:Approver", disabled: () => true},
     {type: "text", name: "approveTime", labelKey: "permission:Approve time", disabled: () => true},
-    {type: "text", name: "expireTime", labelKey: "general:Expire time"},
+    {
+      type: "custom",
+      name: "expireTime",
+      labelKey: "general:Expire time",
+      render: (ctx, update) => (
+        <div className="flex flex-wrap items-center gap-2">
+          <Input
+            type="datetime-local"
+            className="w-auto"
+            value={ctx.record.expireTime ? dayjs(ctx.record.expireTime).format("YYYY-MM-DDTHH:mm") : ""}
+            onChange={(e) => update("expireTime", e.target.value ? dayjs(e.target.value).format() : "")}
+          />
+          {EXPIRE_PRESETS.map(({hours, labelKey}) => (
+            <Button key={hours} type="button" variant="outline" onClick={() => update("expireTime", dayjs().add(hours, "hour").format())}>
+              {i18next.t(labelKey)}
+            </Button>
+          ))}
+          <Button type="button" variant="outline" onClick={() => update("expireTime", "")}>
+            {i18next.t("invitation:Never")}
+          </Button>
+        </div>
+      ),
+    },
     {
       type: "select",
       name: "state",
