@@ -13,6 +13,8 @@ const UI_FIELDS = [
   "favicon",
   "formBackgroundUrl",
   "formBackgroundUrlMobile",
+  "formBackgroundUrlDark",
+  "formBackgroundUrls",
   "formCss",
   "formCssMobile",
   "formOffset",

@@ -181,6 +181,25 @@ export function AuthLoading({application, preview}: {application?: any; preview?
  * the class name the antd frontend gave it — `login-panel`, `login-form`,
  * `login-logo-box` — so form CSS written against the old pages still lands.
  */
+/**
+ * The phone background wins on a phone, then the dark one on the dark palette; otherwise one of the
+ * background URLs, picked at random when there are several.
+ */
+function getBackgroundUrl(application: any, isMobile: boolean, isDark: boolean, seed: number): string | undefined {
+  if (isMobile && application?.formBackgroundUrlMobile) {
+    return application.formBackgroundUrlMobile;
+  }
+  if (isDark && application?.formBackgroundUrlDark) {
+    return application.formBackgroundUrlDark;
+  }
+
+  const urls = [application?.formBackgroundUrl, ...(application?.formBackgroundUrls ?? [])].filter((url) => !!url);
+  if (urls.length === 0) {
+    return isMobile ? application?.formBackgroundUrlMobile : application?.formBackgroundUrl;
+  }
+  return urls[Math.floor(seed * urls.length)];
+}
+
 export function AuthLayout({
   application: ownApplication,
   children,
@@ -205,6 +224,8 @@ export function AuthLayout({
   // an application can force the dark palette regardless of the visitor's own
   // preference, and the logo has to follow the palette that is actually painted
   const isDark = useIsDark();
+  // picked once per page load, so that the background stays put while the visitor is on the page
+  const backgroundSeed = React.useMemo(() => Math.random(), []);
   const isMobile = useIsMobile();
   const isPhone = useIsPhone();
   useApplicationHelmet(preview ? null : application);
@@ -232,9 +253,7 @@ export function AuthLayout({
   // the customized form styling is meant for the standalone page, an embedded
   // one keeps the host page's own look, as the antd pages did, unless the host asked for a theme
   const embedded = Setting.inIframe() && !themePreview && !showcased;
-  const backgroundUrl = embedded
-    ? undefined
-    : (isMobile ? application?.formBackgroundUrlMobile : application?.formBackgroundUrl);
+  const backgroundUrl = embedded ? undefined : getBackgroundUrl(application, isMobile, isDark, backgroundSeed);
   // formOffset: 1 left, 2 center, 3 right, 4 center with the side panel
   const offset = embedded || isMobile ? 2 : (application?.formOffset ?? 2);
   const sidePanel = offset === 4 && application?.formSideHtml;

@@ -63,6 +63,8 @@ export function applyTheme(application: any, theme: any, values: Record<string, 
     footerHtml: fill(theme.footerHtml, true),
     formBackgroundUrl: fill(theme.formBackgroundUrl, false),
     formBackgroundUrlMobile: fill(theme.formBackgroundUrlMobile, false),
+    formBackgroundUrlDark: fill(theme.formBackgroundUrlDark, false),
+    formBackgroundUrls: (theme.formBackgroundUrls ?? []).map((url: string) => fill(url, false)),
   };
 }
 

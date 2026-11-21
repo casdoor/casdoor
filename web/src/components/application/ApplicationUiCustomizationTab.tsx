@@ -555,6 +555,15 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
           onChange={(e) => updateField("formBackgroundUrlMobile", e.target.value)}
         />
       </FormRow>
+      <FormRow block labelKey="application:Background URL Dark">
+        <Input
+          value={application.formBackgroundUrlDark ?? ""}
+          onChange={(e) => updateField("formBackgroundUrlDark", e.target.value)}
+        />
+      </FormRow>
+      <FormRow block labelKey="application:More background URLs">
+        <TagsInput value={application.formBackgroundUrls ?? []} onChange={(v) => updateField("formBackgroundUrls", v)} />
+      </FormRow>
       <FormRow labelKey="application:Custom CSS" block>
         <CodeEditor
           language="css"

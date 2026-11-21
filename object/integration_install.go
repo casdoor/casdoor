@@ -196,11 +196,13 @@ type themeFields struct {
 	FormSideHtml  string     `json:"formSideHtml"`
 	FooterHtml    string     `json:"footerHtml"`
 
-	FormBackgroundUrl       string `json:"formBackgroundUrl"`
-	FormBackgroundUrlMobile string `json:"formBackgroundUrlMobile"`
+	FormBackgroundUrl       string   `json:"formBackgroundUrl"`
+	FormBackgroundUrlMobile string   `json:"formBackgroundUrlMobile"`
+	FormBackgroundUrlDark   string   `json:"formBackgroundUrlDark"`
+	FormBackgroundUrls      []string `json:"formBackgroundUrls"`
 }
 
-var themeColumns = []string{"theme_data", "form_offset", "form_css", "form_css_mobile", "form_side_html", "footer_html", "form_background_url", "form_background_url_mobile"}
+var themeColumns = []string{"theme_data", "form_offset", "form_css", "form_css_mobile", "form_side_html", "footer_html", "form_background_url", "form_background_url_mobile", "form_background_url_dark", "form_background_urls"}
 
 var (
 	marketplaceIndexMutex sync.Mutex
@@ -939,6 +941,8 @@ func installThemeIntegration(integration *Integration, item *MarketplaceIntegrat
 
 		FormBackgroundUrl:       application.FormBackgroundUrl,
 		FormBackgroundUrlMobile: application.FormBackgroundUrlMobile,
+		FormBackgroundUrlDark:   application.FormBackgroundUrlDark,
+		FormBackgroundUrls:      application.FormBackgroundUrls,
 	})
 	if err != nil {
 		return err
@@ -964,6 +968,8 @@ func setApplicationTheme(application *Application, theme *themeFields) {
 	application.FooterHtml = theme.FooterHtml
 	application.FormBackgroundUrl = theme.FormBackgroundUrl
 	application.FormBackgroundUrlMobile = theme.FormBackgroundUrlMobile
+	application.FormBackgroundUrlDark = theme.FormBackgroundUrlDark
+	application.FormBackgroundUrls = theme.FormBackgroundUrls
 }
 
 // InstallIntegration downloads an integration from the Marketplace, checks it against the index and creates

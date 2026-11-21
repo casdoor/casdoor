@@ -193,6 +193,9 @@ type Application struct {
 	FormSideHtml            string                 `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl       string                 `xorm:"varchar(200)" json:"formBackgroundUrl"`
 	FormBackgroundUrlMobile string                 `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
+	FormBackgroundUrlDark   string                 `xorm:"varchar(200)" json:"formBackgroundUrlDark"`
+	FormBackgroundUrls      []string               `xorm:"text" json:"formBackgroundUrls"`
+
 	// PreviousClientSecret stays valid until PreviousClientSecretExpireTime (RFC3339), so that a rotated
 	// secret can be rolled out to the clients without a moment in which they all fail
 	PreviousClientSecret           string `xorm:"varchar(100)" json:"previousClientSecret"`
