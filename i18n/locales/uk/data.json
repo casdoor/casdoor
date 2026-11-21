@@ -30,6 +30,7 @@
     "Invalid token": "Недійсний токен",
     "Please sign in again": "Увійдіть ще раз",
     "Requested scope exceeds original device authorization scope": "Запитана область перевищує область початкової авторизації пристрою",
+    "Signing in with a verification code or a magic link is not enabled for your account": "Вхід за кодом підтвердження або магічним посиланням для вашого облікового запису не ввімкнено",
     "State expected: %s, but got: %s": "Очікувалося стан: %s, але отримано: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий через %s, використайте інший спосіб",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий, зверніться до IT-підтримки",

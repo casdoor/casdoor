@@ -30,6 +30,7 @@
     "Invalid token": "Nieprawidłowy token",
     "Please sign in again": "Zaloguj się ponownie",
     "Requested scope exceeds original device authorization scope": "Żądany zakres przekracza zakres pierwotnej autoryzacji urządzenia",
+    "Signing in with a verification code or a magic link is not enabled for your account": "Logowanie kodem weryfikacyjnym lub magicznym linkiem nie jest włączone dla Twojego konta",
     "State expected: %s, but got: %s": "Oczekiwano stanu: %s, ale otrzymano: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Konto dla dostawcy: %s i nazwy użytkownika: %s (%s) nie istnieje i nie można się zarejestrować jako nowe konto przez %s, użyj innej metody rejestracji",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Konto dla dostawcy: %s i nazwy użytkownika: %s (%s) nie istnieje i nie można się zarejestrować jako nowe konto, skontaktuj się z pomocą IT",

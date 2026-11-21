@@ -83,6 +83,10 @@ func (c *ApiController) checkMagicLinkSignin(authForm *form.AuthForm) (*object.U
 		return nil, errors.New(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
+	if !application.IsCodeSigninAllowedForUser(user) {
+		return nil, errors.New(c.T("auth:Signing in with a verification code or a magic link is not enabled for your account"))
+	}
+
 	if !user.EmailVerified {
 		user.EmailVerified = true
 		_, err = object.UpdateUser(user.GetId(), user, []string{"email_verified"}, false)

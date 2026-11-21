@@ -30,6 +30,7 @@
     "Invalid token": "無効なトークン",
     "Please sign in again": "もう一度サインインしてください",
     "Requested scope exceeds original device authorization scope": "要求されたスコープが元のデバイス認可のスコープを超えています",
+    "Signing in with a verification code or a magic link is not enabled for your account": "お使いのアカウントでは、確認コードまたはマジックリンクでのサインインは有効になっていません",
     "State expected: %s, but got: %s": "期待される状態： %s、実際には：%s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "プロバイダーのアカウント：%s とユーザー名：%s（%s）が存在せず、新しいアカウントを %s 経由でサインアップすることはできません。他の方法でサインアップしてください",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "プロバイダー名：%sとユーザー名：%s（%s）のアカウントは存在しません。新しいアカウントとしてサインアップすることはできません。 ITサポートに連絡してください",

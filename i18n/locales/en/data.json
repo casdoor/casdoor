@@ -30,6 +30,7 @@
     "Invalid token": "Invalid token",
     "Please sign in again": "Please sign in again",
     "Requested scope exceeds original device authorization scope": "Requested scope exceeds original device authorization scope",
+    "Signing in with a verification code or a magic link is not enabled for your account": "Signing in with a verification code or a magic link is not enabled for your account",
     "State expected: %s, but got: %s": "State expected: %s, but got: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",

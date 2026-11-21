@@ -30,6 +30,7 @@
     "Invalid token": "Geçersiz token",
     "Please sign in again": "Lütfen yeniden oturum açın",
     "Requested scope exceeds original device authorization scope": "İstenen kapsam, özgün cihaz yetkilendirmesinin kapsamını aşıyor",
+    "Signing in with a verification code or a magic link is not enabled for your account": "Hesabınız için doğrulama kodu veya sihirli bağlantı ile giriş etkin değil",
     "State expected: %s, but got: %s": "Beklenen durum: %s, fakat alınan: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Provider: %s ve kullanıcı adı: %s (%s) için hesap mevcut değil ve %s ile yeni hesap açılmasına izin verilmiyor, lütfen başka yöntemle kaydolun",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Provider: %s ve kullanıcı adı: %s (%s) için hesap mevcut değil ve yeni hesap açılmasına izin verilmiyor, lütfen BT destek ile iletişime geçin",

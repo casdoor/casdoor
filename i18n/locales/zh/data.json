@@ -30,6 +30,7 @@
     "Invalid token": "无效token",
     "Please sign in again": "请重新登录",
     "Requested scope exceeds original device authorization scope": "请求的 scope 超出了原设备授权的范围",
+    "Signing in with a verification code or a magic link is not enabled for your account": "您的账号未开启验证码或魔法链接登录",
     "State expected: %s, but got: %s": "期望状态为: %s, 实际状态为: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",

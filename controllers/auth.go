@@ -888,6 +888,11 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			if !application.IsCodeSigninAllowedForUser(user) {
+				c.ResponseError(c.T("auth:Signing in with a verification code or a magic link is not enabled for your account"))
+				return
+			}
+
 			verificationCodeType := object.GetVerifyType(authForm.Username)
 			if verificationCodeType == object.VerifyTypeEmail && !application.IsCodeSigninViaEmailEnabled() {
 				c.ResponseError(c.T("auth:The login method: login with email is not enabled for the application"))

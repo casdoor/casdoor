@@ -62,6 +62,8 @@
     "Client cert - Tooltip": "Client certificate used for mutual TLS authentication between the client and server",
     "Code resend timeout": "Code resend timeout",
     "Code resend timeout - Tooltip": "Time period (in seconds) that users must wait before requesting another verification code. Set to 0 to use the global default (60 seconds)",
+    "Code signin groups": "Code signin groups",
+    "Code signin groups - Tooltip": "Only the users in these groups can sign in with a verification code or a magic link, the others sign in with their password or another method. Leave it empty to let every user do it",
     "Complete your account": "Complete your account",
     "Confirm it is you": "Confirm it is you",
     "Connected to the system": "Connected to the system",

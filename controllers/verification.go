@@ -387,6 +387,11 @@ func (c *ApiController) SendVerificationCode() {
 				return
 			}
 
+			if vform.Method == LoginVerification && !application.IsCodeSigninAllowedForUser(user) {
+				c.ResponseError(c.T("auth:Signing in with a verification code or a magic link is not enabled for your account"))
+				return
+			}
+
 			if vform.Method == ForgetVerification {
 				if err = object.CheckLdapPasswordForget(user); err != nil {
 					c.ResponseError(err.Error())
@@ -417,6 +422,9 @@ func (c *ApiController) SendVerificationCode() {
 					c.ResponseError(err.Error())
 					return
 				}
+			} else if !application.IsCodeSigninAllowedForUser(user) {
+				c.ResponseError(c.T("auth:Signing in with a verification code or a magic link is not enabled for your account"))
+				return
 			} else if user.IsDeleted || user.IsForbidden {
 				c.ResponseError(object.GetUserForbiddenMessage(user, c.GetAcceptLanguage()))
 				return
@@ -476,6 +484,11 @@ func (c *ApiController) SendVerificationCode() {
 				return
 			} else if user == nil && (vform.Method == ForgetVerification || !application.IsVerificationCodeSignupEnabled(object.VerifyTypePhone) && !application.IsCodeSigninSignupEnabled(object.VerifyTypePhone)) {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
+				return
+			}
+
+			if vform.Method == LoginVerification && !application.IsCodeSigninAllowedForUser(user) {
+				c.ResponseError(c.T("auth:Signing in with a verification code or a magic link is not enabled for your account"))
 				return
 			}
 

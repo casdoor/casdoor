@@ -1,4 +1,4 @@
-
+import * as React from "react";
 import i18next from "i18next";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -6,6 +6,8 @@ import {Switch} from "@/components/ui/switch";
 import {CodeEditor} from "@/components/common/CodeEditor";
 import {SelectField} from "@/components/common/SelectField";
 import {TagsInput} from "@/components/common/TagsInput";
+import {MultiSelect} from "@/components/common/MultiSelect";
+import * as GroupBackend from "@/backend/GroupBackend";
 import {ThemeEditor} from "@/components/common/ThemeEditor";
 import {EditableTable} from "@/components/crud/EditableTable";
 import {ApplicationPromptPreview, ApplicationSignupSigninPreview} from "@/components/application/ApplicationPreview";
@@ -212,6 +214,30 @@ function getSigninItemRuleOptions(name: string) {
 }
 
 /** The "UI Customization" tab: the blocks the sign-in and sign-up pages are built from. */
+/** the groups that may sign in with a verification code or a magic link, none means everyone */
+function CodeSigninGroupsSelect({application, updateField}: ApplicationTabProps) {
+  const [groups, setGroups] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    if (!application.organization) {
+      return;
+    }
+    GroupBackend.getGroups(application.organization).then((res: any) => {
+      if (res.status === "ok") {
+        setGroups(res.data ?? []);
+      }
+    });
+  }, [application.organization]);
+
+  return (
+    <MultiSelect
+      value={application.codeSigninGroups ?? []}
+      onChange={(v) => updateField("codeSigninGroups", v)}
+      options={groups.map((group) => ({value: `${group.owner}/${group.name}`, label: group.displayName || group.name}))}
+      placeholder={i18next.t("general:All")}
+    />
+  );
+}
+
 export function ApplicationUiCustomizationTab({application, updateField}: ApplicationTabProps) {
   const {account} = useAccount();
 
@@ -277,6 +303,11 @@ export function ApplicationUiCustomizationTab({application, updateField}: Applic
           ]}
         />
       </FormRow>
+      {(application.signinMethods ?? []).some((item: any) => ["Verification code", "Magic link"].includes(item.name)) ? (
+        <FormRow labelKey="application:Code signin groups">
+          <CodeSigninGroupsSelect application={application} updateField={updateField} />
+        </FormRow>
+      ) : null}
       <FormRow labelKey="provider:Signup HTML" block>
         <CodeEditor
           language="html"

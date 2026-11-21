@@ -125,6 +125,7 @@ type Application struct {
 	EnableSigninSession          bool            `json:"enableSigninSession"`
 	EnableAutoSignin             bool            `json:"enableAutoSignin"`
 	EnableCodeSignin             bool            `json:"enableCodeSignin"`
+	CodeSigninGroups             []string        `xorm:"varchar(1000)" json:"codeSigninGroups"`
 	EnableExclusiveSignin        bool            `json:"enableExclusiveSignin"`
 	MaxSessions                  int             `json:"maxSessions"`
 	InactiveTimeoutMinutes       int             `json:"inactiveTimeoutMinutes"`
