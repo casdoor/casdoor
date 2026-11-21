@@ -1731,6 +1731,17 @@ func (c *ApiController) GetSamlLogin() {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	// the redirect binding carries the login_hint the application gave Casdoor on to the IdP, which
+	// Microsoft Entra ID and others use to pick or prefill the account
+	if loginHint := c.Ctx.Input.Query("loginHint"); loginHint != "" && method == "GET" {
+		if parsed, err := url.Parse(authURL); err == nil {
+			query := parsed.Query()
+			query.Set("login_hint", loginHint)
+			parsed.RawQuery = query.Encode()
+			authURL = parsed.String()
+		}
+	}
 	c.SetSession(SamlRequestIdSessionKey, requestId)
 	c.ResponseOk(authURL, method)
 }

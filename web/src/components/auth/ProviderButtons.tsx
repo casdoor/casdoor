@@ -36,7 +36,7 @@ function goToSamlUrl(provider: any, search: string) {
   const redirectUri = `${Setting.getOriginUrl()}/callback/saml`;
 
   const relayState = `${clientId}&${state}&${provider.name}&${realRedirectUri}&${redirectUri}`;
-  AuthBackend.getSamlLogin(`${provider.owner}/${provider.name}`, btoa(relayState)).then((res: any) => {
+  AuthBackend.getSamlLogin(`${provider.owner}/${provider.name}`, btoa(relayState), params.get("login_hint") ?? "").then((res: any) => {
     if (res.status !== "ok") {
       Setting.showMessage("error", res.msg);
       return;

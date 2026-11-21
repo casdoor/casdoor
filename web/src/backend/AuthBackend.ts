@@ -207,8 +207,8 @@ export function unlink(values) {
   }).then(res => res.json());
 }
 
-export function getSamlLogin(providerId, relayState) {
-  return fetch(`${authConfig.serverUrl}/api/get-saml-login?id=${providerId}&relayState=${relayState}`, {
+export function getSamlLogin(providerId, relayState, loginHint = "") {
+  return fetch(`${authConfig.serverUrl}/api/get-saml-login?id=${providerId}&relayState=${relayState}&loginHint=${encodeURIComponent(loginHint)}`, {
     method: "GET",
     credentials: "include",
     headers: {

@@ -425,7 +425,43 @@ export function getWechatQrConnectUrl(application: any, provider: any) {
   return url.toString();
 }
 
+/** the providers whose authorize endpoint takes an OIDC login_hint, GitHub calls it "login" */
+const LOGIN_HINT_PARAMS: Record<string, string> = {
+  "Google": "login_hint",
+  "AzureAD": "login_hint",
+  "AzureADB2C": "login_hint",
+  "MicrosoftOnline": "login_hint",
+  "Okta": "login_hint",
+  "Auth0": "login_hint",
+  "ADFS": "login_hint",
+  "Casdoor": "login_hint",
+  "Custom": "login_hint",
+  "GitHub": "login",
+};
+
+/**
+ * The login_hint that the application sent to Casdoor's own authorize page, so that the upstream
+ * identity provider can pick or prefill the same account
+ */
+export function getLoginHint(): string {
+  return new URLSearchParams(window.location.search).get("login_hint") ?? "";
+}
+
 export function getAuthUrl(application: any, provider: any, method: string, code?: string) {
+  const url = buildAuthUrl(application, provider, method, code);
+  const loginHint = getLoginHint();
+  const param = LOGIN_HINT_PARAMS[Setting.isCustomOAuthType(provider?.type) ? "Custom" : provider?.type];
+  if (!url || !loginHint || !param || method === "link" || !/^https?:/.test(url) || url.includes(`${param}=`)) {
+    return url;
+  }
+
+  const hashIndex = url.indexOf("#");
+  const base = hashIndex === -1 ? url : url.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? "" : url.slice(hashIndex);
+  return `${base}${base.includes("?") ? "&" : "?"}${param}=${encodeURIComponent(loginHint)}${hash}`;
+}
+
+function buildAuthUrl(application: any, provider: any, method: string, code?: string) {
   if (application === null || provider === null) {
     return "";
   }
