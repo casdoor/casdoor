@@ -18,6 +18,12 @@ export function ApplicationAuthenticationTab({application, updateField}: Applica
           onChange={(e) => updateField("cookieExpireInHours", Setting.myParseInt(e.target.value))}
         />
       </FormRow>
+      <FormRow labelKey="application:Sliding session">
+        <Switch
+          checked={!!application.enableSlidingSession}
+          onCheckedChange={(v) => updateField("enableSlidingSession", v)}
+        />
+      </FormRow>
       <FormRow labelKey="ldap:Default group">
         <Input value={application.defaultGroup ?? ""} onChange={(e) => updateField("defaultGroup", e.target.value)} />
       </FormRow>

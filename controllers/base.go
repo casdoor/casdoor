@@ -45,6 +45,9 @@ type RootController struct {
 
 type SessionData struct {
 	ExpireTime int64
+	// SlidingHours is set for an application with a sliding session: the session is extended by
+	// that many hours whenever it is used, instead of ending a fixed time after the sign-in
+	SlidingHours int64 `json:",omitempty"`
 }
 
 var signinPendingApis = map[string]bool{
@@ -401,15 +404,19 @@ func (c *ApiController) GetMfaUserSession() string {
 	return userId.(string)
 }
 
-func (c *ApiController) setExpireForSession(cookieExpireInHours int64) {
+func (c *ApiController) setExpireForSession(cookieExpireInHours int64, sliding bool) {
 	timestamp := time.Now().Unix()
 	if cookieExpireInHours == 0 {
 		cookieExpireInHours = 720
 	}
 	timestamp += 3600 * cookieExpireInHours
-	c.SetSessionData(&SessionData{
+	sessionData := &SessionData{
 		ExpireTime: timestamp,
-	})
+	}
+	if sliding {
+		sessionData.SlidingHours = cookieExpireInHours
+	}
+	c.SetSessionData(sessionData)
 }
 
 func WrapActionResponse(affected bool, e ...error) *Response {

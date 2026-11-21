@@ -283,6 +283,8 @@
     "Signup items - Tooltip": "Items for users to fill in when registering new accounts",
     "Single Choice": "Single Choice",
     "Skipped the existing applications (%s)": "Skipped the existing applications (%s)",
+    "Sliding session": "Sliding session",
+    "Sliding session - Tooltip": "Extend the session by the cookie expiration time whenever the user comes back, so that a user who keeps using the application is not signed out. Without it, the session ends that long after the sign-in",
     "Small icon": "Small icon",
     "Static Value": "Static Value",
     "Step-up MFA": "Step-up MFA",

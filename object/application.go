@@ -172,6 +172,7 @@ type Application struct {
 	RefreshExpireInHours    float64                `json:"refreshExpireInHours"`
 	DisableRefreshRotation  bool                   `json:"disableRefreshRotation"`
 	CookieExpireInHours     int64                  `json:"cookieExpireInHours"`
+	EnableSlidingSession    bool                   `json:"enableSlidingSession"`
 	EnableStepUpMfa         bool                   `json:"enableStepUpMfa"`
 	StepUpMfaTypes          []string               `xorm:"varchar(200)" json:"stepUpMfaTypes"`
 	StepUpExpireInSeconds   int                    `json:"stepUpExpireInSeconds"`

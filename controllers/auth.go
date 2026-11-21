@@ -385,7 +385,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		if !form.AutoSignin && expireInHours > 24 {
 			expireInHours = 24
 		}
-		c.setExpireForSession(expireInHours)
+		c.setExpireForSession(expireInHours, application.EnableSlidingSession)
 	}
 
 	if resp.Status == "ok" {

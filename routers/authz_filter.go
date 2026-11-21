@@ -193,6 +193,10 @@ func getUsername(ctx *context.Context) (username string) {
 		return ""
 	}
 
+	if username != "" && sessionData.SlidingHours > 0 {
+		extendSlidingSession(ctx, sessionData)
+	}
+
 	return
 }
 
