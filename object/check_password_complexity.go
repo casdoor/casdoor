@@ -16,8 +16,10 @@ package object
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/casdoor/casdoor/i18n"
+	"github.com/casdoor/casdoor/util"
 )
 
 type ValidatorFunc func(password string, lang string) string
@@ -87,14 +89,16 @@ func checkPasswordComplexity(password string, options []string, lang string) str
 		"NoRepeat":    isValidOption_NoRepeat,
 	}
 
+	// every unmet option is reported at once, so that a user fixes the password in one go
+	errorMsgs := []string{}
 	for _, option := range options {
 		checkerFunc, ok := checkers[option]
 		if ok {
 			errorMsg := checkerFunc(password, lang)
-			if errorMsg != "" {
-				return errorMsg
+			if errorMsg != "" && !util.InSlice(errorMsgs, errorMsg) {
+				errorMsgs = append(errorMsgs, errorMsg)
 			}
 		}
 	}
-	return ""
+	return strings.Join(errorMsgs, "; ")
 }
