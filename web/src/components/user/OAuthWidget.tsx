@@ -28,6 +28,7 @@ interface WidgetProps {
   application: any;
   providerItem: any;
   account: any;
+  selfTarget?: {owner: string; name: string};
   onUnlinked: () => void;
 }
 
@@ -57,7 +58,7 @@ function SamlWidget({user, providerItem}: {user: any; providerItem: any}) {
  * Link/Unlink buttons. Ported from web/src/common/OAuthWidget.js — the unlink
  * payload and the authorize URL are unchanged.
  */
-function OAuthRow({user, application, providerItem, account, onUnlinked}: WidgetProps) {
+function OAuthRow({user, application, providerItem, account, selfTarget, onUnlinked}: WidgetProps) {
   const provider = providerItem.provider;
   const [wechatOpen, setWechatOpen] = React.useState(false);
 
@@ -83,7 +84,7 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
     name = displayName ?? username ?? id ?? email ?? linkedValue;
   }
 
-  const isSelf = Setting.isSelfUser(account, user);
+  const isSelf = !!selfTarget || Setting.isSelfUser(account, user);
 
   const link = () => {
     if (needsWeChatQrDialog(provider)) {
@@ -94,7 +95,7 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   };
 
   const unlink = () => {
-    AuthBackend.unlink({providerType: provider.type, providerName: provider.name || "", user}).then((res: any) => {
+    AuthBackend.unlink({providerType: provider.type, providerName: provider.name || "", user: selfTarget ?? user}).then((res: any) => {
       if (res.status === "ok") {
         Setting.showMessage("success", "Unlinked successfully");
         onUnlinked();
@@ -155,7 +156,7 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
 }
 
 /** The whole "3rd-party logins" block of the user page. */
-export function ThirdPartyLogins({user, application, account, onUnlinked, filter}: Omit<WidgetProps, "providerItem"> & {
+export function ThirdPartyLogins({user, application, account, selfTarget, onUnlinked, filter}: Omit<WidgetProps, "providerItem"> & {
   /** the prompt page only lists the providers the application asks to be bound */
   filter?: (providerItem: any) => boolean;
 }) {
@@ -175,6 +176,7 @@ export function ThirdPartyLogins({user, application, account, onUnlinked, filter
             application={application}
             providerItem={providerItem}
             account={account}
+            selfTarget={selfTarget}
             onUnlinked={onUnlinked}
           />
         ) : (
