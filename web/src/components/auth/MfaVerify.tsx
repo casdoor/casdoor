@@ -192,6 +192,10 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
             value={passcode}
             placeholder={placeholder}
             onChange={(e) => setPasscode(e.target.value.replace(/\D/g, "").slice(0, VerificationCodeLength))}
+            onPaste={(e) => {
+              e.preventDefault();
+              setPasscode(e.clipboardData.getData("text").replace(/\D/g, "").slice(0, VerificationCodeLength));
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && passcode.length === VerificationCodeLength) {
                 verifyComplete();

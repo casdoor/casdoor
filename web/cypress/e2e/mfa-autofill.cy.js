@@ -41,4 +41,14 @@ describe("TOTP provider callback", {retries: 0}, () => {
     cy.contains("Sign-in was interrupted").should("be.visible");
     cy.get("@providerCallback.all").should("have.length", 1);
   });
+
+  it("normalizes formatted clipboard codes before applying the six-digit limit", () => {
+    cy.window().then((win) => {
+      const clipboardData = new win.DataTransfer();
+      clipboardData.setData("text", "012 345");
+      cy.get("#totp-code").trigger("paste", {clipboardData});
+    });
+    cy.get("#totp-code").should("have.value", "012345").type("{enter}");
+    cy.wait("@mfaVerify").its("request.body.passcode").should("equal", "012345");
+  });
 });
