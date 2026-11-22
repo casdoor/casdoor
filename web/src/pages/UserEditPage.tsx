@@ -100,7 +100,14 @@ export default function UserEditPage({self}: {self?: boolean} = {}) {
   const groupList = useGroupList(organizationName);
 
   const {record: user, updateField, updateFields, loading, denied, mode, setMode, reload} = useEditRecord<any>({
-    fetch: () => UserBackend.getUser(organizationName, userName),
+    // the account items can hide the organization and name from the user, but the page
+    // still needs them to recognize the signed-in user and to save to the right user
+    fetch: () => UserBackend.getUser(organizationName, userName).then((res: any) => {
+      if (res.status === "ok" && res.data) {
+        res.data = {...res.data, owner: res.data.owner || organizationName, name: res.data.name || userName};
+      }
+      return res;
+    }),
     deps: [organizationName, userName],
   });
   const affiliation = useAffiliation(application, user);
