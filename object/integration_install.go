@@ -28,6 +28,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/action"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/edition"
@@ -896,29 +897,28 @@ func getActionModule(owner string, name string) ([]byte, []string, error) {
 	return module, hosts, nil
 }
 
-func installThemeIntegration(integration *Integration, item *MarketplaceIntegration, bundle *IntegrationBundle, variables map[string]string, req *IntegrationInstallRequest, isGlobalAdmin bool, lang string) error {
+// installThemeIntegration returns the themes the application already had, which the new theme replaces:
+// their records are deleted once the new one is saved, and the new one keeps the look from before them.
+func installThemeIntegration(integration *Integration, item *MarketplaceIntegration, bundle *IntegrationBundle, variables map[string]string, req *IntegrationInstallRequest, isGlobalAdmin bool, lang string) ([]*Integration, error) {
 	if req.Application == "" {
-		return fmt.Errorf("choose the application to apply the theme to")
+		return nil, fmt.Errorf("choose the application to apply the theme to")
 	}
 
 	application, err := getIntegrationApplication(integration.Owner, req.Application, isGlobalAdmin)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	installed := []*Integration{}
-	err = ormer.Engine.Find(&installed, &Integration{Type: "theme", Application: application.Name})
+	err = ormer.Engine.Asc("created_time").Find(&installed, &Integration{Type: "theme", Application: application.Name})
 	if err != nil {
-		return err
-	}
-	if len(installed) > 0 {
-		return fmt.Errorf("the application: %s already has the theme: %s, uninstall it first", application.Name, installed[0].Name)
+		return nil, err
 	}
 
 	theme := themeFields{}
 	err = renderIntegrationFile(bundle, "theme.json", variables, &theme)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// refuse the theme by its own name, before the application's save refuses it by field
@@ -927,36 +927,46 @@ func installThemeIntegration(integration *Integration, item *MarketplaceIntegrat
 		isSafe := isCssSafeFor(theme.FormCss, prefixes) && isCssSafeFor(theme.FormCssMobile, prefixes) &&
 			isHtmlSafeFor(theme.FormSideHtml, prefixes) && isHtmlSafeFor(theme.FooterHtml, prefixes)
 		if !isSafe {
-			return fmt.Errorf("the theme: %s uses HTML or loads files that this Casdoor only lets a global admin set", item.Id)
+			return nil, fmt.Errorf("the theme: %s uses HTML or loads files that this Casdoor only lets a global admin set", item.Id)
 		}
 	}
 
-	backup, err := json.Marshal(themeFields{
-		ThemeData:     application.ThemeData,
-		FormOffset:    application.FormOffset,
-		FormCss:       application.FormCss,
-		FormCssMobile: application.FormCssMobile,
-		FormSideHtml:  application.FormSideHtml,
-		FooterHtml:    application.FooterHtml,
+	backup := ""
+	for _, old := range installed {
+		if old.Backup != "" {
+			backup = old.Backup
+			break
+		}
+	}
+	if backup == "" {
+		data, err := json.Marshal(themeFields{
+			ThemeData:     application.ThemeData,
+			FormOffset:    application.FormOffset,
+			FormCss:       application.FormCss,
+			FormCssMobile: application.FormCssMobile,
+			FormSideHtml:  application.FormSideHtml,
+			FooterHtml:    application.FooterHtml,
 
-		FormBackgroundUrl:       application.FormBackgroundUrl,
-		FormBackgroundUrlMobile: application.FormBackgroundUrlMobile,
-		FormBackgroundUrlDark:   application.FormBackgroundUrlDark,
-		FormBackgroundUrls:      application.FormBackgroundUrls,
-	})
-	if err != nil {
-		return err
+			FormBackgroundUrl:       application.FormBackgroundUrl,
+			FormBackgroundUrlMobile: application.FormBackgroundUrlMobile,
+			FormBackgroundUrlDark:   application.FormBackgroundUrlDark,
+			FormBackgroundUrls:      application.FormBackgroundUrls,
+		})
+		if err != nil {
+			return nil, err
+		}
+		backup = string(data)
 	}
 
 	setApplicationTheme(application, &theme)
 	_, err = UpdateApplication(application.GetId(), application, isGlobalAdmin, lang, themeColumns)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	integration.Application = application.Name
-	integration.Backup = string(backup)
-	return nil
+	integration.Backup = backup
+	return installed, nil
 }
 
 func setApplicationTheme(application *Application, theme *themeFields) {
@@ -1069,13 +1079,14 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 		integration.LicenseId = bundle.License.Id
 	}
 
+	var replaced []*Integration
 	switch item.Type {
 	case "app":
 		err = installAppIntegration(integration, bundle, variables, lang)
 	case "provider":
 		err = installProviderIntegration(integration, bundle, variables, req, isGlobalAdmin, lang)
 	case "theme":
-		err = installThemeIntegration(integration, item, bundle, variables, req, isGlobalAdmin, lang)
+		replaced, err = installThemeIntegration(integration, item, bundle, variables, req, isGlobalAdmin, lang)
 	case "action":
 		err = installActionIntegration(integration, bundle, req)
 	default:
@@ -1092,7 +1103,24 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 	if checkedVersion != "" {
 		ReadMarketplaceVersionMetaStep(item.Id, checkedVersion, item.Edition != "", MarketplaceStepInstalled, "")
 	}
+
+	for _, old := range replaced {
+		affected, err := deleteIntegration(old)
+		if err != nil {
+			logs.Warn("failed to remove the replaced theme %s: %v", old.GetId(), err)
+		} else if affected {
+			readUninstalledStep(old)
+		}
+	}
 	return integration, nil
+}
+
+// readUninstalledStep tells the Marketplace server only about what it checked when installing: not files or a catalog of one's own
+func readUninstalledStep(integration *Integration) {
+	isFromMarketplace := integration.Source == "" && (integration.LicenseId != "" || conf.GetConfigString("marketplaceUrl") == "")
+	if isFromMarketplace {
+		ReadMarketplaceVersionMetaStep(integration.IntegrationId, integration.Version, integration.LicenseId != "", marketplaceStepUninstalled, "")
+	}
 }
 
 // UninstallIntegration deletes what the integration created, or restores the theme it replaced.
@@ -1172,10 +1200,8 @@ func UninstallIntegration(integration *Integration, isGlobalAdmin bool, lang str
 	if err != nil {
 		return false, err
 	}
-	// the Marketplace server is told only about what it checked when installing: not files or a catalog of one's own
-	isFromMarketplace := integration.Source == "" && (integration.LicenseId != "" || conf.GetConfigString("marketplaceUrl") == "")
-	if affected && isFromMarketplace {
-		ReadMarketplaceVersionMetaStep(integration.IntegrationId, integration.Version, integration.LicenseId != "", marketplaceStepUninstalled, "")
+	if affected {
+		readUninstalledStep(integration)
 	}
 	return affected, nil
 }

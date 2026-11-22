@@ -368,6 +368,7 @@ function InstallDialog({item, organizationName, installed, onClose}: {
     return [variable.name, value && valid ? value : variable.example ?? ""];
   }));
   const theme = bundle?.files?.["theme.json"];
+  const replacedTheme = isTheme && application ? installed.find((integration) => integration.type === "theme" && integration.application === application) : null;
   const applicationOptions = applications.map((app) => ({id: app.name, name: app.displayName ? `${app.displayName} (${app.name})` : app.name}));
 
   return (
@@ -491,6 +492,11 @@ function InstallDialog({item, organizationName, installed, onClose}: {
               {item.type === "theme" ? (
                 <FieldRow label={i18next.t("general:Application")} required help={i18next.t("integration:Theme application help")}>
                   <SelectField value={application} onChange={setApplication} options={applicationOptions} />
+                  {replacedTheme ? (
+                    <p className="text-xs text-amber-600 dark:text-amber-500">
+                      {i18next.t("integration:Theme replaces").replace("{name}", replacedTheme.displayName || replacedTheme.name)}
+                    </p>
+                  ) : null}
                 </FieldRow>
               ) : null}
             </div>
