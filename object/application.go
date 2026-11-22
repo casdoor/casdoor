@@ -225,6 +225,8 @@ type Application struct {
 
 	RegistrationAccessToken string `xorm:"varchar(100)" json:"registrationAccessToken"`
 	TokenEndpointAuthMethod string `xorm:"varchar(100)" json:"tokenEndpointAuthMethod"`
+
+	RequirePushedAuthorizationRequests bool `json:"requirePushedAuthorizationRequests"`
 }
 
 // IsMfaSkippedForSigninMethod tells whether a sign-in by the method goes without the MFA

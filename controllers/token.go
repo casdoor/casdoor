@@ -337,6 +337,20 @@ func (c *ApiController) GetOAuthToken() {
 	dpopProof := c.Ctx.Request.Header.Get("DPoP")
 
 	host := c.Ctx.Request.Host
+
+	if grantType == object.CibaGrantType {
+		token, err := object.GetCibaToken(clientId, clientSecret, clientAssertion, clientAssertionType, c.Ctx.Input.Query("auth_req_id"), host)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = token
+		c.SetTokenErrorHttpStatus()
+		c.ServeJSON()
+		return
+	}
+
 	var pendingDeviceCode string
 	var pendingDeviceAuthCache object.DeviceAuthCache
 

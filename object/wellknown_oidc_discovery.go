@@ -59,6 +59,11 @@ type OidcDiscovery struct {
 	AuthorizationResponseIssParameterSupported bool     `json:"authorization_response_iss_parameter_supported"`   // RFC 9207
 	ClientIdMetadataDocumentSupported          bool     `json:"client_id_metadata_document_supported"`            // draft-ietf-oauth-client-id-metadata-document
 	AuthorizationGrantProfilesSupported        []string `json:"authorization_grant_profiles_supported,omitempty"` // draft-ietf-oauth-identity-assertion-authz-grant
+	PushedAuthorizationRequestEndpoint         string   `json:"pushed_authorization_request_endpoint"`            // RFC 9126
+	RequirePushedAuthorizationRequests         bool     `json:"require_pushed_authorization_requests"`            // RFC 9126
+	BackchannelAuthenticationEndpoint          string   `json:"backchannel_authentication_endpoint"`              // OpenID Connect CIBA Core 1.0
+	BackchannelTokenDeliveryModesSupported     []string `json:"backchannel_token_delivery_modes_supported"`       // OpenID Connect CIBA Core 1.0
+	BackchannelUserCodeParameterSupported      bool     `json:"backchannel_user_code_parameter_supported"`        // OpenID Connect CIBA Core 1.0
 }
 
 var (
@@ -192,6 +197,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	registrationEndpoint := fmt.Sprintf("%s/api/oauth/register", originBackend)
 	authorizationEndpoint := fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
 	cimdOrg := ""
+	requirePar := false
 
 	// Merge application-specific custom scopes if application is provided
 	if applicationName != "" {
@@ -214,6 +220,8 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 			if err == nil {
 				issuer = applicationIssuer
 			}
+
+			requirePar = application.RequirePushedAuthorizationRequests
 		}
 	}
 
@@ -235,7 +243,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		RevocationEndpoint:                         fmt.Sprintf("%s/api/login/oauth/revoke", originBackend),
 		ResponseTypesSupported:                     []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token"},
 		ResponseModesSupported:                     []string{"query", "fragment", "form_post"},
-		GrantTypesSupported:                        []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:jwt-bearer", "urn:ietf:params:oauth:grant-type:token-exchange", VerificationCodeGrantType, MobileOneClickGrantType},
+		GrantTypesSupported:                        []string{"authorization_code", "implicit", "password", "client_credentials", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:jwt-bearer", "urn:ietf:params:oauth:grant-type:token-exchange", CibaGrantType, VerificationCodeGrantType, MobileOneClickGrantType},
 		SubjectTypesSupported:                      []string{"public"},
 		IdTokenSigningAlgValuesSupported:           []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
 		ScopesSupported:                            scopes,
@@ -245,6 +253,10 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 		RequestUriParameterSupported:               false,
 		RequestObjectSigningAlgValuesSupported:     RequestObjectSigningAlgs,
 		EndSessionEndpoint:                         fmt.Sprintf("%s/api/logout", originBackend),
+		PushedAuthorizationRequestEndpoint:         fmt.Sprintf("%s/api/login/oauth/par", originBackend),
+		RequirePushedAuthorizationRequests:         requirePar,
+		BackchannelAuthenticationEndpoint:          fmt.Sprintf("%s/api/login/oauth/bc-authorize", originBackend),
+		BackchannelTokenDeliveryModesSupported:     []string{"poll"},
 		BackchannelLogoutSupported:                 true,
 		BackchannelLogoutSessionSupported:          true,
 		DPoPSigningAlgValuesSupported:              DPoPSigningAlgs,

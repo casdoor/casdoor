@@ -40,6 +40,7 @@ const (
 	UnsupportedGrantType = "unsupported_grant_type"
 	InvalidScope         = "invalid_scope"
 	InvalidTarget        = "invalid_target"
+	AccessDenied         = "access_denied"
 	EndpointError        = "endpoint_error"
 	DeviceAuthExpiresIn  = 120
 	DeviceAuthInterval   = 5
@@ -510,6 +511,13 @@ func GetOAuthCode(userId string, clientId string, provider string, signinMethod 
 	err = ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
+	}
+
+	if application.RequirePushedAuthorizationRequests && !consumeParAuthorization(clientId, redirectUri, state, nonce, challenge) {
+		return &Code{
+			Message: "error: this application only accepts authorization requests pushed to the PAR endpoint (RFC 9126)",
+			Code:    "",
+		}, nil
 	}
 
 	// the code is generated first: an ID token returned together with it carries its c_hash

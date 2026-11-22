@@ -152,6 +152,7 @@ const TelegramLogin = React.lazy(() => import("@/pages/auth/TelegramLogin"));
 const CasLogout = React.lazy(() => import("@/pages/auth/CasLogout"));
 const CaptchaPage = React.lazy(() => import("@/pages/auth/CaptchaPage"));
 const PushConfirmPage = React.lazy(() => import("@/ee/pages/auth/PushConfirmPage"));
+const CibaConfirmPage = React.lazy(() => import("@/pages/auth/CibaConfirmPage"));
 const OidcDiscoveryPage = React.lazy(() => import("@/pages/auth/OidcDiscoveryPage"));
 
 Setting.initServerUrl();
@@ -256,6 +257,7 @@ export default function App() {
         <Route path="/telegram-login" element={<TelegramLogin />} />
         <Route path="/captcha" element={<CaptchaPage />} />
         <Route path="/mfa/push-confirm/:id" element={<PushConfirmPage />} />
+        <Route path="/ciba/:owner/:id" element={<CibaConfirmPage />} />
         <Route path="/.well-known/openid-configuration" element={<OidcDiscoveryPage />} />
         <Route path="/consent/:applicationName" element={<ConsentPage />} />
         <Route path="/prompt" element={<PromptPage />} />

@@ -124,6 +124,7 @@ const GRANT_TYPES = [
   {value: "urn:ietf:params:oauth:grant-type:device_code", label: "Device Code"},
   {value: "urn:ietf:params:oauth:grant-type:jwt-bearer", label: "JWT Bearer"},
   {value: "urn:ietf:params:oauth:grant-type:token-exchange", label: "Token Exchange"},
+  {value: "urn:openid:params:grant-type:ciba", label: "CIBA"},
   {value: "urn:casdoor:params:oauth:grant-type:verification-code", label: "Verification Code"},
   {value: "urn:casdoor:params:oauth:grant-type:mobile-one-click", label: "Mobile One-Click"},
 ];
@@ -482,6 +483,12 @@ export function ApplicationOidcOauthTab({application, updateField}: ApplicationT
         <Switch
           checked={!!application.disableRefreshRotation}
           onCheckedChange={(v) => updateField("disableRefreshRotation", v)}
+        />
+      </FormRow>
+      <FormRow labelKey="application:Require PAR">
+        <Switch
+          checked={!!application.requirePushedAuthorizationRequests}
+          onCheckedChange={(v) => updateField("requirePushedAuthorizationRequests", v)}
         />
       </FormRow>
     </>

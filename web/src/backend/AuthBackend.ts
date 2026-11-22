@@ -149,6 +149,26 @@ export function cancelDeviceLogin(userCode, cancelToken) {
   }).then(res => res.json());
 }
 
+export function getCibaRequest(id: string) {
+  return fetch(`${authConfig.serverUrl}/api/login/oauth/ciba-request?requestId=${encodeURIComponent(id)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function answerCibaRequest(id: string, approve: boolean) {
+  return fetch(`${authConfig.serverUrl}/api/login/oauth/ciba-answer?requestId=${encodeURIComponent(id)}&approve=${approve}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function completeDeviceLogin(deviceCode, oAuthParams) {
   return fetch(`${authConfig.serverUrl}/api/device-auth-complete?deviceCode=${encodeURIComponent(deviceCode)}${oAuthParamsToQuery(oAuthParams).replace("?", "&")}`, {
     method: "POST",

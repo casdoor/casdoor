@@ -345,6 +345,18 @@ func StaticFilter(ctx *context.Context) {
 		return
 	}
 
+	// a pushed authorization request (RFC 9126) is expanded the same way, the request_uri works once
+	if (urlPath == "/login/oauth/authorize" || urlPath == "/signup/oauth/authorize") && ctx.Request.URL.Query().Get("request_uri") != "" {
+		query, err := object.ResolvePushedAuthorizationRequest(ctx.Request.URL.Query())
+		if err != nil {
+			responseError(ctx, err.Error())
+			return
+		}
+
+		http.Redirect(ctx.ResponseWriter, ctx.Request, fmt.Sprintf("%s%s?%s", basePath, urlPath, query.Encode()), http.StatusFound)
+		return
+	}
+
 	// the login page reads state, nonce, PKCE etc. from the URL, so expand a request object (RFC 9101) into it first
 	if (urlPath == "/login/oauth/authorize" || urlPath == "/signup/oauth/authorize") && ctx.Request.URL.Query().Get("request") != "" {
 		query, err := object.ResolveOAuthRequestObject(ctx.Request.URL.Query())
