@@ -118,7 +118,7 @@ export default function CibaConfirmPage() {
         </dl>
         {request.status === "Expired" ? (
           <Alert variant="destructive">
-            <AlertDescription>{i18next.t("application:The sign-in request has expired")}</AlertDescription>
+            <AlertDescription>{i18next.t("mfa:The sign-in request has expired")}</AlertDescription>
           </Alert>
         ) : (
           <div className="grid grid-cols-2 gap-3">

@@ -315,7 +315,6 @@
     "The application does not allow to sign up new account": "The application does not allow to sign up new account",
     "The application itself if empty": "The application itself if empty",
     "The proof token is a JWT signed with the application's token cert, it can also be checked with the JWKS, then your server must remember its jti so it is used only once": "The proof token is a JWT signed with the application's token cert, it can also be checked with the JWKS, then your server must remember its jti so it is used only once",
-    "The sign-in request has expired": "The sign-in request has expired",
     "The sign-in request is approved": "The sign-in request is approved",
     "The sign-in request is denied": "The sign-in request is denied",
     "This action needs a fresh code from your multi-factor authentication": "This action needs a fresh code from your multi-factor authentication",
