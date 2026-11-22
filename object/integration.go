@@ -105,6 +105,42 @@ func GetIntegration(id string) (*Integration, error) {
 	return getIntegration(owner, name)
 }
 
+// GetIntegrationNameConflict returns what already has the name an integration of the type would be installed with:
+// "invalid", "integration", "application" or "provider", or "" when the name can be used.
+func GetIntegrationNameConflict(owner string, name string, integrationType string) (string, error) {
+	if !installNameRegex.MatchString(name) {
+		return "invalid", nil
+	}
+
+	integration, err := getIntegration(owner, name)
+	if err != nil {
+		return "", err
+	}
+	if integration != nil {
+		return "integration", nil
+	}
+
+	switch integrationType {
+	case "app":
+		application, err := getApplication("admin", name)
+		if err != nil {
+			return "", err
+		}
+		if application != nil {
+			return "application", nil
+		}
+	case "provider", "action":
+		existed, err := ormer.Engine.Exist(&Provider{Name: name})
+		if err != nil {
+			return "", err
+		}
+		if existed {
+			return "provider", nil
+		}
+	}
+	return "", nil
+}
+
 func addIntegration(integration *Integration) (bool, error) {
 	affected, err := ormer.Engine.Insert(integration)
 	if err != nil {

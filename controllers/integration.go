@@ -91,6 +91,30 @@ func (c *ApiController) DownloadMarketplaceFile() {
 	_ = c.Ctx.Output.Body(data)
 }
 
+// GetIntegrationNameConflict
+// @Title GetIntegrationNameConflict
+// @Tag Integration API
+// @Description check whether an integration of the type can be installed with the name
+// @Param   owner     query    string  true        "The organization to install in"
+// @Param   name      query    string  true        "The name of the integration"
+// @Param   type      query    string  true        "The type of the integration"
+// @Success 200 {string} string "what already has the name: invalid, integration, application or provider, empty when free"
+// @router /get-integration-name-conflict [get]
+func (c *ApiController) GetIntegrationNameConflict() {
+	owner := c.Ctx.Input.Query("owner")
+	if !c.requireOrganizationPermission(owner) {
+		return
+	}
+
+	conflict, err := object.GetIntegrationNameConflict(owner, c.Ctx.Input.Query("name"), c.Ctx.Input.Query("type"))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(conflict)
+}
+
 // GetIntegrations
 // @Title GetIntegrations
 // @Tag Integration API

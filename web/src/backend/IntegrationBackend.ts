@@ -54,6 +54,16 @@ export function getIntegration(owner, name) {
   }).then(res => res.json());
 }
 
+export function getIntegrationNameConflict(owner, name, type) {
+  return fetch(`${Setting.ServerUrl}/api/get-integration-name-conflict?owner=${encodeURIComponent(owner)}&name=${encodeURIComponent(name)}&type=${encodeURIComponent(type)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function installIntegration(request) {
   return fetch(`${Setting.ServerUrl}/api/install-integration`, {
     method: "POST",

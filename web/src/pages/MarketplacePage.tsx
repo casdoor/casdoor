@@ -278,6 +278,48 @@ function InstallDialog({item, organizationName, installed, onClose}: {
   const [clientSecret, setClientSecret] = React.useState("");
   const [installing, setInstalling] = React.useState(false);
   const [previewApplication, setPreviewApplication] = React.useState<any>(null);
+  // what already has the name, checked for the name in checkedName; the suggested name moves on while the user hasn't typed one
+  const [nameConflict, setNameConflict] = React.useState("");
+  const [checkedName, setCheckedName] = React.useState("");
+  const [isNameEdited, setIsNameEdited] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!name) {
+      setNameConflict("");
+      setCheckedName("");
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      IntegrationBackend.getIntegrationNameConflict(organizationName, name, item.type)
+        .then((res: any) => {
+          if (cancelled) {
+            return;
+          }
+          const conflict = res.status === "ok" ? res.data ?? "" : "";
+          if (conflict && conflict !== "invalid" && !isNameEdited) {
+            const match = name.match(/-(\d+)$/);
+            const next = match ? Number(match[1]) + 1 : 2;
+            if (next <= 50) {
+              setName(`${item.id}-${next}`);
+              return;
+            }
+          }
+          setNameConflict(conflict);
+          setCheckedName(name);
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setNameConflict("");
+            setCheckedName(name);
+          }
+        });
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [name, item, organizationName, isNameEdited]);
 
   React.useEffect(() => {
     const applyBundle = (data: any) => {
@@ -325,7 +367,24 @@ function InstallDialog({item, organizationName, installed, onClose}: {
 
   const manifestVariables: any[] = bundle?.manifest?.variables ?? [];
   const actionKind = getActionKind(bundle);
+  const getVariableError = (variable: any) => {
+    const value = variables[variable.name]?.trim() ?? "";
+    if (!value) {
+      return "";
+    }
+    if (variable.type === "color" && !/^#[0-9a-fA-F]{6}$/.test(value)) {
+      return i18next.t("integration:Color format error");
+    }
+    if (variable.type === "url" && !isHttpUrl(value)) {
+      return i18next.t("integration:URL format error");
+    }
+    return "";
+  };
+  const nameError = checkedName === name ? getNameConflictText(nameConflict, name) : "";
   const isMissing = !name
+    || checkedName !== name
+    || nameConflict !== ""
+    || manifestVariables.some((variable) => getVariableError(variable) !== "")
     || manifestVariables.some((variable) => variable.required && !variables[variable.name]?.trim())
     || (item.type === "provider" && (!clientId || !clientSecret))
     || (item.type === "theme" && !application);
@@ -399,7 +458,15 @@ function InstallDialog({item, organizationName, installed, onClose}: {
                 <Input value={organizationName} disabled />
               </FieldRow>
               <FieldRow label={i18next.t("general:Name")} required help={i18next.t("integration:Name help")}>
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
+                <Input
+                  value={name}
+                  aria-invalid={nameError !== ""}
+                  onChange={(e) => {
+                    setIsNameEdited(true);
+                    setName(e.target.value);
+                  }}
+                />
+                {nameError ? <p className="text-xs text-destructive">{nameError}</p> : null}
               </FieldRow>
 
               {manifestVariables.map((variable) => (
@@ -414,12 +481,13 @@ function InstallDialog({item, organizationName, installed, onClose}: {
                       <input
                         type="color"
                         className="h-9 w-12 cursor-pointer rounded-md border bg-transparent p-1"
-                        value={/^#[0-9a-fA-F]{6}$/.test(variables[variable.name] ?? "") ? variables[variable.name] : "#000000"}
+                        value={/^#[0-9a-fA-F]{6}$/.test(variables[variable.name]?.trim() ?? "") ? variables[variable.name].trim() : "#000000"}
                         onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
                       />
                       <Input
                         value={variables[variable.name] ?? ""}
                         placeholder={variable.example}
+                        aria-invalid={getVariableError(variable) !== ""}
                         onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
                       />
                     </div>
@@ -427,9 +495,11 @@ function InstallDialog({item, organizationName, installed, onClose}: {
                     <Input
                       value={variables[variable.name] ?? ""}
                       placeholder={variable.example}
+                      aria-invalid={getVariableError(variable) !== ""}
                       onChange={(e) => setVariables({...variables, [variable.name]: e.target.value})}
                     />
                   )}
+                  {getVariableError(variable) ? <p className="text-xs text-destructive">{getVariableError(variable)}</p> : null}
                 </FieldRow>
               ))}
 
@@ -515,6 +585,33 @@ function InstallDialog({item, organizationName, installed, onClose}: {
       </DialogContent>
     </Dialog>
   );
+}
+
+function isHttpUrl(value: string): boolean {
+  if (/[\s"'<>`]/.test(value)) {
+    return false;
+  }
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") && url.host !== "";
+  } catch {
+    return false;
+  }
+}
+
+function getNameConflictText(conflict: string, name: string): string {
+  switch (conflict) {
+  case "invalid":
+    return i18next.t("integration:Name format error");
+  case "integration":
+    return i18next.t("integration:Integration name taken").replace("{name}", name);
+  case "application":
+    return i18next.t("integration:Application name taken").replace("{name}", name);
+  case "provider":
+    return i18next.t("integration:Provider name taken").replace("{name}", name);
+  default:
+    return "";
+  }
 }
 
 function readBase64(file: File): Promise<string> {

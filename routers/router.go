@@ -145,6 +145,7 @@ func InitAPI() {
 	web.Router("/api/download-marketplace-file", &controllers.ApiController{}, "GET:DownloadMarketplaceFile")
 	web.Router("/api/get-integrations", &controllers.ApiController{}, "GET:GetIntegrations")
 	web.Router("/api/get-integration", &controllers.ApiController{}, "GET:GetIntegration")
+	web.Router("/api/get-integration-name-conflict", &controllers.ApiController{}, "GET:GetIntegrationNameConflict")
 	web.Router("/api/install-integration", &controllers.ApiController{}, "POST:InstallIntegration")
 	web.Router("/api/delete-integration", &controllers.ApiController{}, "POST:DeleteIntegration")
 
