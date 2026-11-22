@@ -2,6 +2,7 @@ describe("User sign-in status", {retries: 0}, () => {
   const rows = [
     {owner: "example", name: "local", displayName: "Local user", isForbidden: false},
     {owner: "example", name: "directory", displayName: "Directory user", azuread: "immutable-directory-id", isForbidden: false},
+    {owner: "example", name: "imported", displayName: "Imported user", id: "immutable-import-id", registerType: "Add Users", registerSource: "example/azure-ad", isForbidden: false},
   ];
 
   beforeEach(() => {
@@ -49,6 +50,8 @@ describe("User sign-in status", {retries: 0}, () => {
     cy.wait("@users");
     cy.contains("tr", "directory").find('[role="switch"]').should("be.disabled");
     cy.get('[aria-label="Is forbidden: directory"]').should("not.exist");
+    cy.contains("tr", "imported").find('[role="switch"]').should("be.disabled");
+    cy.get('[aria-label="Is forbidden: imported"]').should("not.exist");
   });
 
   it("does not change the displayed status when an update fails", () => {

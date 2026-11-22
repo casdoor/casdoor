@@ -192,11 +192,12 @@ export default function UserListPage({
       ...forbidden,
       defaultHidden: false,
       render: (value, record, index) => {
+        const managed = record.azuread || (record.registerType === "Add Users" && record.registerSource);
         if (!canManageUsers || !Setting.isLocalAdminUser(account) ||
           (!Setting.isAdminUser(account) && account?.owner !== record.owner) ||
-          isProtected(record) || Setting.isAdminUser(record) || record.isDeleted || record.azuread) {
+          isProtected(record) || Setting.isAdminUser(record) || record.isDeleted || managed) {
           return (
-            <span title={record.azuread ? "Managed by Microsoft Entra" : undefined}>
+            <span title={managed ? "Managed by directory synchronization" : undefined}>
               {forbidden.render?.(value, record, index)}
             </span>
           );
