@@ -5,7 +5,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {SendCodeInput} from "@/components/auth/SendCodeInput";
-import {CodeInput} from "@/components/auth/CodeInput";
+import {VerificationCodeLength} from "@/components/auth/CodeInput";
 import {PushWait} from "@/ee/components/auth/mfa/PushWait";
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Setting from "@/lib/setting";
@@ -180,8 +180,24 @@ export function MfaVerify({formValues, authParams, mfaProps, application, onSucc
         />
       ) : selected?.mfaType === TotpMfaType ? (
         <>
-          <p className="text-sm text-muted-foreground">{prompt}</p>
-          <CodeInput autoFocus value={passcode} onChange={setPasscode} onComplete={verifyComplete} />
+          <Label htmlFor="totp-code">{prompt}</Label>
+          <Input
+            id="totp-code"
+            name="otp"
+            type="text"
+            autoFocus
+            autoComplete="one-time-code"
+            inputMode="numeric"
+            maxLength={VerificationCodeLength}
+            value={passcode}
+            placeholder={placeholder}
+            onChange={(e) => setPasscode(e.target.value.replace(/\D/g, "").slice(0, VerificationCodeLength))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && passcode.length === VerificationCodeLength) {
+                verifyComplete();
+              }
+            }}
+          />
         </>
       ) : (
         <>

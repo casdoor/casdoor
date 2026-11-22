@@ -31,6 +31,7 @@ import * as Setting from "@/lib/setting";
  */
 const REACT_FALLBACK_KEY = "__casdoor_callback_react";
 const REACT_FALLBACK_PAYLOAD_KEY = "casdoor_callback_react_fallback";
+const spentCallbackSearch = `?${REACT_FALLBACK_KEY}=1`;
 
 interface ReactFallbackPayload {
   search: string;
@@ -102,6 +103,11 @@ export default function AuthCallback() {
       return;
     }
     startedRef.current = true;
+
+    if (location.search === spentCallbackSearch) {
+      setMsg("Sign-in was interrupted. Return to the app you were signing in to and start again.");
+      return;
+    }
 
     // the WeChat QR code on the sign-in page comes back here inside its frame: finish in the page itself
     // (the frame's own name does not survive WeChat's page, its element's does; a cross-origin parent hides it)
@@ -266,6 +272,8 @@ export default function AuthCallback() {
         localStorage.setItem("mfaRedirectUrl", Setting.getOriginUrl());
         Setting.goToLink(Setting.getOriginUrl());
       } else if (res.data === NextMfa) {
+        // the provider code has been redeemed; a reload must start a fresh sign-in
+        window.history.replaceState(window.history.state, "", window.location.pathname + spentCallbackSearch);
         // the panel needs the application for its branding and the captcha rule
         // behind "Get Code"
         if (applicationName) {
