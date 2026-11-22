@@ -15,8 +15,8 @@
 import * as Setting from "@/lib/setting";
 import i18next from "i18next";
 
-export function getGlobalUsers(page, pageSize, field: any = "", value: any = "", sortField: any = "", sortOrder: any = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+export function getGlobalUsers(page, pageSize, field: any = "", value: any = "", sortField: any = "", sortOrder: any = "", signInStatus = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}&signInStatus=${encodeURIComponent(signInStatus)}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -25,8 +25,8 @@ export function getGlobalUsers(page, pageSize, field: any = "", value: any = "",
   }).then(res => res.json());
 }
 
-export function getUsers(owner, page: any = "", pageSize: any = "", field: any = "", value: any = "", sortField: any = "", sortOrder: any = "", groupName: any = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}`, {
+export function getUsers(owner, page: any = "", pageSize: any = "", field: any = "", value: any = "", sortField: any = "", sortOrder: any = "", groupName: any = "", signInStatus = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${encodeURIComponent(value)}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}&signInStatus=${encodeURIComponent(signInStatus)}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -45,9 +45,9 @@ export function getUser(owner, name) {
   }).then(res => res.json());
 }
 
-export function updateUser(owner, name, user) {
+export function updateUser(owner, name, user, columns = "") {
   const newUser = Setting.deepCopy(user);
-  return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`, {
+  return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}&columns=${encodeURIComponent(columns)}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newUser),

@@ -347,9 +347,21 @@ func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error)
 	return true, string(marshalValue), nil
 }
 
-func GetGlobalUserCount(field, value string) (int64, error) {
+func filterUserSignIn(session *xorm.Session, prefix string, status []string) *xorm.Session {
+	if len(status) == 0 || status[0] == "" {
+		return session
+	}
+	// match native login checks, including legacy NULL flags that load as false
+	active := fmt.Sprintf("COALESCE(%sis_forbidden, ?) = ? AND COALESCE(%sis_deleted, ?) = ?", prefix, prefix)
+	if status[0] != "enabled" {
+		active = "NOT (" + active + ")"
+	}
+	return session.And(active, false, false, false, false)
+}
+
+func GetGlobalUserCount(field, value string, status ...string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
-	return session.Count(&User{})
+	return filterUserSignIn(session, "", status).Count(&User{})
 }
 
 func GetGlobalUsers() ([]*User, error) {
@@ -376,10 +388,14 @@ func GetGlobalUsersWithFilter(cond builder.Cond) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string, status ...string) ([]*User, error) {
 	users := []*User{}
 	session := GetSessionForUser("", offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&users)
+	prefix := ""
+	if offset != -1 {
+		prefix = "a."
+	}
+	err := filterUserSignIn(session, prefix, status).Find(&users)
 	if err != nil {
 		return nil, err
 	}
@@ -387,14 +403,13 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string, groupName string) (int64, error) {
-	session := GetSession(owner, -1, -1, field, value, "", "")
-
+func GetUserCount(owner, field, value string, groupName string, status ...string) (int64, error) {
 	if groupName != "" {
-		return GetGroupUserCount(util.GetId(owner, groupName), field, value)
+		return GetGroupUserCount(util.GetId(owner, groupName), field, value, status...)
 	}
 
-	return session.Count(&User{})
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	return filterUserSignIn(session, "", status).Count(&User{})
 }
 
 func GetUserCountWithFilter(owner string, cond builder.Cond) (int64, error) {
@@ -457,15 +472,19 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string) ([]*User, error) {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string, status ...string) ([]*User, error) {
 	users := []*User{}
 
 	if groupName != "" {
-		return GetPaginationGroupUsers(util.GetId(owner, groupName), offset, limit, field, value, sortField, sortOrder)
+		return GetPaginationGroupUsers(util.GetId(owner, groupName), offset, limit, field, value, sortField, sortOrder, status...)
 	}
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&users)
+	prefix := ""
+	if offset != -1 {
+		prefix = "a."
+	}
+	err := filterUserSignIn(session, prefix, status).Find(&users)
 	if err != nil {
 		return nil, err
 	}

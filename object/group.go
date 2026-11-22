@@ -375,7 +375,7 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 	return treeData
 }
 
-func GetGroupUserCount(groupId string, field, value string) (int64, error) {
+func GetGroupUserCount(groupId string, field, value string, status ...string) (int64, error) {
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
 	if err != nil {
 		return 0, err
@@ -385,20 +385,20 @@ func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 		return 0, err
 	}
 
-	if field == "" && value == "" {
+	if field == "" && value == "" && (len(status) == 0 || status[0] == "") {
 		return int64(len(names)), nil
 	} else {
 		tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 		session := ormer.Engine.Table(tableNamePrefix+"user").
 			Where("owner = ?", owner).In("name", names)
-		if util.FilterField(field) {
-			session = session.And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
+		if field != "" && value != "" && util.FilterField(field) {
+			session = session.And(fmt.Sprintf("%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
 		}
-		return session.Count()
+		return filterUserSignIn(session, "", status).Count()
 	}
 }
 
-func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string, status ...string) ([]*User, error) {
 	users := []*User{}
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
 	if err != nil {
@@ -410,8 +410,7 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 	}
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	prefixedUserTable := tableNamePrefix + "user"
-	session := ormer.Engine.Table(prefixedUserTable).
+	session := ormer.Engine.Table(tableNamePrefix+"user").
 		Where("owner = ?", owner).In("name", names)
 
 	if offset != -1 && limit != -1 {
@@ -419,14 +418,14 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 	}
 
 	if field != "" && value != "" && util.FilterField(field) {
-		session = session.And(fmt.Sprintf("%s.%s like ?", prefixedUserTable, util.CamelToSnakeCase(field)), "%"+value+"%")
+		session = session.And(fmt.Sprintf("%s like ?", quoteColumn(util.CamelToSnakeCase(field))), "%"+value+"%")
 	}
 
 	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
 		sortField = "created_time"
 	}
 
-	orderQuery := fmt.Sprintf("%s.%s", prefixedUserTable, util.CamelToSnakeCase(sortField))
+	orderQuery := util.CamelToSnakeCase(sortField)
 
 	if sortOrder == "ascend" {
 		session = session.Asc(orderQuery)
@@ -434,7 +433,7 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 		session = session.Desc(orderQuery)
 	}
 
-	err = session.Find(&users)
+	err = filterUserSignIn(session, "", status).Find(&users)
 	if err != nil {
 		return nil, err
 	}

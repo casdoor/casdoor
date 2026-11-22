@@ -58,14 +58,19 @@ func (c *ApiController) GetGlobalUsers() {
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetGlobalUserCount(field, value)
+		status := c.Ctx.Input.Query("signInStatus")
+		if status != "" && status != "enabled" && status != "disabled" {
+			c.ResponseError("Invalid sign-in status")
+			return
+		}
+		count, err := object.GetGlobalUserCount(field, value, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -126,14 +131,19 @@ func (c *ApiController) GetUsers() {
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetUserCount(owner, field, value, groupName)
+		status := c.Ctx.Input.Query("signInStatus")
+		if status != "" && status != "enabled" && status != "disabled" {
+			c.ResponseError("Invalid sign-in status")
+			return
+		}
+		count, err := object.GetUserCount(owner, field, value, groupName, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
+		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

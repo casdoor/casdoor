@@ -15,6 +15,7 @@ import {Button, type ButtonProps} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 
 interface ConfirmButtonProps extends Omit<ButtonProps, "onClick" | "title"> {
+  trigger?: React.ReactElement;
   title?: React.ReactNode;
   description?: React.ReactNode;
   confirmText?: React.ReactNode;
@@ -25,6 +26,7 @@ interface ConfirmButtonProps extends Omit<ButtonProps, "onClick" | "title"> {
 
 /** A button that asks for confirmation before running its action. */
 export function ConfirmButton({
+  trigger,
   title,
   description,
   confirmText,
@@ -40,7 +42,7 @@ export function ConfirmButton({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button {...buttonProps}>{children}</Button>
+        {trigger ?? <Button {...buttonProps}>{children}</Button>}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

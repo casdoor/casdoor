@@ -3,6 +3,9 @@ import i18next from "i18next";
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Switch} from "@/components/ui/switch";
+import {ConfirmButton} from "@/components/common/ConfirmButton";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {XlsxImport} from "@/components/crud/XlsxImport";
 import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
@@ -39,6 +42,8 @@ export default function UserListPage({
     (record.owner === "built-in" && record.name === "admin");
 
   const [organization, setOrganization] = React.useState<any>({});
+  const [statusFilter, setStatusFilter] = React.useState("enabled");
+  const [revision, setRevision] = React.useState(0);
 
   React.useEffect(() => {
     if (!organizationName) {
@@ -55,6 +60,7 @@ export default function UserListPage({
   // a delegated admin sees the users of their groups, and adds or deletes them only when allowed to manage users
   const delegated = isDelegatedAdmin(account);
   const canManageUsers = !delegated || canDelegated(account, "users");
+  const signInStatus = delegated || statusFilter === "all" ? "" : statusFilter;
 
   const tagLabels = React.useMemo(() => {
     const map: Record<string, string> = {};
@@ -74,6 +80,7 @@ export default function UserListPage({
     </span>
   );
 
+  const forbidden = boolColumn<any>({dataIndex: "isForbidden", title: i18next.t("user:Is forbidden"), invertColor: true});
   const columns: ColumnDef<any>[] = [
     organizationColumn(140, "owner", undefined, "left"),
     {
@@ -181,7 +188,44 @@ export default function UserListPage({
       align: "center",
       render: (value) => (value ? <Badge variant="outline">{i18next.t("user:Pending approval")}</Badge> : null),
     },
-    boolColumn({dataIndex: "isForbidden", title: i18next.t("user:Is forbidden"), invertColor: true}),
+    {
+      ...forbidden,
+      defaultHidden: false,
+      render: (value, record, index) => {
+        if (!canManageUsers || !Setting.isLocalAdminUser(account) ||
+          (!Setting.isAdminUser(account) && account?.owner !== record.owner) ||
+          isProtected(record) || Setting.isAdminUser(record) || record.isDeleted || record.azuread) {
+          return (
+            <span title={record.azuread ? "Managed by Microsoft Entra" : undefined}>
+              {forbidden.render?.(value, record, index)}
+            </span>
+          );
+        }
+        return (
+          <ConfirmButton
+            title={value ? "Allow Casdoor sign-in?" : "Block Casdoor sign-in?"}
+            description={`${record.owner}/${record.name}`}
+            destructive={!value}
+            trigger={
+              <Switch checked={Boolean(value)} className="data-[state=checked]:bg-destructive"
+                aria-label={`${i18next.t("user:Is forbidden")}: ${record.name}`} />
+            }
+            onConfirm={async() => {
+              try {
+                const res = await UserBackend.updateUser(record.owner, record.name, {isForbidden: !value}, "IsForbidden");
+                if (res.status === "ok") {
+                  setRevision((current) => current + 1);
+                } else {
+                  Setting.showMessage("error", res.msg);
+                }
+              } catch (error) {
+                Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+              }
+            }}
+          />
+        );
+      },
+    },
     boolColumn({dataIndex: "isDeleted", title: i18next.t("user:Is deleted"), invertColor: true}),
   ];
 
@@ -192,19 +236,35 @@ export default function UserListPage({
       columns={columns}
       formType="users"
       formItems={formItems}
-      toolbar={({refresh}) => delegated ? null : (
-        <XlsxImport
-          columns={Setting.getUserColumns()}
-          templateName="import-user.xlsx"
-          uploadApi="upload-users"
-          successMessage="Users uploaded successfully, refreshing the page"
-          onUploaded={refresh}
-        />
+      initialQuery={{pageSize: 100}}
+      toolbar={({refresh, setQuery}) => delegated ? null : (
+        <>
+          <Select value={statusFilter} onValueChange={(status) => {
+            setStatusFilter(status);
+            setQuery({page: 1});
+          }}>
+            <SelectTrigger aria-label="Casdoor sign-in status" className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="enabled">{i18next.t("general:Enabled")}</SelectItem>
+              <SelectItem value="disabled">{i18next.t("general:Disabled")}</SelectItem>
+              <SelectItem value="all">{i18next.t("general:All")}</SelectItem>
+            </SelectContent>
+          </Select>
+          <XlsxImport
+            columns={Setting.getUserColumns()}
+            templateName="import-user.xlsx"
+            uploadApi="upload-users"
+            successMessage="Users uploaded successfully, refreshing the page"
+            onUploaded={refresh}
+          />
+        </>
       )}
-      deps={[organizationName, groupName, isGlobal]}
+      deps={[organizationName, groupName, isGlobal, signInStatus, revision]}
       fetch={(q) =>
         isGlobal
-          ? UserBackend.getGlobalUsers(q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
+          ? UserBackend.getGlobalUsers(q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder, signInStatus)
           : UserBackend.getUsers(
             organizationName,
             q.page,
@@ -214,6 +274,7 @@ export default function UserListPage({
             q.sortField,
             q.sortOrder,
             groupName,
+            signInStatus,
           )
       }
       newRecord={account && canManageUsers ? () => newUser(account, organization, organizationName, groupName) : undefined}
