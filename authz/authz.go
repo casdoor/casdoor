@@ -109,6 +109,14 @@ p, *, *, POST, /api/return-privileged-request, *, *
 p, *, *, POST, /api/reveal-privileged-password, *, *
 p, *, *, GET, /api/get-my-access-review-items, *, *
 p, *, *, POST, /api/decide-access-review-items, *, *
+p, *, *, POST, /api/device/enroll, *, *
+p, *, *, POST, /api/device/status, *, *
+p, *, *, POST, /api/device/report, *, *
+p, *, *, GET, /api/device/challenge, *, *
+p, *, *, GET, /api/get-device-enrollment, *, *
+p, *, *, POST, /api/approve-device-enrollment, *, *
+p, *, *, GET, /api/get-my-devices, *, *
+p, *, *, POST, /api/delete-device, *, *
 p, *, *, GET, /api/export-own-data, *, *
 p, *, *, POST, /api/delete-own-account, *, *
 p, *, *, GET, /api/mfa/push/challenge, *, *

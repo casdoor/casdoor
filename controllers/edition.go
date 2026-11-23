@@ -134,6 +134,8 @@ func (c *ApiController) getEditionFeatureName(feature string) string {
 		return c.T("edition:Provisioning to legacy databases")
 	case edition.FeatureTrustedOrg:
 		return c.T("edition:Trusted organizations")
+	case edition.FeatureAdaptiveRisk:
+		return c.T("edition:Adaptive risk policy")
 	default:
 		return feature
 	}

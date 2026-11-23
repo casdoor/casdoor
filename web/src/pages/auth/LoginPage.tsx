@@ -15,6 +15,8 @@ import {MfaVerify, NextMfa, RequiredMfa} from "@/components/auth/MfaVerify";
 import {AgreementCheckbox, getAgreementDefaultValue, isSigninAgreementShown} from "@/components/auth/AgreementModal";
 import {DeviceLoginPanel} from "@/components/auth/DeviceLoginPanel";
 import {CertLoginPanel, CertLoginParams} from "@/ee/components/auth/CertLoginPanel";
+import {TrustedDeviceSignin} from "@/components/auth/TrustedDeviceSignin";
+import {enableDeviceAgent} from "@/lib/device-agent";
 import {GoogleOneTap} from "@/components/auth/GoogleOneTap";
 import {FaceRecognitionCommonModal} from "@/components/common/FaceRecognitionCommonModal";
 import {FaceRecognitionModal} from "@/components/common/FaceRecognitionModal";
@@ -1123,6 +1125,11 @@ export default function LoginPage({type = "login", application: applicationProp,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [application, location.search, preview]);
 
+  // the device agent is asked to sign each sign-in only for an organization that uses device trust
+  React.useEffect(() => {
+    enableDeviceAgent(!preview && !!application?.organizationObj?.deviceTrust?.mode);
+  }, [application, preview]);
+
   // A popup host wants to know when the visitor closes the window without signing in.
   React.useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -1492,15 +1499,30 @@ export default function LoginPage({type = "login", application: applicationProp,
     case "Back button":
       return null;
     case "Signin methods":
-      return showTabs ? (
-        <SigninMethodTabs
-          key={key}
-          className="signin-methods"
-          methods={methods}
-          value={activeTab}
-          onChange={(v) => setLoginMethod(v as LoginMethod)}
-        />
-      ) : null;
+      return (
+        <React.Fragment key={key}>
+          <TrustedDeviceSignin
+            application={application}
+            onSignin={() =>
+              doLogin(applyRequestType({
+                application: application.name,
+                organization: application.organization,
+                signinMethod: "Trusted device",
+                autoSignin: true,
+                language: Setting.getLanguage(),
+              }))
+            }
+          />
+          {showTabs ? (
+            <SigninMethodTabs
+              className="signin-methods"
+              methods={methods}
+              value={activeTab}
+              onChange={(v) => setLoginMethod(v as LoginMethod)}
+            />
+          ) : null}
+        </React.Fragment>
+      );
     case "Select organization":
       return (
         <div key={key} className="login-organization-select">

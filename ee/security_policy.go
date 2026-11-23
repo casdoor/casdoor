@@ -62,64 +62,8 @@ func GetCachedSecurityPolicy(owner string) *object.SecurityPolicy {
 	return policy
 }
 
-// getOrganizationEmailProvider picks the email provider of the organization's default application, then any
-// email provider owned by the organization, then the default Email provider of the global setting
-func getOrganizationEmailProvider(organization *object.Organization) (*object.Provider, error) {
-	if organization.DefaultApplication != "" {
-		application, err := object.LookupApplication("admin", organization.DefaultApplication)
-		if err != nil {
-			return nil, err
-		}
-		if application != nil {
-			provider, err := application.GetProviderByCategoryAndRule("Email", "", "All")
-			if err != nil {
-				return nil, err
-			}
-			if provider != nil {
-				return provider, nil
-			}
-		}
-	}
-
-	providers := []*object.Provider{}
-	err := object.GetOrmer().Engine.Where("category = ? and (owner = ? or owner = ?)", "Email", organization.Name, "admin").Find(&providers)
-	if err != nil {
-		return nil, err
-	}
-	for _, provider := range providers {
-		if provider.Owner == organization.Name {
-			return provider, nil
-		}
-	}
-
-	provider, err := object.GetDefaultEmailProvider()
-	if err != nil || provider != nil {
-		return provider, err
-	}
-	if len(providers) > 0 {
-		return providers[0], nil
-	}
-	return nil, nil
-}
-
 func sendOrganizationEmail(organization *object.Organization, title string, content string, dest []string) error {
-	if len(dest) == 0 {
-		return nil
-	}
-
-	provider, err := getOrganizationEmailProvider(organization)
-	if err != nil {
-		return err
-	}
-	if provider == nil {
-		return fmt.Errorf("the organization: %s has no email provider", organization.Name)
-	}
-
-	sender := organization.DisplayName
-	if sender == "" {
-		sender = organization.Name
-	}
-	return object.SendEmail(provider, title, content, dest, sender)
+	return object.SendOrganizationEmail(organization, title, content, dest)
 }
 
 // SendSecurityAlert emails the organization's alert addresses

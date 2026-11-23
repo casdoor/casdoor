@@ -25,6 +25,7 @@ func init() {
 		new(AccessReview),
 		new(PrivilegedRequest),
 		new(AccessReviewItem),
+		new(SigninRiskEvent),
 	)
 
 	object.EncryptUserFieldsHook = EncryptUserFields
@@ -56,6 +57,7 @@ func init() {
 	object.ProvisionUserHook = provisionUser
 	object.RequestOrganizationProvisioningHook = requestOrganizationProvisioning
 	object.IsTrustedOrganizationHook = isTrustedOrganization
+	object.ClearSecurityPolicyCacheHook = func(owner string) { securityPolicyCache.Delete(owner) }
 
 	audit.FormatSiemEventHook = func(format string, event *audit.Event, eventTime time.Time) string {
 		if format == "CEF" {

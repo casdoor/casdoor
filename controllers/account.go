@@ -295,6 +295,11 @@ func (c *ApiController) Signup() {
 
 	application.ApplySignupApproval(user)
 
+	if deny := object.RunSignupFlows(user, application.Name, clientIp, c.Ctx.Request, object.FlowTriggerPreSignup); deny != "" {
+		c.ResponseError(deny)
+		return
+	}
+
 	affected, err := object.AddUser(user, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -305,6 +310,7 @@ func (c *ApiController) Signup() {
 		c.ResponseError(c.T("account:Failed to add user"), util.StructToJson(user))
 		return
 	}
+	object.RunSignupFlows(user, application.Name, clientIp, c.Ctx.Request, object.FlowTriggerPostSignup)
 
 	err = object.AddUserToOriginalDatabase(user)
 	if err != nil {

@@ -32,6 +32,7 @@ import * as Setting from "@/lib/setting";
 import {EditionNotice} from "@/components/common/EditionNotice";
 import {SecurityPolicyTab} from "@/ee/components/organization/SecurityPolicyTab";
 import {EnterprisePolicyTab} from "@/ee/components/organization/EnterprisePolicyTab";
+import {OrganizationDeviceTrustTab} from "@/components/organization/OrganizationDeviceTrustTab";
 
 const PASSWORD_TYPES = ["plain", "salt", "sha512-salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id", "pbkdf2-django", "pbkdf2-sm3"];
 const TOKEN_FORMATS = ["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"];
@@ -189,6 +190,7 @@ export default function OrganizationEditPage() {
           <TabsTrigger value="password">{i18next.t("general:Password type")}</TabsTrigger>
           <TabsTrigger value="account">{i18next.t("organization:Account items")}</TabsTrigger>
           <TabsTrigger value="security">{i18next.t("application:Security")}</TabsTrigger>
+          <TabsTrigger value="device-trust">{i18next.t("organization:Device trust")}</TabsTrigger>
           <TabsTrigger value="enterprise">{i18next.t("general:Compliance")}</TabsTrigger>
           <TabsTrigger value="advanced">{i18next.t("provider:Advanced")}</TabsTrigger>
         </TabsList>
@@ -511,6 +513,9 @@ export default function OrganizationEditPage() {
 
         <TabsContent value="security" className={formGridClass}>
           <SecurityPolicyTab owner={organization.name} policy={organization.securityPolicy} onChange={(policy) => update("securityPolicy", policy)} />
+        </TabsContent>
+        <TabsContent value="device-trust" className={formGridClass}>
+          <OrganizationDeviceTrustTab owner={organization.name} policy={organization.deviceTrust} onChange={(policy) => update("deviceTrust", policy)} />
         </TabsContent>
 
         <TabsContent value="enterprise" className={formGridClass}>

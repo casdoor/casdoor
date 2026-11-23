@@ -8,14 +8,11 @@ package ee
 
 import (
 	"fmt"
-	"net"
+	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/beego/beego/v2/core/logs"
-	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/ip"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -34,42 +31,8 @@ type SigninTrace struct {
 	Count        int    `json:"count"`
 }
 
-var (
-	ipDbOnce   sync.Once
-	ipDbLoaded bool
-)
-
-// getIpLocation names the place of an IP: the city from the IP database configured by "ipDbFile" (the ipip.net
-// 17mon format), otherwise the IPv4 /16 or IPv6 /48 network, which changes with the place in most cases
 func getIpLocation(clientIp string) string {
-	ipDbOnce.Do(func() {
-		if file := conf.GetConfigString("ipDbFile"); file != "" {
-			if err := ip.Init(file); err != nil {
-				logs.Warn("the IP database: %s is not loaded: %s", file, err.Error())
-			} else {
-				ipDbLoaded = true
-			}
-		}
-	})
-
-	parsed := net.ParseIP(clientIp)
-	if parsed == nil {
-		return ""
-	}
-	if parsed.IsLoopback() || parsed.IsPrivate() {
-		return "intranet"
-	}
-
-	if ipDbLoaded && parsed.To4() != nil {
-		if info, err := ip.Find(clientIp); err == nil && info.Country != "" {
-			return strings.Trim(strings.Join([]string{info.Country, info.Region, info.City}, " "), " ")
-		}
-	}
-
-	if v4 := parsed.To4(); v4 != nil {
-		return fmt.Sprintf("%d.%d.0.0/16", v4[0], v4[1])
-	}
-	return (&net.IPNet{IP: parsed.Mask(net.CIDRMask(48, 128)), Mask: net.CIDRMask(48, 128)}).String()
+	return object.GetIpLocation(clientIp)
 }
 
 func getSigninTraces(owner string, user string) ([]*SigninTrace, error) {
@@ -106,11 +69,12 @@ func upsertSigninTrace(user *object.User, kind string, key string, clientIp stri
 
 // CheckSigninRisk records where and on which device the user signs in, and emails the user when it is a new place
 // or a new device under the organization's security policy. The first sign-in only records.
-func CheckSigninRisk(user *object.User, clientIp string, deviceId string, userAgent string) {
+func CheckSigninRisk(user *object.User, clientIp string, deviceId string, userAgent string, header http.Header) {
 	policy := GetCachedSecurityPolicy(user.Owner)
-	if policy == nil || (!policy.AlertOnNewLocation && !policy.AlertOnNewDevice) {
+	if policy == nil || (!policy.AlertOnNewLocation && !policy.AlertOnNewDevice && !policy.AdaptiveRisk) {
 		return
 	}
+	country := getIpCountry(clientIp, header, policy)
 
 	go func() {
 		traces, err := getSigninTraces(user.Owner, user.Name)
@@ -141,8 +105,12 @@ func CheckSigninRisk(user *object.User, clientIp string, deviceId string, userAg
 		}
 
 		location := getIpLocation(clientIp)
-		check(policy.AlertOnNewLocation, "location", location, fmt.Sprintf("New location: %s (IP address %s)", location, clientIp))
-		check(policy.AlertOnNewDevice, "device", object.TruncateString(deviceId, 200), fmt.Sprintf("New device: %s", userAgent))
+		check(policy.AlertOnNewLocation || policy.AdaptiveRisk, "location", location, fmt.Sprintf("New location: %s (IP address %s)", location, clientIp))
+		check(policy.AlertOnNewDevice || policy.AdaptiveRisk, "device", object.TruncateString(deviceId, 200), fmt.Sprintf("New device: %s", userAgent))
+		if policy.AdaptiveRisk {
+			check(true, "country", country, "")
+		}
+		alerts = filterSigninAlerts(alerts, policy)
 
 		if len(alerts) == 0 || user.Email == "" {
 			return
@@ -160,4 +128,22 @@ func CheckSigninRisk(user *object.User, clientIp string, deviceId string, userAg
 			logs.Warn("the sign-in alert to the user: %s is not sent: %s", user.GetId(), err.Error())
 		}
 	}()
+}
+
+// filterSigninAlerts keeps the alerts that the policy asks to email, the traces of adaptive risk are recorded silently
+func filterSigninAlerts(alerts []string, policy *object.SecurityPolicy) []string {
+	res := []string{}
+	for _, alert := range alerts {
+		if alert == "" {
+			continue
+		}
+		if strings.HasPrefix(alert, "New location:") && !policy.AlertOnNewLocation {
+			continue
+		}
+		if strings.HasPrefix(alert, "New device:") && !policy.AlertOnNewDevice {
+			continue
+		}
+		res = append(res, alert)
+	}
+	return res
 }

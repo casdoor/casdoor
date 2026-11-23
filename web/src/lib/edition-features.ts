@@ -59,6 +59,8 @@ export const EditionFeatures: EditionFeature[] = [
     stop: org("security", "application:Security", "organization:Password check plugins")},
   {id: "credential-stuffing", edition: "Commercial", category: "edition:Passwords and attacks", name: "edition:Credential stuffing defense", description: "edition:Credential stuffing defense - Description",
     stop: org("security", "application:Security", "organization:Credential stuffing threshold")},
+  {id: "adaptive-risk", edition: "Commercial", category: "edition:Passwords and attacks", name: "edition:Adaptive risk policy", description: "edition:Adaptive risk policy - Description",
+    stop: org("security", "application:Security", "organization:Enable adaptive risk")},
   {id: "signin-alerts", edition: "Commercial", category: "edition:Passwords and attacks", name: "edition:New location and device alerts", description: "edition:New location and device alerts - Description",
     stop: org("security", "application:Security", "organization:Alert on new location")},
   {id: "password-migration", edition: "Commercial", category: "edition:Passwords and attacks", name: "edition:Password migration", description: "edition:Password migration - Description",

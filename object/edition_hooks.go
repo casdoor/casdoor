@@ -59,6 +59,7 @@ var (
 	ProvisionUserHook                     func(user *User)
 	RequestOrganizationProvisioningHook   func(organization string)
 	IsTrustedOrganizationHook             func(name string) bool
+	ClearSecurityPolicyCacheHook          func(owner string)
 )
 
 var errEnterpriseFeatures = fmt.Errorf("this needs the enterprise features of Casdoor")
@@ -244,4 +245,11 @@ func requestOrganizationProvisioning(organization string) {
 
 func isTrustedOrganization(name string) bool {
 	return IsTrustedOrganizationHook != nil && IsTrustedOrganizationHook(name)
+}
+
+// clearSecurityPolicyCache makes a saved security policy apply to the next request instead of after the cache expires
+func clearSecurityPolicyCache(owner string) {
+	if ClearSecurityPolicyCacheHook != nil {
+		ClearSecurityPolicyCacheHook(owner)
+	}
 }

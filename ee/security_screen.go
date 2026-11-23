@@ -349,7 +349,7 @@ func buildSecurityScreen(owner string) (*SecurityScreen, error) {
 	if total := res.SigninSuccessToday + res.SigninFailureToday; total > 0 {
 		res.FailureRateToday = float64(res.SigninFailureToday) / float64(total)
 	}
-	res.IpDbLoaded = ipDbLoaded
+	res.IpDbLoaded = object.IsIpDbLoaded()
 	res.Provinces = rankRegions(provinces, 12)
 	res.Cities = rankRegions(cities, 12)
 	res.TopFailedIps = topCounts(failedIps, 8)

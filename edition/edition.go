@@ -77,6 +77,7 @@ const (
 	FeatureScimProvisioning = "SCIM provisioning"
 	FeatureDbProvisioning   = "Provisioning to legacy databases"
 	FeatureTrustedOrg       = "Trusted organizations"
+	FeatureAdaptiveRisk     = "Adaptive risk policy"
 )
 
 const KindOnPremise = "OnPremise"

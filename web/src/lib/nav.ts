@@ -54,6 +54,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
         ? [{key: "/editions", label: i18next.t("edition:Editions and features")}]
         : []),
       ...(account.pendingAccessReviews > 0 ? [{key: "/my-access-reviews", label: i18next.t("enterprise:My access reviews")}] : []),
+      ...(account.organization?.deviceTrust?.mode ? [{key: "/device-enroll", label: i18next.t("device:My devices")}] : []),
     ],
   });
 
@@ -102,6 +103,8 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
     items: [
       {key: "/applications", label: i18next.t("general:Applications")},
       {key: "/providers", label: i18next.t("application:Providers")},
+      {key: "/flows", label: i18next.t("flow:Flows")},
+      {key: "/devices", label: i18next.t("device:Devices")},
       {key: "/marketplace", label: i18next.t("general:Marketplace")},
       {key: "/integrations", label: i18next.t("general:Integrations")},
       {key: "/resources", label: i18next.t("general:Resources")},
@@ -155,6 +158,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
     items: [
       {key: "/sessions", label: i18next.t("general:Sessions")},
       {key: "/records", label: i18next.t("general:Records")},
+      {key: "/signin-risks", label: i18next.t("enterprise:Sign-in risks")},
       {key: "/compliance", label: i18next.t("general:Compliance")},
       {key: "/tokens", label: i18next.t("general:Tokens")},
       {key: "/verifications", label: i18next.t("general:Verifications")},

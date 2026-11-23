@@ -330,6 +330,16 @@ type SecurityPolicy struct {
 	AlertOnNewLocation bool `json:"alertOnNewLocation"`
 	AlertOnNewDevice   bool `json:"alertOnNewDevice"`
 
+	// adaptive risk: the signals of a sign-in add up to a score, which asks for MFA or refuses the sign-in
+	AdaptiveRisk          bool           `json:"adaptiveRisk"`
+	RiskMfaScore          int            `json:"riskMfaScore"`
+	RiskDenyScore         int            `json:"riskDenyScore"`
+	RiskScores            map[string]int `json:"riskScores"`
+	RiskTrustedNetworks   []string       `json:"riskTrustedNetworks"`
+	RiskBlockedCountries  []string       `json:"riskBlockedCountries"`
+	RiskCountryHeader     string         `json:"riskCountryHeader"`
+	ImpossibleTravelHours int            `json:"impossibleTravelHours"`
+
 	MaskSensitiveData    bool `json:"maskSensitiveData"`
 	AllowAccountDeletion bool `json:"allowAccountDeletion"`
 	AllowDataExport      bool `json:"allowDataExport"`

@@ -18,6 +18,8 @@ import * as Setting from "@/lib/setting";
 export interface CrudListPageProps<T extends Record<string, any>> {
   title: React.ReactNode;
   description?: React.ReactNode;
+  /** shown between the page header and the table, such as a summary of the rows */
+  header?: React.ReactNode;
   columns: ColumnDef<T>[];
   fetch: (query: TableQuery) => Promise<CasdoorListResponse<T>>;
   /** re-fetch when any of these change */
@@ -79,6 +81,7 @@ export interface CrudListPageProps<T extends Record<string, any>> {
 export function CrudListPage<T extends Record<string, any>>({
   title,
   description,
+  header,
   columns,
   fetch,
   deps = [],
@@ -256,6 +259,7 @@ export function CrudListPage<T extends Record<string, any>>({
           </>
         }
       />
+      {header}
       <DataTable
         columns={shownColumns}
         rows={rows}

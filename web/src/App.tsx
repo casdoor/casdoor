@@ -35,6 +35,11 @@ const SystemInfoPage = React.lazy(() => import("@/pages/SystemInfoPage"));
 const CompliancePage = React.lazy(() => import("@/ee/pages/CompliancePage"));
 const SecurityScreenPage = React.lazy(() => import("@/ee/pages/SecurityScreenPage"));
 const AccessReviewListPage = React.lazy(() => import("@/ee/pages/AccessReviewListPage"));
+const SigninRiskListPage = React.lazy(() => import("@/ee/pages/SigninRiskListPage"));
+const FlowListPage = React.lazy(() => import("@/pages/FlowListPage"));
+const FlowEditPage = React.lazy(() => import("@/pages/FlowEditPage"));
+const DeviceListPage = React.lazy(() => import("@/pages/DeviceListPage"));
+const DeviceEnrollPage = React.lazy(() => import("@/pages/DeviceEnrollPage"));
 const AccessReviewEditPage = React.lazy(() => import("@/ee/pages/AccessReviewEditPage"));
 const MyAccessReviewsPage = React.lazy(() => import("@/ee/pages/MyAccessReviewsPage"));
 const EditionsPage = React.lazy(() => import("@/pages/EditionsPage"));
@@ -354,6 +359,11 @@ export default function App() {
           <Route path="/access-reviews" element={<AccessReviewListPage />} />
           <Route path="/access-reviews/:organizationName/:reviewName" element={<AccessReviewEditPage />} />
           <Route path="/my-access-reviews" element={<MyAccessReviewsPage />} />
+          <Route path="/signin-risks" element={<SigninRiskListPage />} />
+          <Route path="/flows" element={<FlowListPage />} />
+          <Route path="/flows/:organizationName/:flowName" element={<FlowEditPage />} />
+          <Route path="/devices" element={<DeviceListPage />} />
+          <Route path="/device-enroll" element={<DeviceEnrollPage />} />
           <Route path="/editions" element={<EditionsPage />} />
           <Route path="/tokens" element={<TokenListPage />} />
           <Route path="/tokens/:tokenName" element={<TokenEditPage />} />

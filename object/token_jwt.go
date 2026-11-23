@@ -15,6 +15,7 @@
 package object
 
 import (
+	"bytes"
 	"crypto/ed25519"
 	"crypto/sha256"
 	"crypto/sha512"
@@ -852,6 +853,20 @@ func generateJwtTokenWithOptions(application *Application, user *User, provider 
 		return "", "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
 	}
 
+	flowClaims, err := getFlowTokenClaims(application, user, scope)
+	if err != nil {
+		return "", "", "", "", err
+	}
+	if len(flowClaims) > 0 {
+		token.Claims = mergeFlowClaims(token.Claims, flowClaims)
+		newIdTokenWithoutFlows := newIdToken
+		newIdToken = func() *jwt.Token {
+			idToken := newIdTokenWithoutFlows()
+			idToken.Claims = mergeFlowClaims(idToken.Claims, flowClaims)
+			return idToken
+		}
+	}
+
 	cert, err := GetCertByApplication(signingApplication)
 	if err != nil {
 		return "", "", "", "", err
@@ -1013,4 +1028,24 @@ func parseEdPublicKeyFromPem(certificate string) (interface{}, error) {
 		return nil, fmt.Errorf("the certificate has no Ed25519 public key")
 	}
 	return publicKey, nil
+}
+
+// mergeFlowClaims adds the claims of the pre-token flows to the claims of a token, the claims Casdoor sets win
+func mergeFlowClaims(claims jwt.Claims, extra map[string]interface{}) jwt.Claims {
+	data, err := json.Marshal(claims)
+	if err != nil {
+		return claims
+	}
+	res := jwt.MapClaims{}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	if err = decoder.Decode(&res); err != nil {
+		return claims
+	}
+	for key, value := range extra {
+		if _, ok := res[key]; !ok {
+			res[key] = value
+		}
+	}
+	return res
 }

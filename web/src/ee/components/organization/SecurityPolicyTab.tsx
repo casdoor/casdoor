@@ -16,6 +16,8 @@ import {getActionKind, parseBundle} from "@/lib/integration";
 import {FormRow} from "@/components/crud/FormRow";
 import {EditionNotice} from "@/components/common/EditionNotice";
 import * as Setting from "@/lib/setting";
+import {RiskSignals} from "@/lib/risk-signals";
+
 
 /** The organization's security and risk control settings, which need a commercial edition license. */
 export function SecurityPolicyTab({owner, policy, onChange}: {owner: string; policy: any; onChange: (policy: any) => void}) {
@@ -82,6 +84,51 @@ export function SecurityPolicyTab({owner, policy, onChange}: {owner: string; pol
       {section("organization:Sign-in alerts")}
       {toggle("alertOnNewLocation", "organization:Alert on new location")}
       {toggle("alertOnNewDevice", "organization:Alert on new device")}
+
+      {section("organization:Adaptive risk")}
+      {toggle("adaptiveRisk", "organization:Enable adaptive risk")}
+      {value.adaptiveRisk ? (
+        <>
+          {number("riskMfaScore", "organization:Ask for MFA at score", "40")}
+          {number("riskDenyScore", "organization:Block at score", "100")}
+          {number("impossibleTravelHours", "organization:Impossible travel within hours", "2")}
+          <FormRow labelKey="organization:Signal scores" block>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {RiskSignals.map((signal) => (
+                <label key={signal.name} className="flex items-center justify-between gap-2 rounded-md border px-3 py-1.5 text-sm">
+                  <span>{i18next.t(signal.labelKey)}</span>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={100}
+                    className="h-8 w-20"
+                    placeholder={String(signal.score)}
+                    value={value.riskScores?.[signal.name] ?? ""}
+                    onChange={(e) => {
+                      const scores = {...(value.riskScores ?? {})};
+                      if (e.target.value === "") {
+                        delete scores[signal.name];
+                      } else {
+                        scores[signal.name] = Setting.myParseInt(e.target.value);
+                      }
+                      set("riskScores", scores);
+                    }}
+                  />
+                </label>
+              ))}
+            </div>
+          </FormRow>
+          <FormRow labelKey="organization:Trusted networks" block>
+            <TagsInput value={value.riskTrustedNetworks ?? []} onChange={(v) => set("riskTrustedNetworks", v)} placeholder="10.0.0.0/8" />
+          </FormRow>
+          <FormRow labelKey="organization:Blocked countries" block>
+            <TagsInput value={value.riskBlockedCountries ?? []} onChange={(v) => set("riskBlockedCountries", v)} placeholder="KP" />
+          </FormRow>
+          <FormRow labelKey="organization:Country header">
+            <Input placeholder="CF-IPCountry" value={value.riskCountryHeader ?? ""} onChange={(e) => set("riskCountryHeader", e.target.value)} />
+          </FormRow>
+        </>
+      ) : null}
 
       {section("organization:Personal information")}
       {toggle("maskSensitiveData", "organization:Mask personal information in the console")}
