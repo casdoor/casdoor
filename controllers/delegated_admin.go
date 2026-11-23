@@ -56,9 +56,10 @@ func (c *ApiController) getDelegatedUsers(scope *ee.DelegatedScope) {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
+	statusCond := object.GetUserStatusCond(c.Ctx.Input.Query("status"), "")
 
 	if limit == "" || page == "" {
-		users, err := object.GetMaskedUsers(scope.GetScopedUsers(-1, -1, "", "", "", "", groupName))
+		users, err := object.GetMaskedUsers(scope.GetScopedUsers(-1, -1, "", "", "", "", groupName, nil))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -69,13 +70,13 @@ func (c *ApiController) getDelegatedUsers(scope *ee.DelegatedScope) {
 	}
 
 	pageSize := util.ParseInt(limit)
-	count, err := scope.GetScopedUserCount(field, value, groupName, nil)
+	count, err := scope.GetScopedUserCount(field, value, groupName, statusCond)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 	paginator := pagination.NewPaginator(c.Ctx.Request, pageSize, count)
-	users, err := object.GetMaskedUsers(scope.GetScopedUsers(paginator.Offset(), pageSize, field, value, sortField, sortOrder, groupName))
+	users, err := object.GetMaskedUsers(scope.GetScopedUsers(paginator.Offset(), pageSize, field, value, sortField, sortOrder, groupName, statusCond))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

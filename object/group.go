@@ -311,7 +311,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, errors.New("group has children group")
 	}
 
-	if count, err := GetGroupUserCount(group.GetId(), "", ""); err != nil {
+	if count, err := GetGroupUserCount(group.GetId(), "", "", ""); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has users")
@@ -375,7 +375,7 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 	return treeData
 }
 
-func GetGroupUserCount(groupId string, field, value string) (int64, error) {
+func GetGroupUserCount(groupId string, field, value string, status string) (int64, error) {
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
 	if err != nil {
 		return 0, err
@@ -385,20 +385,24 @@ func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 		return 0, err
 	}
 
-	if field == "" && value == "" {
+	if field == "" && value == "" && status == "" {
 		return int64(len(names)), nil
 	} else {
 		tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-		session := ormer.Engine.Table(tableNamePrefix+"user").
+		prefixedUserTable := tableNamePrefix + "user"
+		session := ormer.Engine.Table(prefixedUserTable).
 			Where("owner = ?", owner).In("name", names)
-		if util.FilterField(field) {
-			session = session.And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
+		if field != "" && value != "" && util.FilterField(field) {
+			session = session.And(fmt.Sprintf("%s.%s like ?", prefixedUserTable, util.CamelToSnakeCase(field)), "%"+value+"%")
+		}
+		if cond := GetUserStatusCond(status, ""); cond != nil {
+			session = session.And(cond)
 		}
 		return session.Count()
 	}
 }
 
-func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string, status string) ([]*User, error) {
 	users := []*User{}
 	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
 	if err != nil {
@@ -424,6 +428,10 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 
 	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
 		sortField = "created_time"
+	}
+
+	if cond := GetUserStatusCond(status, ""); cond != nil {
+		session = session.And(cond)
 	}
 
 	orderQuery := fmt.Sprintf("%s.%s", prefixedUserTable, util.CamelToSnakeCase(sortField))

@@ -290,8 +290,8 @@ func (scope *DelegatedScope) GetScopedUserCount(field string, value string, grou
 	return session.Count(&object.User{})
 }
 
-// GetScopedUsers lists the administered users, a page of them when limit is not -1
-func (scope *DelegatedScope) GetScopedUsers(offset int, limit int, field string, value string, sortField string, sortOrder string, groupName string) ([]*object.User, error) {
+// GetScopedUsers lists the administered users, a page of them when limit is not -1, cond may further limit them
+func (scope *DelegatedScope) GetScopedUsers(offset int, limit int, field string, value string, sortField string, sortOrder string, groupName string, cond builder.Cond) ([]*object.User, error) {
 	users := []*object.User{}
 	names, err := scope.GetScopedUserNames(groupName)
 	if err != nil || len(names) == 0 {
@@ -303,6 +303,9 @@ func (scope *DelegatedScope) GetScopedUsers(offset int, limit int, field string,
 	}
 	if field != "" && value != "" && util.FilterField(field) {
 		session = session.And(fmt.Sprintf("%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
+	}
+	if cond != nil {
+		session = session.And(cond)
 	}
 	if sortField == "" || sortOrder == "" || !util.FilterField(sortField) {
 		sortField = "created_time"

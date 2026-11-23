@@ -35,7 +35,7 @@ export interface CrudListPageProps<T extends Record<string, any>> {
   editUrl?: (record: T) => string;
   addButtonLabel?: React.ReactNode;
   /** extra buttons next to Refresh/Add; a function form gets `refresh` to re-fetch the list */
-  toolbar?: React.ReactNode | ((ctx: {refresh: () => void}) => React.ReactNode);
+  toolbar?: React.ReactNode | ((ctx: {refresh: () => void; setQuery: (patch: Partial<TableQuery>) => void}) => React.ReactNode);
   rowKey?: (row: T, index: number) => string;
   initialQuery?: Partial<TableQuery>;
   /**
@@ -112,7 +112,7 @@ export function CrudListPage<T extends Record<string, any>>({
   );
 
   // the selection is of rows, and a page change or a re-fetch replaces them
-  React.useEffect(() => setSelected(new Set()), [query.page, query.pageSize, query.searchText, query.searchedColumn]);
+  React.useEffect(() => setSelected(new Set()), [query.page, query.pageSize, query.searchText, query.searchedColumn, rows]);
 
   const handleAdd = async() => {
     if (!newRecord) {
@@ -242,7 +242,7 @@ export function CrudListPage<T extends Record<string, any>>({
         description={description}
         actions={
           <>
-            {typeof toolbar === "function" ? toolbar({refresh}) : toolbar}
+            {typeof toolbar === "function" ? toolbar({refresh, setQuery}) : toolbar}
             <ColumnMenu columns={allColumns} visibility={visibility} />
             <Button variant="outline" size="iconSm" onClick={refresh} aria-label="Refresh" disabled={loading}>
               <RefreshCw className={loading ? "animate-spin" : undefined} />

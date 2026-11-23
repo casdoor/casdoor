@@ -78,7 +78,7 @@ func initLicenseReporter() {
 		InstanceId: getInstanceId,
 		Version:    getVersion,
 		UserCount: func() int64 {
-			count, err := GetGlobalUserCount("", "")
+			count, err := GetGlobalUserCount("", "", "")
 			if err != nil {
 				return 0
 			}

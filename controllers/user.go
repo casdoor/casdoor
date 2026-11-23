@@ -33,6 +33,7 @@ import (
 // @Title GetGlobalUsers
 // @Tag User API
 // @Description get global users
+// @Param   status    query    string  false       "enabled for the users who can sign in, disabled for the forbidden or deleted ones, empty for all"
 // @Success 200 {array} object.User The Response object
 // @router /get-global-users [get]
 func (c *ApiController) GetGlobalUsers() {
@@ -46,6 +47,7 @@ func (c *ApiController) GetGlobalUsers() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
+	status := c.Ctx.Input.Query("status")
 
 	if limit == "" || page == "" {
 		users, err := object.GetMaskedUsers(object.GetGlobalUsers())
@@ -58,14 +60,14 @@ func (c *ApiController) GetGlobalUsers() {
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetGlobalUserCount(field, value)
+		count, err := object.GetGlobalUserCount(field, value, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -87,6 +89,7 @@ func (c *ApiController) GetGlobalUsers() {
 // @Tag User API
 // @Description
 // @Param   owner     query    string  true        "The owner of users"
+// @Param   status    query    string  false       "enabled for the users who can sign in, disabled for the forbidden or deleted ones, empty for all"
 // @Success 200 {array} object.User The Response object
 // @router /get-users [get]
 func (c *ApiController) GetUsers() {
@@ -103,6 +106,7 @@ func (c *ApiController) GetUsers() {
 	value := c.Ctx.Input.Query("value")
 	sortField := c.Ctx.Input.Query("sortField")
 	sortOrder := c.Ctx.Input.Query("sortOrder")
+	status := c.Ctx.Input.Query("status")
 
 	if limit == "" || page == "" {
 		if groupName != "" {
@@ -126,14 +130,14 @@ func (c *ApiController) GetUsers() {
 		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetUserCount(owner, field, value, groupName)
+		count, err := object.GetUserCount(owner, field, value, groupName, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.NewPaginator(c.Ctx.Request, limit, count)
-		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
+		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName, status)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -987,7 +991,7 @@ func (c *ApiController) GetSortedUsers() {
 			c.ResponseError(fmt.Sprintf("invalid sorter field: %s", sorter))
 			return
 		}
-		users, err = object.GetMaskedUsers(scope.GetScopedUsers(0, limit, "", "", sorter, "descend", ""))
+		users, err = object.GetMaskedUsers(scope.GetScopedUsers(0, limit, "", "", sorter, "descend", "", nil))
 	} else {
 		users, err = object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
 	}
@@ -1021,7 +1025,7 @@ func (c *ApiController) GetUserCount() {
 		}
 		count, err = scope.GetScopedUserCount("", "", "", cond)
 	} else if isOnline == "" {
-		count, err = object.GetUserCount(owner, "", "", "")
+		count, err = object.GetUserCount(owner, "", "", "", "")
 	} else {
 		count, err = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
 	}

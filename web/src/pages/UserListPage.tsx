@@ -3,6 +3,18 @@ import i18next from "i18next";
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Switch} from "@/components/ui/switch";
 import {CrudListPage} from "@/components/crud/CrudListPage";
 import {XlsxImport} from "@/components/crud/XlsxImport";
 import {boolColumn, dateColumn, linkColumn, organizationColumn, textColumn} from "@/components/crud/columns";
@@ -14,6 +26,7 @@ import * as UserBackend from "@/backend/UserBackend";
 import * as Setting from "@/lib/setting";
 import {canDelegated, isDelegatedAdmin} from "@/ee/lib/delegated-admin";
 import {newUser} from "@/pages/defaults";
+import {cn} from "@/lib/utils";
 
 /**
  * Also embedded by the group tree page, which scopes the list to the selected
@@ -39,6 +52,11 @@ export default function UserListPage({
     (record.owner === "built-in" && record.name === "admin");
 
   const [organization, setOrganization] = React.useState<any>({});
+  // "enabled" lists the users who can sign in, "disabled" the forbidden or deleted ones
+  const [status, setStatus] = React.useState("");
+  const [forbidding, setForbidding] = React.useState<any>(null);
+  const [saving, setSaving] = React.useState(false);
+  const refreshRef = React.useRef<() => void>(() => {});
 
   React.useEffect(() => {
     if (!organizationName) {
@@ -55,6 +73,25 @@ export default function UserListPage({
   // a delegated admin sees the users of their groups, and adds or deletes them only when allowed to manage users
   const delegated = isDelegatedAdmin(account);
   const canManageUsers = !delegated || canDelegated(account, "users");
+  const canForbid = (record: any) => canManageUsers && (delegated || Setting.isLocalAdminUser(account)) && !isProtected(record);
+
+  const saveForbidden = async() => {
+    setSaving(true);
+    try {
+      const res = await UserBackend.updateUser(forbidding.owner, forbidding.name, {isForbidden: !forbidding.isForbidden}, ["isForbidden"]);
+      if (res.status === "ok") {
+        Setting.showMessage("success", i18next.t("general:Successfully saved"));
+        setForbidding(null);
+        refreshRef.current();
+      } else {
+        Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
+      }
+    } catch (error) {
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const tagLabels = React.useMemo(() => {
     const map: Record<string, string> = {};
@@ -181,7 +218,23 @@ export default function UserListPage({
       align: "center",
       render: (value) => (value ? <Badge variant="outline">{i18next.t("user:Pending approval")}</Badge> : null),
     },
-    boolColumn({dataIndex: "isForbidden", title: i18next.t("user:Is forbidden"), invertColor: true}),
+    {
+      ...boolColumn<any>({dataIndex: "isForbidden", title: i18next.t("user:Is forbidden"), invertColor: true}),
+      render: (value, record) => (
+        <span className="inline-flex items-center gap-1.5">
+          <Switch
+            checked={Boolean(value)}
+            disabled={!canForbid(record)}
+            onCheckedChange={() => setForbidding(record)}
+            aria-label={`${i18next.t("user:Is forbidden")}: ${record.name}`}
+            className={cn(!canForbid(record) && "opacity-100", "data-[state=checked]:bg-destructive")}
+          />
+          <span className="text-xs text-muted-foreground">
+            {value ? i18next.t("general:ON") : i18next.t("general:OFF")}
+          </span>
+        </span>
+      ),
+    },
     boolColumn({dataIndex: "isDeleted", title: i18next.t("user:Is deleted"), invertColor: true}),
   ];
 
@@ -192,19 +245,65 @@ export default function UserListPage({
       columns={columns}
       formType="users"
       formItems={formItems}
-      toolbar={({refresh}) => delegated ? null : (
-        <XlsxImport
-          columns={Setting.getUserColumns()}
-          templateName="import-user.xlsx"
-          uploadApi="upload-users"
-          successMessage="Users uploaded successfully, refreshing the page"
-          onUploaded={refresh}
-        />
-      )}
-      deps={[organizationName, groupName, isGlobal]}
+      toolbar={({refresh, setQuery}) => {
+        refreshRef.current = refresh;
+        return (
+          <>
+            <Select
+              value={status || "all"}
+              onValueChange={(value) => {
+                setStatus(value === "all" ? "" : value);
+                setQuery({page: 1});
+              }}
+            >
+              <SelectTrigger className="h-8 w-28" aria-label={i18next.t("general:Status")}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{i18next.t("general:All")}</SelectItem>
+                <SelectItem value="enabled">{i18next.t("general:Enabled")}</SelectItem>
+                <SelectItem value="disabled">{i18next.t("general:Disabled")}</SelectItem>
+              </SelectContent>
+            </Select>
+            {delegated ? null : (
+              <XlsxImport
+                columns={Setting.getUserColumns()}
+                templateName="import-user.xlsx"
+                uploadApi="upload-users"
+                successMessage="Users uploaded successfully, refreshing the page"
+                onUploaded={refresh}
+              />
+            )}
+            <AlertDialog open={forbidding !== null} onOpenChange={(open) => !open && !saving && setForbidding(null)}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {forbidding?.isForbidden ? i18next.t("user:Allow this user to sign in again?") : i18next.t("user:Forbid this user from signing in?")}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>{forbidding ? `${forbidding.owner}/${forbidding.name}` : null}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={saving}>{i18next.t("general:Cancel")}</AlertDialogCancel>
+                  <AlertDialogAction
+                    className={cn(!forbidding?.isForbidden && "bg-destructive text-destructive-foreground hover:bg-destructive/90")}
+                    disabled={saving}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      saveForbidden();
+                    }}
+                  >
+                    {i18next.t("general:OK")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        );
+      }}
+      deps={[organizationName, groupName, isGlobal, status]}
       fetch={(q) =>
         isGlobal
-          ? UserBackend.getGlobalUsers(q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder)
+          ? UserBackend.getGlobalUsers(q.page, q.pageSize, q.searchedColumn, q.searchText, q.sortField, q.sortOrder, status)
           : UserBackend.getUsers(
             organizationName,
             q.page,
@@ -214,6 +313,7 @@ export default function UserListPage({
             q.sortField,
             q.sortOrder,
             groupName,
+            status,
           )
       }
       newRecord={account && canManageUsers ? () => newUser(account, organization, organizationName, groupName) : undefined}

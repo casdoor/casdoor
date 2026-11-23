@@ -347,8 +347,31 @@ func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error)
 	return true, string(marshalValue), nil
 }
 
-func GetGlobalUserCount(field, value string) (int64, error) {
+// GetUserStatusCond matches the users who can sign in for "enabled", the forbidden or deleted ones for "disabled"
+func GetUserStatusCond(status string, alias string) builder.Cond {
+	if alias != "" {
+		alias += "."
+	}
+	isForbidden := alias + "is_forbidden"
+	isDeleted := alias + "is_deleted"
+	switch status {
+	case "enabled":
+		return builder.And(
+			builder.Or(builder.Eq{isForbidden: false}, builder.IsNull{isForbidden}),
+			builder.Or(builder.Eq{isDeleted: false}, builder.IsNull{isDeleted}),
+		)
+	case "disabled":
+		return builder.Or(builder.Eq{isForbidden: true}, builder.Eq{isDeleted: true})
+	default:
+		return nil
+	}
+}
+
+func GetGlobalUserCount(field, value string, status string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
+	if cond := GetUserStatusCond(status, ""); cond != nil {
+		session = session.And(cond)
+	}
 	return session.Count(&User{})
 }
 
@@ -376,9 +399,12 @@ func GetGlobalUsersWithFilter(cond builder.Cond) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string, status string) ([]*User, error) {
 	users := []*User{}
 	session := GetSessionForUser("", offset, limit, field, value, sortField, sortOrder)
+	if cond := GetUserStatusCond(status, getSessionForUserAlias(offset)); cond != nil {
+		session = session.And(cond)
+	}
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err
@@ -387,13 +413,15 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string, groupName string) (int64, error) {
-	session := GetSession(owner, -1, -1, field, value, "", "")
-
+func GetUserCount(owner, field, value string, groupName string, status string) (int64, error) {
 	if groupName != "" {
-		return GetGroupUserCount(util.GetId(owner, groupName), field, value)
+		return GetGroupUserCount(util.GetId(owner, groupName), field, value, status)
 	}
 
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	if cond := GetUserStatusCond(status, ""); cond != nil {
+		session = session.And(cond)
+	}
 	return session.Count(&User{})
 }
 
@@ -457,14 +485,17 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string) ([]*User, error) {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string, status string) ([]*User, error) {
 	users := []*User{}
 
 	if groupName != "" {
-		return GetPaginationGroupUsers(util.GetId(owner, groupName), offset, limit, field, value, sortField, sortOrder)
+		return GetPaginationGroupUsers(util.GetId(owner, groupName), offset, limit, field, value, sortField, sortOrder, status)
 	}
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
+	if cond := GetUserStatusCond(status, getSessionForUserAlias(offset)); cond != nil {
+		session = session.And(cond)
+	}
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err
@@ -1226,7 +1257,7 @@ func AddUser(user *User, lang string) (bool, error) {
 
 	rankingItem := GetAccountItemByName("Ranking", organization)
 	if rankingItem != nil {
-		count, err := GetUserCount(user.Owner, "", "", "")
+		count, err := GetUserCount(user.Owner, "", "", "", "")
 		if err != nil {
 			return false, err
 		}

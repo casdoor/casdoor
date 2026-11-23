@@ -53,6 +53,14 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 	return session
 }
 
+// getSessionForUserAlias is the alias GetSessionForUser gives the user table, a page of users is read through a self join
+func getSessionForUserAlias(offset int) string {
+	if offset == -1 {
+		return ""
+	}
+	return "a"
+}
+
 func GetSessionForUser(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
 	session := ormer.Engine.Prepare()
 	if offset != -1 && limit != -1 {
