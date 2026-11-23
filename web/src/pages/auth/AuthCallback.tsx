@@ -31,6 +31,25 @@ import * as Setting from "@/lib/setting";
  */
 const REACT_FALLBACK_KEY = "__casdoor_callback_react";
 const REACT_FALLBACK_PAYLOAD_KEY = "casdoor_callback_react_fallback";
+/**
+ * Put on the callback URL in place of the provider's code once the backend has
+ * redeemed it and asked for the second factor, so a reload offers a new sign-in
+ * instead of posting the spent code again.
+ */
+const SPENT_KEY = "__casdoor_callback_spent";
+
+// the parameters getStateFromQueryParams adds to the query of the sign-in page
+const STATE_ONLY_KEYS = ["application", "provider", "method", "from", "linkNonce", "userCode"];
+
+/** The authorize request a provider sign-in started from, to begin it again; "" when it was not one. */
+function getSigninAgainUrl(innerParams: URLSearchParams): string {
+  if (!innerParams.get("client_id") || !innerParams.get("redirect_uri")) {
+    return "";
+  }
+  const query = new URLSearchParams(innerParams);
+  STATE_ONLY_KEYS.forEach((key) => query.delete(key));
+  return `/login/oauth/authorize?${query.toString()}`;
+}
 
 interface ReactFallbackPayload {
   search: string;
@@ -95,6 +114,8 @@ export default function AuthCallback() {
   // the third-party account being linked already belongs to another account, which can be merged into this one
   const [merge, setMerge] = React.useState<{name: string; displayName: string; from: string} | null>(null);
   const [merging, setMerging] = React.useState(false);
+  // reloaded after the provider's code was spent: the authorize request to start again, "" when there is none
+  const [signinAgainUrl, setSigninAgainUrl] = React.useState<string | null>(null);
   const startedRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -113,6 +134,11 @@ export default function AuthCallback() {
     const params = new URLSearchParams(location.search);
     const state = params.get("state") ?? "";
     const innerParams = new URLSearchParams(Util.getQueryParamsFromState(state));
+
+    if (params.get(SPENT_KEY) === "1") {
+      setSigninAgainUrl(getSigninAgainUrl(innerParams));
+      return;
+    }
 
     const getResponseType = (): string => {
       const method = innerParams.get("method");
@@ -266,6 +292,11 @@ export default function AuthCallback() {
         localStorage.setItem("mfaRedirectUrl", Setting.getOriginUrl());
         Setting.goToLink(Setting.getOriginUrl());
       } else if (res.data === NextMfa) {
+        // the code is single-use and the pending sign-in lives on in the session, so take
+        // the code out of the address bar; the React marker keeps the static callback page
+        // from handling the reload
+        const spent = new URLSearchParams({state, [REACT_FALLBACK_KEY]: "1", [SPENT_KEY]: "1"});
+        window.history.replaceState(window.history.state, "", `${window.location.pathname}?${spent.toString()}`);
         // the panel needs the application for its branding and the captcha rule
         // behind "Get Code"
         if (applicationName) {
@@ -401,6 +432,23 @@ export default function AuthCallback() {
               {i18next.t("user:Merge accounts")}
             </Button>
           </div>
+        </div>
+      </AuthLayout>
+    );
+  }
+
+  if (signinAgainUrl !== null) {
+    return (
+      <AuthLayout>
+        <div className="space-y-4">
+          <Alert>
+            <AlertDescription>{i18next.t("login:Sign-in interrupted")}</AlertDescription>
+          </Alert>
+          {signinAgainUrl ? (
+            <Button className="w-full" onClick={() => Setting.goToLink(signinAgainUrl)}>
+              {i18next.t("login:Sign in again")}
+            </Button>
+          ) : null}
         </div>
       </AuthLayout>
     );
