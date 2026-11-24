@@ -131,6 +131,7 @@ func runServer() {
 	web.InsertFilter("*", web.BeforeRouter, routers.TimeoutFilter)
 	web.InsertFilter("*", web.BeforeRouter, routers.ApiFilter)
 	web.InsertFilter("*", web.BeforeRouter, routers.PrometheusFilter)
+	web.InsertFilter("*", web.BeforeRouter, routers.NotFoundApiFilter)
 	web.InsertFilter("*", web.BeforeRouter, routers.RecordMessage)
 	web.InsertFilter("*", web.BeforeRouter, routers.FieldValidationFilter)
 	web.InsertFilter("*", web.AfterExec, routers.AfterRecordMessage, web.WithReturnOnOutput(false))

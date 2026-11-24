@@ -36,6 +36,7 @@ func RequestBodyFilter(ctx *context.Context) {
 		return
 	}
 	if ctx.Request.Body == nil || ctx.Request.Body == http.NoBody {
+		checkRequestForm(ctx, nil)
 		return
 	}
 
@@ -51,7 +52,10 @@ func RequestBodyFilter(ctx *context.Context) {
 		responseRequestBodyTooLarge(ctx, limit)
 		return
 	}
-	if err != nil || len(body) == 0 {
+	if err != nil {
+		return
+	}
+	if !checkRequestForm(ctx, body) || len(body) == 0 {
 		return
 	}
 
@@ -59,6 +63,30 @@ func RequestBodyFilter(ctx *context.Context) {
 	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Cache the raw bytes directly so controllers always have access to them.
 	ctx.Input.RequestBody = body
+}
+
+// checkRequestForm parses the form the way Beego does before routing, a malformed one is answered with
+// 400 here, Beego would answer it with 500
+func checkRequestForm(ctx *context.Context, body []byte) bool {
+	request := ctx.Request.Clone(ctx.Request.Context())
+	request.Body = io.NopCloser(bytes.NewReader(body))
+
+	var err error
+	if ctx.Input.IsUpload() {
+		err = request.ParseMultipartForm(web.BConfig.MaxMemory)
+		if request.MultipartForm != nil {
+			_ = request.MultipartForm.RemoveAll()
+		}
+	} else {
+		err = request.ParseForm()
+	}
+	if err == nil {
+		return true
+	}
+
+	ctx.Output.SetStatus(http.StatusBadRequest)
+	responseError(ctx, fmt.Sprintf("failed to parse the request: %s", err.Error()))
+	return false
 }
 
 // getRequestBodyLimit applies the same limits Beego enforces after the filters, the body
