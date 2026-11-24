@@ -426,6 +426,7 @@
     "The signup item: %s is required, so the magic link cannot sign up a new user": "The signup item: %s is required, so the magic link cannot sign up a new user",
     "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "This link was requested from another browser. Go back to that browser and enter the code: %s": "This link was requested from another browser. Go back to that browser and enter the code: %s",
     "Too many SMS codes have been sent to this number, please try again later": "Too many SMS codes have been sent to this number, please try again later",
     "Turing test failed.": "Turing test failed.",
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",

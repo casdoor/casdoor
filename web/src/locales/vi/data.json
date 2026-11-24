@@ -1426,7 +1426,7 @@
     "unsynced": "chưa đồng bộ"
   },
   "login": {
-    "A sign-in link has been sent to your email, it can only be opened in this browser": "Liên kết đăng nhập đã được gửi tới email của bạn, chỉ có thể mở trong trình duyệt này",
+    "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below": "Liên kết đăng nhập và mã đã được gửi đến email của bạn. Hãy mở liên kết trong trình duyệt này hoặc nhập mã bên dưới",
     "Approve and sign in": "Phê duyệt và đăng nhập",
     "Auto sign in": "Tự động đăng nhập",
     "Back button": "Nút quay lại",

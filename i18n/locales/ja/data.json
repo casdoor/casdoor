@@ -426,6 +426,7 @@
     "The signup item: %s is required, so the magic link cannot sign up a new user": "サインアップ項目: %s は必須のため、マジックリンクでは新規ユーザーを登録できません",
     "The verification code has already been used!": "この検証コードは既に使用されています！",
     "The verification code has not been sent yet!": "検証コードはまだ送信されていません！",
+    "This link was requested from another browser. Go back to that browser and enter the code: %s": "このリンクは別のブラウザで申請されました。そのブラウザに戻って次のコードを入力してください：%s",
     "Too many SMS codes have been sent to this number, please try again later": "この番号への SMS 送信が多すぎます。しばらくしてから再試行してください",
     "Turing test failed.": "チューリングテストは失敗しました。",
     "Unable to get the email modify rule.": "電子メール変更規則を取得できません。",

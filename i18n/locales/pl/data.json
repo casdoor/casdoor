@@ -426,6 +426,7 @@
     "The signup item: %s is required, so the magic link cannot sign up a new user": "Pole rejestracji: %s jest wymagane, więc magiczny link nie może zarejestrować nowego użytkownika",
     "The verification code has already been used!": "Kod weryfikacyjny został już wykorzystany!",
     "The verification code has not been sent yet!": "Kod weryfikacyjny nie został jeszcze wysłany!",
+    "This link was requested from another browser. Go back to that browser and enter the code: %s": "Ten link został zamówiony w innej przeglądarce. Wróć do tamtej przeglądarki i wpisz kod: %s",
     "Too many SMS codes have been sent to this number, please try again later": "Na ten numer wysłano zbyt wiele kodów SMS, spróbuj później",
     "Turing test failed.": "Test Turinga nie powiódł się.",
     "Unable to get the email modify rule.": "Nie można pobrać reguły modyfikacji email.",

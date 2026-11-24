@@ -1471,7 +1471,7 @@
     "unsynced": "unsynced"
   },
   "login": {
-    "A sign-in link has been sent to your email, it can only be opened in this browser": "A sign-in link has been sent to your email, it can only be opened in this browser",
+    "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below": "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below",
     "Approve and sign in": "Approve and sign in",
     "Auto sign in": "Auto sign in",
     "Back button": "Back button",

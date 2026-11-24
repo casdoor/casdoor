@@ -1428,7 +1428,7 @@
     "unsynced": "未同步"
   },
   "login": {
-    "A sign-in link has been sent to your email, it can only be opened in this browser": "登录链接已发送到你的邮箱, 该链接只能在当前浏览器中打开",
+    "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below": "登录链接和验证码已发送到您的邮箱。请在本浏览器中打开链接，或在下方输入验证码",
     "Approve and sign in": "批准并登录",
     "Auto sign in": "下次自动登录",
     "Back button": "返回按钮",

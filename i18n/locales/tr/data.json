@@ -426,6 +426,7 @@
     "The signup item: %s is required, so the magic link cannot sign up a new user": "Kayıt alanı: %s zorunlu olduğundan sihirli bağlantı yeni kullanıcı kaydedemez",
     "The verification code has already been used!": "Doğrulama kodu zaten kullanılmış!",
     "The verification code has not been sent yet!": "Doğrulama kodu henüz gönderilmedi!",
+    "This link was requested from another browser. Go back to that browser and enter the code: %s": "Bu bağlantı başka bir tarayıcıdan istendi. O tarayıcıya dönün ve şu kodu girin: %s",
     "Too many SMS codes have been sent to this number, please try again later": "Bu numaraya çok fazla SMS kodu gönderildi, lütfen daha sonra tekrar deneyin",
     "Turing test failed.": "Turing testi başarısız.",
     "Unable to get the email modify rule.": "E-posta değiştirme kuralı alınamıyor.",

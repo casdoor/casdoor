@@ -1426,7 +1426,7 @@
     "unsynced": "não sincronizado"
   },
   "login": {
-    "A sign-in link has been sent to your email, it can only be opened in this browser": "Um link de login foi enviado para o seu e-mail, ele só pode ser aberto neste navegador",
+    "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below": "Um link de login e um código foram enviados para o seu e-mail. Abra o link neste navegador ou digite o código abaixo",
     "Approve and sign in": "Aprovar e fazer login",
     "Auto sign in": "Entrar automaticamente",
     "Back button": "Botão voltar",

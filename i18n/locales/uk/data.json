@@ -426,6 +426,7 @@
     "The signup item: %s is required, so the magic link cannot sign up a new user": "Поле реєстрації: %s є обов'язковим, тому магічне посилання не може зареєструвати нового користувача",
     "The verification code has already been used!": "Код підтвердження вже використано!",
     "The verification code has not been sent yet!": "Код підтвердження ще не надіслано!",
+    "This link was requested from another browser. Go back to that browser and enter the code: %s": "Це посилання запитано в іншому браузері. Поверніться до того браузера та введіть код: %s",
     "Too many SMS codes have been sent to this number, please try again later": "На цей номер надіслано надто багато SMS-кодів, спробуйте пізніше",
     "Turing test failed.": "Тест Тюрінга не пройдено.",
     "Unable to get the email modify rule.": "Не вдалося отримати правило зміни email.",

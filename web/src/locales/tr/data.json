@@ -1426,7 +1426,7 @@
     "unsynced": "senkronize edilmedi"
   },
   "login": {
-    "A sign-in link has been sent to your email, it can only be opened in this browser": "E-postanıza bir oturum açma bağlantısı gönderildi, yalnızca bu tarayıcıda açılabilir",
+    "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below": "Giriş bağlantısı ve kod e-postanıza gönderildi. Bağlantıyı bu tarayıcıda açın veya kodu aşağıya girin",
     "Approve and sign in": "Onayla ve giriş yap",
     "Auto sign in": "Otomatik Oturum Aç",
     "Back button": "Geri düğmesi",

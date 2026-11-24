@@ -18,6 +18,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/binary"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -46,9 +47,14 @@ type MagicLink struct {
 	SigninPath  string `xorm:"varchar(1000)" json:"-"`
 	TokenHash   string `xorm:"varchar(100) index notnull" json:"-"`
 	SessionHash string `xorm:"varchar(100) notnull" json:"-"`
+	CodeHash    string `xorm:"varchar(100)" json:"-"`
+	FailedTimes int    `xorm:"notnull default 0" json:"failedTimes"`
 	Time        int64  `xorm:"notnull" json:"time"`
 	IsUsed      bool   `xorm:"notnull" json:"isUsed"`
 }
+
+// MagicLinkCodeMaxFailedTimes is how many wrong codes a link takes before it is spent.
+const MagicLinkCodeMaxFailedTimes = 5
 
 // MagicLinkUrlPrefix is the short path mailed in a link, "/m/<token>". The sign-in page
 // the link returns to is kept with the link instead of being spelled out in the mail.
@@ -67,6 +73,18 @@ func generateMagicLinkToken() (string, error) {
 func HashMagicLinkSecret(secret string) string {
 	hash := sha256.Sum256([]byte(secret))
 	return hex.EncodeToString(hash[:])
+}
+
+// GetMagicLinkCode is the 6-digit code mailed with a link. It is derived from the link's
+// token, so whoever opens the link in another browser can be shown the code to type
+// into the browser that asked for it, which proves no more than the link itself does.
+func GetMagicLinkCode(token string) string {
+	hash := sha256.Sum256([]byte("magic-link-code:" + token))
+	return fmt.Sprintf("%06d", binary.BigEndian.Uint32(hash[:4])%1000000)
+}
+
+func hashMagicLinkCode(name string, code string) string {
+	return HashMagicLinkSecret(name + ":" + code)
 }
 
 func getMagicLinkTimeout() int64 {
@@ -179,7 +197,7 @@ func getMagicLinkEmailTitle(provider *Provider, organization *Organization) stri
 	return fmt.Sprintf("Your sign-in link for %s", name)
 }
 
-func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, user *User) string {
+func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, code string, user *User) string {
 	content := provider.Content
 	if !strings.Contains(content, "%link") {
 		content = getDefaultMagicLinkEmailContent()
@@ -188,6 +206,7 @@ func getMagicLinkEmailContent(provider *Provider, magicLinkUrl string, user *Use
 	content = strings.ReplaceAll(content, "<reset-link>", "")
 	content = strings.ReplaceAll(content, "</reset-link>", "")
 	content = strings.ReplaceAll(content, "%link", magicLinkUrl)
+	content = strings.ReplaceAll(content, "%code", code)
 	content = strings.ReplaceAll(content, "%expireTime", fmt.Sprintf("%d", getMagicLinkTimeout()))
 
 	userString := "Hi"
@@ -203,7 +222,8 @@ func getDefaultMagicLinkEmailContent() string {
 	return `<p>You have requested a sign-in link at Casdoor.</p>
 <p><a href="%link">Click here to sign in</a></p>
 <p>Or open this link: %link</p>
-<p>The link can only be used once, in the browser you asked for it, and expires in %expireTime minutes. If you did not request it, you can ignore this email.</p>`
+<p>Reading this email on another device? Enter this code in the browser you asked for the link instead: <b>%code</b></p>
+<p>The link and the code can only be used once, in the browser you asked for them, and expire in %expireTime minutes. If you did not request them, you can ignore this email.</p>`
 }
 
 // isAllowSendMagicLink throttles the links the same way IsAllowSend() throttles the
@@ -234,9 +254,10 @@ func isAllowSendMagicLink(application *Application, email string, remoteAddr str
 }
 
 func addMagicLink(organization *Organization, application *Application, email string, remoteAddr string, signinPath string, token string, sessionHash string) error {
+	name := util.GenerateId()
 	magicLink := &MagicLink{
 		Owner:       organization.Name,
-		Name:        util.GenerateId(),
+		Name:        name,
 		CreatedTime: util.GetCurrentTime(),
 		Application: application.Name,
 		Email:       email,
@@ -244,6 +265,7 @@ func addMagicLink(organization *Organization, application *Application, email st
 		SigninPath:  signinPath,
 		TokenHash:   HashMagicLinkSecret(token),
 		SessionHash: sessionHash,
+		CodeHash:    hashMagicLinkCode(name, GetMagicLinkCode(token)),
 		Time:        time.Now().Unix(),
 		IsUsed:      false,
 	}
@@ -287,7 +309,7 @@ func SendMagicLinkToEmail(organization *Organization, user *User, provider *Prov
 	}
 
 	title := getMagicLinkEmailTitle(provider, organization)
-	content := getMagicLinkEmailContent(provider, getMagicLinkUrl(origin, token), user)
+	content := getMagicLinkEmailContent(provider, getMagicLinkUrl(origin, token), GetMagicLinkCode(token), user)
 	err = SendEmail(provider, title, content, []string{dest}, organization.DisplayName)
 	if err != nil {
 		// a link that was never mailed must not hold back the next attempt
@@ -316,16 +338,20 @@ func ConsumeMagicLink(token string, sessionHash string, application *Application
 	if !existed || magicLink.Application != application.Name || magicLink.Owner != application.Organization {
 		return nil, errors.New(i18n.Translate(lang, "verification:The magic link is invalid"))
 	}
-	if magicLink.IsUsed {
+	if magicLink.IsUsed || magicLink.FailedTimes >= MagicLinkCodeMaxFailedTimes {
 		return nil, errors.New(i18n.Translate(lang, "verification:The magic link has already been used"))
 	}
 	if time.Now().Unix()-magicLink.Time > getMagicLinkTimeout()*60 {
 		return nil, errors.New(i18n.Translate(lang, "verification:The magic link has expired"))
 	}
 	if sessionHash == "" || sessionHash != magicLink.SessionHash {
-		return nil, errors.New(i18n.Translate(lang, "verification:Please open the magic link in the browser you requested it from"))
+		return nil, fmt.Errorf(i18n.Translate(lang, "verification:This link was requested from another browser. Go back to that browser and enter the code: %s"), GetMagicLinkCode(token))
 	}
 
+	return claimMagicLink(magicLink, lang)
+}
+
+func claimMagicLink(magicLink *MagicLink, lang string) (*MagicLink, error) {
 	affected, err := ormer.Engine.Where("token_hash = ?", magicLink.TokenHash).And("is_used = ?", false).Cols("is_used").Update(&MagicLink{IsUsed: true})
 	if err != nil {
 		return nil, err
@@ -336,6 +362,42 @@ func ConsumeMagicLink(token string, sessionHash string, application *Application
 
 	magicLink.IsUsed = true
 	return magicLink, nil
+}
+
+// ConsumeMagicLinkCode claims the latest link mailed to the address with the code typed
+// into the browser that asked for it, for a mail read on another device. Every wrong code
+// counts against the link, which is spent after MagicLinkCodeMaxFailedTimes of them.
+func ConsumeMagicLinkCode(email string, code string, sessionHash string, application *Application, lang string) (*MagicLink, error) {
+	email = strings.ToLower(strings.TrimSpace(email))
+	code = strings.TrimSpace(code)
+	if email == "" || code == "" || sessionHash == "" {
+		return nil, errors.New(i18n.Translate(lang, "verification:Wrong verification code!"))
+	}
+
+	magicLink := &MagicLink{}
+	existed, err := ormer.Engine.Where("owner = ? and application = ? and session_hash = ? and lower(email) = ?", application.Organization, application.Name, sessionHash, email).Desc("time").Get(magicLink)
+	if err != nil {
+		return nil, err
+	}
+	if !existed || magicLink.CodeHash == "" {
+		return nil, errors.New(i18n.Translate(lang, "verification:Wrong verification code!"))
+	}
+	if magicLink.IsUsed || magicLink.FailedTimes >= MagicLinkCodeMaxFailedTimes {
+		return nil, errors.New(i18n.Translate(lang, "verification:The magic link has already been used"))
+	}
+	if time.Now().Unix()-magicLink.Time > getMagicLinkTimeout()*60 {
+		return nil, errors.New(i18n.Translate(lang, "verification:The magic link has expired"))
+	}
+
+	if hashMagicLinkCode(magicLink.Name, code) != magicLink.CodeHash {
+		_, err = ormer.Engine.Where("token_hash = ?", magicLink.TokenHash).Incr("failed_times").Update(&MagicLink{})
+		if err != nil {
+			return nil, err
+		}
+		return nil, errors.New(i18n.Translate(lang, "verification:Wrong verification code!"))
+	}
+
+	return claimMagicLink(magicLink, lang)
 }
 
 // CheckMagicLinkSignup rejects a magic link signup for an application that asks the

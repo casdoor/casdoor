@@ -62,7 +62,14 @@ func (c *ApiController) checkMagicLinkSignin(authForm *form.AuthForm) (*object.U
 		return nil, errors.New(c.T("auth:The login method: login with magic link is not enabled for the application"))
 	}
 
-	magicLink, err := object.ConsumeMagicLink(authForm.Code, c.getMagicLinkSessionHash(), application, c.GetAcceptLanguage())
+	// the page that asked for the link posts the address with the code from the mail,
+	// the link itself comes back with its token alone
+	var magicLink *object.MagicLink
+	if authForm.Username != "" {
+		magicLink, err = object.ConsumeMagicLinkCode(authForm.Username, authForm.Code, c.getMagicLinkSessionHash(), application, c.GetAcceptLanguage())
+	} else {
+		magicLink, err = object.ConsumeMagicLink(authForm.Code, c.getMagicLinkSessionHash(), application, c.GetAcceptLanguage())
+	}
 	if err != nil {
 		return nil, err
 	}

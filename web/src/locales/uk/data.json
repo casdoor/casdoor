@@ -1426,7 +1426,7 @@
     "unsynced": "несинхронізований"
   },
   "login": {
-    "A sign-in link has been sent to your email, it can only be opened in this browser": "Посилання для входу надіслано на вашу пошту, його можна відкрити лише в цьому браузері",
+    "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below": "Посилання для входу та код надіслано на вашу електронну пошту. Відкрийте посилання в цьому браузері або введіть код нижче",
     "Approve and sign in": "Схвалити та увійти",
     "Auto sign in": "Автоматичний вхід",
     "Back button": "Кнопка «Назад»",

@@ -1426,7 +1426,7 @@
     "unsynced": "未同期"
   },
   "login": {
-    "A sign-in link has been sent to your email, it can only be opened in this browser": "ログインリンクをメールに送信しました。このリンクはこのブラウザーでのみ開けます",
+    "A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below": "ログインリンクと確認コードをメールで送信しました。このブラウザでリンクを開くか、下にコードを入力してください",
     "Approve and sign in": "承認してサインイン",
     "Auto sign in": "自動サインイン",
     "Back button": "戻るボタン",

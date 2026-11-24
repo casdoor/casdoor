@@ -342,6 +342,10 @@ export default function LoginPage({type = "login", application: applicationProp,
   // the magic-link method ends on "check your email" instead of signing in right away
   const [magicLinkSent, setMagicLinkSent] = React.useState(false);
   const [magicLinkVerifying, setMagicLinkVerifying] = React.useState(false);
+  // the code mailed with the link, for a mail read on another device
+  const [magicLinkCode, setMagicLinkCode] = React.useState("");
+  // why the link opened here could not sign in, e.g. the code to type into the browser that asked for it
+  const [magicLinkError, setMagicLinkError] = React.useState<string | null>(null);
   const [captchaForMagicLink, setCaptchaForMagicLink] = React.useState(false);
 
   const owner = params.owner;
@@ -889,8 +893,13 @@ export default function LoginPage({type = "login", application: applicationProp,
           goToCodeSignup(res.data2, values.code);
         } else if (res.status === "ok") {
           checkMfa(res, values, oAuthParams, (ok) => handleLoginResult(ok, values, oAuthParams));
+        } else if (values.signinMethod === "Magic link" && !values.username) {
+          setMagicLinkError(res.msg);
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+          if (values.signinMethod === "Magic link") {
+            setMagicLinkCode("");
+          }
           onRejected();
         }
       })
@@ -1306,12 +1315,60 @@ export default function LoginPage({type = "login", application: applicationProp,
     return <AuthLoading application={application} preview={!!preview} />;
   }
 
-  if (magicLinkSent) {
+  if (magicLinkError !== null) {
     return (
       <AuthLayout preview={!!preview} application={application}>
         <Alert>
-          <AlertDescription>{i18next.t("login:A sign-in link has been sent to your email, it can only be opened in this browser")}</AlertDescription>
+          <AlertDescription>{magicLinkError}</AlertDescription>
         </Alert>
+        <Button variant="outline" className="mt-4 w-full" onClick={() => setMagicLinkError(null)}>
+          {i18next.t("login:Sign in again")}
+        </Button>
+      </AuthLayout>
+    );
+  }
+
+  if (magicLinkSent) {
+    const signInWithMagicLinkCode = () => {
+      if (magicLinkCode.length !== VerificationCodeLength || loading) {
+        return;
+      }
+      doLogin(applyRequestType({
+        application: application.name,
+        organization: application.organization,
+        signinMethod: "Magic link",
+        username: username.trim(),
+        code: magicLinkCode,
+        autoSignin: true,
+        language: Setting.getLanguage(),
+      }));
+    };
+
+    return (
+      <AuthLayout preview={!!preview} application={application}>
+        <Alert>
+          <AlertDescription>{i18next.t("login:A sign-in link and a code have been sent to your email. Open the link in this browser, or enter the code below")}</AlertDescription>
+        </Alert>
+        <form
+          className="mt-4 space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            signInWithMagicLinkCode();
+          }}
+        >
+          <CodeInput
+            id="magicLinkCode"
+            className="verification-code-input"
+            autoFocus
+            value={magicLinkCode}
+            onChange={setMagicLinkCode}
+            onComplete={signInWithMagicLinkCode}
+            disabled={loading}
+          />
+          <Button type="submit" className="w-full" disabled={loading || magicLinkCode.length !== VerificationCodeLength}>
+            {i18next.t("login:Sign In")}
+          </Button>
+        </form>
       </AuthLayout>
     );
   }

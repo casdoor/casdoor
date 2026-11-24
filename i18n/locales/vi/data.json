@@ -426,6 +426,7 @@
     "The signup item: %s is required, so the magic link cannot sign up a new user": "Mục đăng ký: %s là bắt buộc, vì vậy liên kết ma thuật không thể đăng ký người dùng mới",
     "The verification code has already been used!": "Mã xác thực đã được sử dụng!",
     "The verification code has not been sent yet!": "Mã xác thực chưa được gửi!",
+    "This link was requested from another browser. Go back to that browser and enter the code: %s": "Liên kết này được yêu cầu từ một trình duyệt khác. Hãy quay lại trình duyệt đó và nhập mã: %s",
     "Too many SMS codes have been sent to this number, please try again later": "Đã gửi quá nhiều mã SMS tới số này, vui lòng thử lại sau",
     "Turing test failed.": "Kiểm định Turing thất bại.",
     "Unable to get the email modify rule.": "Không thể lấy quy tắc sửa đổi email.",
