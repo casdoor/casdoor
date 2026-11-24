@@ -426,7 +426,27 @@ func (c *ApiController) Logout() {
 
 	user := c.GetSessionUsername()
 
-	if idTokenHint == "" {
+	var token *object.Token
+	if idTokenHint != "" {
+		var err error
+		token, err = object.GetTokenByIdToken(idTokenHint)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		// RPs still holding a hint issued before ID tokens were split from access tokens
+		if token == nil {
+			token, err = object.GetTokenByAccessToken(idTokenHint)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+	}
+
+	// a hint whose token is already gone (logged out before, or deleted) still ends the current session,
+	// so that logging out twice is not an error
+	if token == nil {
 		// "id_token_hint" is only RECOMMENDED (not REQUIRED) by the OIDC RP-Initiated Logout
 		// spec, so when it is absent we log the user out based on the current session. Some
 		// clients (e.g. Gitea) only send "post_logout_redirect_uri" (optionally with
@@ -492,24 +512,6 @@ func (c *ApiController) Logout() {
 		c.ResponseOk(user, application.HomepageUrl)
 		return
 	} else {
-		token, err := object.GetTokenByIdToken(idTokenHint)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		// RPs still holding a hint issued before ID tokens were split from access tokens
-		if token == nil {
-			token, err = object.GetTokenByAccessToken(idTokenHint)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-		}
-		if token == nil {
-			c.ResponseError(c.T("token:Token not found, invalid accessToken"))
-			return
-		}
-
 		application, err := object.GetApplication(util.GetId(token.Owner, token.Application))
 		if err != nil {
 			c.ResponseError(err.Error())
