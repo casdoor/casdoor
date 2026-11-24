@@ -182,6 +182,23 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 		return nil, err
 	}
 
+	// the OAuth endpoints answer errors as {error, error_description} (RFC 6749 section 5.2)
+	if resp.Status == "" {
+		var tokenError TokenError
+		if json.Unmarshal(respBytes, &tokenError) == nil && tokenError.Error != "" {
+			resp.Status = "error"
+			resp.Msg = tokenError.Error
+			if tokenError.ErrorDescription != "" {
+				resp.Msg = fmt.Sprintf("%s: %s", tokenError.Error, tokenError.ErrorDescription)
+			}
+		}
+	}
+
+	statusCode := 200
+	if ctx.ResponseWriter.Status != 0 {
+		statusCode = ctx.ResponseWriter.Status
+	}
+
 	if action != "buy-product" && action != "notify-payment" {
 		resp.Data = nil
 	}
@@ -207,7 +224,7 @@ func NewRecord(ctx *context.Context) (*Record, error) {
 		Action:      action,
 		Language:    languageCode,
 		Object:      object,
-		StatusCode:  200,
+		StatusCode:  statusCode,
 		Response:    fmt.Sprintf("{status:\"%s\", msg:\"%s\"%s}", resp.Status, resp.Msg, dataResp),
 		IsTriggered: false,
 	}

@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -349,7 +348,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 	}
 
-	sendResp := errors.New("invalid dest type")
+	sendResp := fmt.Errorf("the verification type: %q is invalid, it should be %q or %q", vform.Type, object.VerifyTypeEmail, object.VerifyTypePhone)
 	var provider *object.Provider
 
 	switch vform.Type {

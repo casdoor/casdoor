@@ -62,7 +62,7 @@ func (c *ApiController) ResponseErrorWithCode(code string, error string, data ..
 		return
 	}
 
-	resp := &Response{Status: "error", Code: code, Msg: error}
+	resp := &Response{Status: "error", Code: code, Msg: util.GetReadableError(error)}
 	c.ResponseJsonData(resp, data...)
 }
 

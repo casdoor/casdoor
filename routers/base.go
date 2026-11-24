@@ -71,7 +71,7 @@ func responseError(ctx *context.Context, error string, data ...interface{}) {
 		return
 	}
 
-	resp := Response{Status: "error", Msg: error}
+	resp := Response{Status: "error", Msg: util.GetReadableError(error)}
 	switch len(data) {
 	case 2:
 		resp.Data2 = data[1]
