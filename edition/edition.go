@@ -145,6 +145,9 @@ var (
 	currentText string
 	// set when the license server says the license was revoked or is bound to another instance
 	rejectedErr error
+	// the license last taken from the database, see SetStoredLicense
+	storedText     string
+	reportLoopOnce sync.Once
 )
 
 func init() {
@@ -228,9 +231,52 @@ func load() {
 			logs.Warn("license: %s, running as the %s edition", currentErr.Error(), Community)
 		} else {
 			logs.Info("license: %s edition licensed to %s, expires at %s", current.Edition, current.Licensee, current.ExpireTime)
-			go reportLoop()
+			startReportLoop()
 		}
 	})
+}
+
+func startReportLoop() {
+	reportLoopOnce.Do(func() {
+		go reportLoop()
+	})
+}
+
+// SetStoredLicense takes the license kept in the database, which a hosting provider writes for a hosted instance.
+// It is called with the setting at startup and every minute, and applies only when the "license" config item is
+// empty; a changed text replaces the license in effect without a restart, an empty one removes it.
+func SetStoredLicense(text string) {
+	if readConfiguredLicense() != "" {
+		return
+	}
+	load()
+
+	text = strings.TrimSpace(text)
+	stateMu.Lock()
+	if text == storedText {
+		stateMu.Unlock()
+		return
+	}
+	storedText = text
+	rejectedErr = nil
+	if text == "" {
+		current, currentErr, currentText = nil, nil, ""
+		stateMu.Unlock()
+		logs.Info("license: the stored license was removed, running as the %s edition", Community)
+		return
+	}
+
+	license, err := ParseLicense(text)
+	if err != nil {
+		current, currentErr, currentText = nil, err, ""
+		stateMu.Unlock()
+		logs.Warn("license: %s, running as the %s edition", err.Error(), Community)
+		return
+	}
+	current, currentErr, currentText = license, nil, text
+	stateMu.Unlock()
+	logs.Info("license: %s edition licensed to %s, expires at %s", license.Edition, license.Licensee, license.ExpireTime)
+	startReportLoop()
 }
 
 // getState returns the license in effect, or nil with the reason it is not

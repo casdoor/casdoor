@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/edition"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -63,6 +64,10 @@ type Setting struct {
 
 	// identifies this Casdoor (its database) to the license server, generated once and never edited
 	InstanceId string `xorm:"varchar(100)" json:"instanceId"`
+
+	// the license the hosting provider keeps in the database of a hosted instance, used when the "license" config
+	// item is empty and picked up within a minute of a change; never sent to or saved from the console
+	License string `xorm:"mediumtext" json:"-"`
 }
 
 type headHtmlState struct {
@@ -112,6 +117,7 @@ func UpdateSetting(setting *Setting) (bool, error) {
 	setting.CreatedTime = oldSetting.CreatedTime
 	setting.UpdatedTime = util.GetCurrentTime()
 	setting.InstanceId = oldSetting.InstanceId
+	setting.License = oldSetting.License
 
 	affected, err := ormer.Engine.ID(core.PK{settingOwner, settingName}).AllCols().Update(setting)
 	if err != nil {
@@ -196,6 +202,8 @@ func (setting *Setting) apply() {
 
 	updatedTime, _ := time.Parse(time.RFC3339, setting.UpdatedTime)
 	currentHeadHtml.Store(&headHtmlState{html: setting.HeadHtml, updatedTime: updatedTime})
+
+	edition.SetStoredLicense(setting.License)
 }
 
 func GetDefaultEmailProvider() (*Provider, error) {
