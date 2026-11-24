@@ -23,6 +23,7 @@ import (
 
 	"github.com/beego/beego/v2/core/logs"
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/core"
 )
 
 var (
@@ -238,6 +239,7 @@ func deliverWebhookEvent(event *WebhookEvent) bool {
 		if event.AttemptCount >= maxRetries {
 			// Max retries reached, mark as permanently failed
 			UpdateWebhookEventState(event, WebhookEventStatusFailed, statusCode, respBody, err)
+			disableFailingWebhook(webhook, &record)
 		} else {
 			// Schedule retry
 			retryInterval := webhook.RetryInterval
@@ -310,4 +312,44 @@ func ReplayWebhookEvent(eventId string) error {
 	deliverWebhookEvent(event)
 
 	return nil
+}
+
+const (
+	webhookDisableFailedEvents = 100
+	webhookDisableFailedHours  = 24
+)
+
+// disableFailingWebhook turns off a webhook whose last 100 events have all failed for more than a day,
+// so that an endpoint that is gone is not called forever, and leaves a record that tells why
+func disableFailingWebhook(webhook *Webhook, record *Record) {
+	events := []*WebhookEvent{}
+	err := ormer.Engine.Cols("state", "created_time").Where("webhook = ?", webhook.GetId()).
+		In("state", WebhookEventStatusSuccess, WebhookEventStatusFailed).
+		Desc("created_time").Limit(webhookDisableFailedEvents).Find(&events)
+	if err != nil || len(events) < webhookDisableFailedEvents {
+		return
+	}
+
+	for _, event := range events {
+		if event.State != WebhookEventStatusFailed {
+			return
+		}
+	}
+
+	oldestTime, err := time.Parse(time.RFC3339, events[len(events)-1].CreatedTime)
+	if err != nil || time.Since(oldestTime) < webhookDisableFailedHours*time.Hour {
+		return
+	}
+
+	webhook.IsEnabled = false
+	_, err = ormer.Engine.ID(core.PK{webhook.Owner, webhook.Name}).Cols("is_enabled").Update(webhook)
+	if err != nil {
+		logs.Error(fmt.Sprintf("failed to disable webhook %s: %v", webhook.GetId(), err))
+		return
+	}
+
+	err = addWebhookRecord(webhook, record, 0, "", fmt.Errorf("the webhook has been disabled because its last %d events have all failed for more than %d hours, enable it again after fixing its URL", webhookDisableFailedEvents, webhookDisableFailedHours))
+	if err != nil {
+		logs.Error(fmt.Sprintf("failed to record disabling webhook %s: %v", webhook.GetId(), err))
+	}
 }
