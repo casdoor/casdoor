@@ -78,6 +78,7 @@ const (
 	FeatureDbProvisioning   = "Provisioning to legacy databases"
 	FeatureTrustedOrg       = "Trusted organizations"
 	FeatureAdaptiveRisk     = "Adaptive risk policy"
+	FeatureCloudSignin      = "Casdoor Cloud console sign-in"
 )
 
 const (
@@ -100,8 +101,9 @@ func getKind() string {
 // "features", e.g. a community edition license with "features": ["abac"], or a commercial edition license
 // with "features": ["form-fill"]
 var featureKeys = map[string]string{
-	FeatureAbac:     "abac",
-	FeatureFormFill: "form-fill",
+	FeatureAbac:        "abac",
+	FeatureFormFill:    "form-fill",
+	FeatureCloudSignin: "cloud-signin",
 }
 
 var ranks = map[string]int{
@@ -204,6 +206,33 @@ func ParseLicense(text string) (*License, error) {
 	}
 
 	return license, nil
+}
+
+// VerifySigned checks a text of the form "<base64url payload>.<base64url Ed25519 signature of the payload part>"
+// signed by the license key and returns the payload
+func VerifySigned(text string) ([]byte, error) {
+	parts := strings.Split(strings.TrimSpace(text), ".")
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("the signed text is malformed")
+	}
+	payload, err := base64.RawURLEncoding.DecodeString(parts[0])
+	if err != nil {
+		return nil, fmt.Errorf("the signed text is malformed")
+	}
+	signature, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil || !ed25519.Verify(publicKey, []byte(parts[0]), signature) {
+		return nil, fmt.Errorf("the signature is invalid")
+	}
+	return payload, nil
+}
+
+// GetLicenseIdentity returns the ID and the kind of the license in effect, empty without one
+func GetLicenseIdentity() (string, string) {
+	license, _, _ := getState()
+	if license == nil {
+		return "", ""
+	}
+	return license.Id, license.Kind
 }
 
 // readConfiguredLicense takes the "license" config item (or environment variable), which is either the license

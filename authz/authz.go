@@ -182,6 +182,7 @@ p, *, *, GET, /api/get-invitation-info, *, *
 p, *, *, GET, /api/get-license, *, *
 p, *, *, GET, /api/faceid-signin-begin, *, *
 p, *, *, GET, /api/login/cert, *, *
+p, *, *, POST, /api/cloud-signin, *, *
 p, *, *, GET, /api/get-cert-challenge, *, *
 p, *, *, GET, /api/kerberos-login, *, *
 p, *, *, POST, /api/grant-consent, *, *

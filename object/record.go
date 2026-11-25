@@ -42,7 +42,7 @@ var secretRecordKeys = []string{
 	"clientSecret", "client_secret", "clientSecret2", "accessSecret", "secret", "secretKey", "privateKey", "sslKey", "kerberosKeytab",
 	"token", "accessToken", "access_token", "refreshToken", "refresh_token", "idToken", "id_token", "registrationAccessToken",
 	"originalToken", "originalRefreshToken", "totpSecret", "masterVerificationCode",
-	"code_verifier", "passcode", "recoveryCode", "recoveryCodes",
+	"code_verifier", "passcode", "recoveryCode", "recoveryCodes", "ticket",
 }
 
 // secretRecordKeyPatterns match the per-provider OAuth tokens kept in a user's properties

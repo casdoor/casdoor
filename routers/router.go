@@ -49,6 +49,7 @@ func InitAPI() {
 	web.Router("/api/login", &controllers.ApiController{}, "POST:Login")
 	web.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	web.Router("/api/login/cert", &eecontrollers.ApiController{}, "GET:LoginByCert")
+	web.Router("/api/cloud-signin", &eecontrollers.ApiController{}, "POST:CloudSignin")
 	web.Router("/api/get-cert-challenge", &eecontrollers.ApiController{}, "GET:GetCertChallenge")
 	web.Router("/api/get-dashboard", &controllers.ApiController{}, "GET:GetDashboard")
 	web.Router("/api/get-dashboard-providers", &controllers.ApiController{}, "GET:GetDashboardProviderDistribution")

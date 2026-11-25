@@ -336,6 +336,38 @@ func (c *ApiController) renewSessionIdForUser(userId string) {
 	}
 }
 
+// StartBrowserSession signs the user in on this browser for the hours given, kept with the sessions of the
+// application like a sign-in on the login page
+func (c *ApiController) StartBrowserSession(user *object.User, application string, hours int64) error {
+	userId := user.GetId()
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+	c.renewSessionIdForUser(userId)
+	c.SetSessionUsername(userId)
+	c.setExpireForSession(hours, false)
+
+	err := object.RecordUserSignin(user, clientIp)
+	if err != nil {
+		return err
+	}
+
+	sessionId := c.Ctx.Input.CruSession.SessionID(context.Background())
+	_, err = object.AddSession(&object.Session{
+		Owner:       user.Owner,
+		Name:        user.Name,
+		Application: application,
+		SessionId:   []string{sessionId},
+		SessionInfos: []*object.SessionInfo{{
+			SessionId:      sessionId,
+			CreatedTime:    util.GetCurrentTime(),
+			LastActiveTime: util.GetCurrentTime(),
+			ExpireTime:     time.Now().Add(time.Duration(hours) * time.Hour).Format(time.RFC3339),
+			Ip:             clientIp,
+			UserAgent:      c.Ctx.Request.UserAgent(),
+		}},
+	})
+	return err
+}
+
 // isSessionCreatedInRequest reports whether the session ID was generated for this request and is already being set in the response
 func (c *ApiController) isSessionCreatedInRequest() bool {
 	sessionId := c.StartSession().SessionID(context.Background())
