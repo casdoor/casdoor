@@ -1293,6 +1293,11 @@ export function myParseInt(i) {
   return isNaN(res) ? 0 : res;
 }
 
+export function myParseFloat(i) {
+  const res = parseFloat(i);
+  return isNaN(res) ? 0 : res;
+}
+
 export function isScriptUrl(link) {
   try {
     const protocol = new URL(link, window.location.href).protocol;
