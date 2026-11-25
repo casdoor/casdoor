@@ -106,8 +106,7 @@ const authInfo = {
     internalEndpoint: "https://login.work.weixin.qq.com/wwlogin/sso/login",
   },
   Lark: {
-    // scope: "email",
-    endpoint: "https://open.feishu.cn/open-apis/authen/v1/index",
+    endpoint: "https://accounts.feishu.cn/open-apis/authen/v1/authorize",
     endpoint2: "https://accounts.larksuite.com/open-apis/authen/v1/authorize",
   },
   GitLab: {
@@ -568,10 +567,16 @@ function buildAuthUrl(application: any, provider: any, method: string, code?: st
       return `https://error:not-supported-provider-sub-type:${provider.subType}`;
     }
   } else if (provider.type === "Lark") {
-    if (provider.disableSsl) {
-      redirectUri = encodeURIComponent(redirectUri);
+    const params = new URLSearchParams({
+      client_id: provider.clientId,
+      redirect_uri: redirectUri,
+      response_type: "code",
+      state,
+    });
+    if (scope) {
+      params.set("scope", scope.trim());
     }
-    return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
+    return `${endpoint}?${params}`;
   } else if (provider.type === "ADFS") {
     return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;
   } else if (provider.type === "Baidu") {

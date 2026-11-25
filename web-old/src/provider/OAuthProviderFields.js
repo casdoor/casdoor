@@ -132,6 +132,18 @@ export function renderOAuthProviderFields(provider, updateProviderField, renderU
         )
       }
       {
+        provider.type === "Lark" ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input value={provider.scopes ?? ""} onChange={e => updateProviderField("scopes", e.target.value)} />
+            </Col>
+          </Row>
+        ) : null
+      }
+      {
         provider.type === "Alipay" ? (
           <React.Fragment>
             <Row style={{marginTop: "20px"}} >

@@ -997,6 +997,11 @@ export default function ProviderEditPage() {
           <Switch disabled={!provider.clientId} checked={!!provider.disableSsl} onCheckedChange={(v) => updateProviderField("disableSsl", v)} />
         </FormRow>
       ) : null}
+      {provider.type === "Lark" ? (
+        <FormRow labelKey="provider:Scope">
+          <Input value={provider.scopes ?? ""} onChange={(e) => updateProviderField("scopes", e.target.value)} />
+        </FormRow>
+      ) : null}
       {provider.type === "Alipay" ? (
         <React.Fragment>
           <FormRow labelKey="general:Cert">

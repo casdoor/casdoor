@@ -387,8 +387,8 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		return true, nil
 	}
 
-	// Store the original OAuth provider token if available
-	if token != nil && token.AccessToken != "" {
+	// Lark uses an application credential to complete sign-in. Keep it out of user records.
+	if providerType != "Lark" && token != nil && token.AccessToken != "" {
 		// Store tokens per provider in Properties map
 		setUserProperty(user, getOAuthTokenPropertyKey(providerType, "accessToken"), token.AccessToken)
 
