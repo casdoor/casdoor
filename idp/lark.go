@@ -15,11 +15,11 @@
 package idp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/nyaruka/phonenumbers"
@@ -53,7 +53,7 @@ func (idp *LarkIdProvider) SetHttpClient(client *http.Client) {
 // getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
 func (idp *LarkIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
 	endpoint := oauth2.Endpoint{
-		TokenURL: idp.LarkDomain + "/open-apis/auth/v3/tenant_access_token/internal",
+		TokenURL: idp.LarkDomain + "/open-apis/authen/v1/access_token",
 	}
 
 	config := &oauth2.Config{
@@ -67,162 +67,125 @@ func (idp *LarkIdProvider) getConfig(clientId string, clientSecret string, redir
 	return config
 }
 
-/*
-{
-    "code": 0,
-    "msg": "success",
-    "tenant_access_token": "t-caecc734c2e3328a62489fe0648c4b98779515d3",
-    "expire": 7140
-}
-*/
-
-type LarkAccessToken struct {
-	Code              int    `json:"code"`
-	Msg               string `json:"msg"`
-	TenantAccessToken string `json:"tenant_access_token"`
-	Expire            int    `json:"expire"`
+type LarkUserData struct {
+	AccessToken     string `json:"access_token"`
+	ExpiresIn       int    `json:"expires_in"`
+	RefreshToken    string `json:"refresh_token"`
+	Name            string `json:"name"`
+	AvatarUrl       string `json:"avatar_url"`
+	OpenId          string `json:"open_id"`
+	UnionId         string `json:"union_id"`
+	Email           string `json:"email"`
+	EnterpriseEmail string `json:"enterprise_email"`
+	UserId          string `json:"user_id"`
+	Mobile          string `json:"mobile"`
 }
 
-func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
-	params := &struct {
-		AppID     string `json:"app_id"`
-		AppSecret string `json:"app_secret"`
-	}{idp.Config.ClientID, idp.Config.ClientSecret}
+type larkResponse struct {
+	Code              int          `json:"code"`
+	Msg               string       `json:"msg"`
+	TenantAccessToken string       `json:"tenant_access_token"`
+	Data              LarkUserData `json:"data"`
+}
 
-	data, err := idp.postWithBody(params, idp.Config.Endpoint.TokenURL)
+func (idp *LarkIdProvider) request(method string, url string, bearer string, body interface{}) (*larkResponse, error) {
+	var reader io.Reader
+	if body != nil {
+		data, err := json.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+		reader = bytes.NewReader(data)
+	}
+
+	req, err := http.NewRequest(method, url, reader)
 	if err != nil {
 		return nil, err
 	}
-
-	appToken := &LarkAccessToken{}
-	err = json.Unmarshal(data, appToken)
-	if err != nil {
-		return nil, err
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	}
-
-	if appToken.Code != 0 {
-		return nil, fmt.Errorf("GetToken() error, appToken.Code: %d, appToken.Msg: %s", appToken.Code, appToken.Msg)
+	if bearer != "" {
+		req.Header.Set("Authorization", "Bearer "+bearer)
 	}
-
-	t := &oauth2.Token{
-		AccessToken: appToken.TenantAccessToken,
-		TokenType:   "Bearer",
-		Expiry:      time.Unix(time.Now().Unix()+int64(appToken.Expire), 0),
-	}
-
-	raw := make(map[string]interface{})
-	raw["code"] = code
-	t = t.WithExtra(raw)
-	return t, nil
-}
-
-/*
-{
-    "code": 0,
-    "msg": "success",
-    "data": {
-        "access_token": "u-6U1SbDiM6XIH2DcTCPyeub",
-        "token_type": "Bearer",
-        "expires_in": 7140,
-        "name": "zhangsan",
-        "en_name": "Three Zhang",
-        "avatar_url": "www.feishu.cn/avatar/icon",
-        "avatar_thumb": "www.feishu.cn/avatar/icon_thumb",
-        "avatar_middle": "www.feishu.cn/avatar/icon_middle",
-        "avatar_big": "www.feishu.cn/avatar/icon_big",
-        "open_id": "ou-caecc734c2e3328a62489fe0648c4b98779515d3",
-        "union_id": "on-d89jhsdhjsajkda7828enjdj328ydhhw3u43yjhdj",
-        "email": "zhangsan@feishu.cn",
-        "enterprise_email": "zhangsan@company.com",
-        "user_id": "5d9bdxxx",
-        "mobile": "+86130002883xx",
-        "tenant_key": "736588c92lxf175d",
-        "refresh_expires_in": 2591940,
-        "refresh_token": "ur-t9HHgRCjMqGqIU9v05Zhos"
-    }
-}
-*/
-
-type LarkUserInfo struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data struct {
-		AccessToken      string `json:"access_token"`
-		TokenType        string `json:"token_type"`
-		ExpiresIn        int    `json:"expires_in"`
-		Name             string `json:"name"`
-		EnName           string `json:"en_name"`
-		AvatarUrl        string `json:"avatar_url"`
-		AvatarThumb      string `json:"avatar_thumb"`
-		AvatarMiddle     string `json:"avatar_middle"`
-		AvatarBig        string `json:"avatar_big"`
-		OpenId           string `json:"open_id"`
-		UnionId          string `json:"union_id"`
-		Email            string `json:"email"`
-		EnterpriseEmail  string `json:"enterprise_email"`
-		UserId           string `json:"user_id"`
-		Mobile           string `json:"mobile"`
-		TenantKey        string `json:"tenant_key"`
-		RefreshExpiresIn int    `json:"refresh_expires_in"`
-		RefreshToken     string `json:"refresh_token"`
-	} `json:"data"`
-}
-
-func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	body := &struct {
-		GrantType string `json:"grant_type"`
-		Code      string `json:"code"`
-	}{"authorization_code", token.Extra("code").(string)}
-
-	data, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", idp.LarkDomain+"/open-apis/authen/v1/access_token", strings.NewReader(string(data)))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-Type", "application/json;charset=UTF-8")
-	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
 	resp, err := idp.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-
 	defer resp.Body.Close()
-	data, err = io.ReadAll(resp.Body)
+
+	res := &larkResponse{}
+	if err = json.NewDecoder(resp.Body).Decode(res); err != nil {
+		return nil, fmt.Errorf("invalid Lark response from %s (HTTP %d): %v", url, resp.StatusCode, err)
+	}
+	if res.Code != 0 {
+		return nil, fmt.Errorf("Lark request to %s failed, code: %d, msg: %s", url, res.Code, res.Msg)
+	}
+	return res, nil
+}
+
+func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
+	appParams := map[string]string{"app_id": idp.Config.ClientID, "app_secret": idp.Config.ClientSecret}
+	appRes, err := idp.request(http.MethodPost, idp.LarkDomain+"/open-apis/auth/v3/tenant_access_token/internal", "", appParams)
 	if err != nil {
 		return nil, err
 	}
 
-	var larkUserInfo LarkUserInfo
-	err = json.Unmarshal(data, &larkUserInfo)
+	codeParams := map[string]string{"grant_type": "authorization_code", "code": code}
+	userRes, err := idp.request(http.MethodPost, idp.Config.Endpoint.TokenURL, appRes.TenantAccessToken, codeParams)
 	if err != nil {
 		return nil, err
+	}
+	if userRes.Data.AccessToken == "" {
+		return nil, fmt.Errorf("Lark token response is missing access_token")
+	}
+
+	token := &oauth2.Token{
+		AccessToken:  userRes.Data.AccessToken,
+		TokenType:    "Bearer",
+		RefreshToken: userRes.Data.RefreshToken,
+	}
+	if userRes.Data.ExpiresIn > 0 {
+		token.Expiry = time.Now().Add(time.Duration(userRes.Data.ExpiresIn) * time.Second)
+	}
+
+	data := userRes.Data
+	return token.WithExtra(map[string]interface{}{"larkUserData": &data}), nil
+}
+
+func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+	data, ok := token.Extra("larkUserData").(*LarkUserData)
+	if !ok || data == nil {
+		res, err := idp.request(http.MethodGet, idp.LarkDomain+"/open-apis/authen/v1/user_info", token.AccessToken, nil)
+		if err != nil {
+			return nil, err
+		}
+		data = &res.Data
+	}
+	if data.OpenId == "" {
+		return nil, fmt.Errorf("Lark user info is missing open_id")
 	}
 
 	// Use enterprise_email as fallback when email is empty
-	email := larkUserInfo.Data.Email
+	email := data.Email
 	if email == "" {
-		email = larkUserInfo.Data.EnterpriseEmail
+		email = data.EnterpriseEmail
 	}
 
 	// Use fallback mechanism for username: UserId -> UnionId -> OpenId
-	username := larkUserInfo.Data.UserId
+	username := data.UserId
 	if username == "" {
-		username = larkUserInfo.Data.UnionId
+		username = data.UnionId
 	}
 	if username == "" {
-		username = larkUserInfo.Data.OpenId
+		username = data.OpenId
 	}
 
 	var phoneNumber string
 	var countryCode string
-	if len(larkUserInfo.Data.Mobile) != 0 {
-		phoneNumberParsed, err := phonenumbers.Parse(larkUserInfo.Data.Mobile, "")
+	if len(data.Mobile) != 0 {
+		phoneNumberParsed, err := phonenumbers.Parse(data.Mobile, "")
 		if err != nil {
 			return nil, err
 		}
@@ -231,42 +194,16 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	}
 
 	userInfo := UserInfo{
-		Id:          larkUserInfo.Data.OpenId,
-		DisplayName: larkUserInfo.Data.Name,
+		Id:          data.OpenId,
+		DisplayName: data.Name,
 		Username:    username,
 		Email:       email,
 		// enterprise directory email
 		EmailVerified: email != "",
-		AvatarUrl:     larkUserInfo.Data.AvatarUrl,
+		AvatarUrl:     data.AvatarUrl,
 		Phone:         phoneNumber,
 		PhoneVerified: phoneNumber != "",
 		CountryCode:   countryCode,
 	}
 	return &userInfo, nil
-}
-
-func (idp *LarkIdProvider) postWithBody(body interface{}, url string) ([]byte, error) {
-	bs, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-
-	r := strings.NewReader(string(bs))
-	resp, err := idp.Client.Post(url, "application/json;charset=UTF-8", r)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			return
-		}
-	}(resp.Body)
-	return data, nil
 }
