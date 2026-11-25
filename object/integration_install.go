@@ -828,7 +828,7 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 	}
 
 	integration.Kind = file.Kind
-	integration.Module = base64.StdEncoding.EncodeToString(module)
+	integration.Wasm = module
 
 	// the syncers and the security settings of the organization pick these actions themselves
 	category := actionKindCategories[file.Kind]
@@ -876,13 +876,16 @@ func getActionModule(owner string, name string) ([]byte, []string, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	if integration == nil || integration.Type != "action" || integration.Module == "" {
+	if integration == nil || integration.Type != "action" || (len(integration.Wasm) == 0 && integration.Module == "") {
 		return nil, nil, fmt.Errorf("the action: %s is not installed in %s", name, owner)
 	}
 
-	module, err := base64.StdEncoding.DecodeString(integration.Module)
-	if err != nil {
-		return nil, nil, err
+	module := integration.Wasm
+	if len(module) == 0 {
+		module, err = base64.StdEncoding.DecodeString(integration.Module)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	bundle := &IntegrationBundle{}
@@ -1098,6 +1101,11 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 
 	_, err = addIntegration(integration)
 	if err != nil {
+		// otherwise the provider or application it created stays behind and blocks installing it again
+		undoErr := undoIntegration(integration, isGlobalAdmin, lang)
+		if undoErr != nil {
+			logs.Warn("failed to undo the integration %s that could not be saved: %v", integration.GetId(), undoErr)
+		}
 		return fail(installStageSave, fmt.Errorf("the integration was downloaded but could not be saved to the database of this Casdoor, try again later or ask its administrator: %w", err))
 	}
 	if checkedVersion != "" {
@@ -1133,11 +1141,29 @@ func UninstallIntegration(integration *Integration, isGlobalAdmin bool, lang str
 		return false, nil
 	}
 
+	err = undoIntegration(integration, isGlobalAdmin, lang)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := deleteIntegration(integration)
+	if err != nil {
+		return false, err
+	}
+	if affected {
+		readUninstalledStep(integration)
+	}
+	return affected, nil
+}
+
+// undoIntegration deletes the application or provider the integration created, or restores the theme it replaced
+func undoIntegration(integration *Integration, isGlobalAdmin bool, lang string) error {
+	var err error
 	var application *Application
 	if integration.Application != "" {
 		application, err = getApplication("admin", integration.Application)
 		if err != nil {
-			return false, err
+			return err
 		}
 		if application != nil && application.Organization != integration.Owner {
 			application = nil
@@ -1171,7 +1197,7 @@ func UninstallIntegration(integration *Integration, isGlobalAdmin bool, lang str
 			application.Providers = providers
 			_, err = UpdateApplication(application.GetId(), application, isGlobalAdmin, lang, []string{"providers"})
 			if err != nil {
-				return false, err
+				return err
 			}
 		}
 		if integration.Provider != "" {
@@ -1182,7 +1208,7 @@ func UninstallIntegration(integration *Integration, isGlobalAdmin bool, lang str
 			theme := themeFields{}
 			err = json.Unmarshal([]byte(integration.Backup), &theme)
 			if err != nil {
-				return false, err
+				return err
 			}
 			setApplicationTheme(application, &theme)
 			_, err = UpdateApplication(application.GetId(), application, isGlobalAdmin, lang, themeColumns)
@@ -1192,16 +1218,5 @@ func UninstallIntegration(integration *Integration, isGlobalAdmin bool, lang str
 			}
 		}
 	}
-	if err != nil {
-		return false, err
-	}
-
-	affected, err := deleteIntegration(integration)
-	if err != nil {
-		return false, err
-	}
-	if affected {
-		readUninstalledStep(integration)
-	}
-	return affected, nil
+	return err
 }
