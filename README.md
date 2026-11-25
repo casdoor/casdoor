@@ -333,6 +333,22 @@ Casdoor is free and open source. If it saves you time, consider supporting its d
 
 <a href="https://opencollective.com/casdoor#backer"><img src="https://opencollective.com/casdoor/tiers/backer.svg?avatarHeight=36" alt="Backers on Open Collective"></a>
 
+## 📝 Citation
+
+If you use Casdoor in your research, please cite:
+
+```bibtex
+@article{luo2025perm,
+  title   = {PERM: Streamlining Cloud Authorization With Flexible and Scalable Policy Enforcement},
+  author  = {Luo, Yang and Shen, Qingni and Wu, Zhonghai},
+  journal = {IEEE Transactions on Information Forensics and Security},
+  volume  = {20},
+  pages   = {8481--8496},
+  year    = {2025},
+  doi     = {10.1109/TIFS.2025.3592519}
+}
+```
+
 ## 📄 License
 
 Casdoor is licensed under the [Apache License 2.0](LICENSE), except for the directories named `ee` (`ee/` and `web/src/ee/`), which hold the commercial and enterprise edition features and are licensed under the [Casdoor Enterprise License](ee/LICENSE). Casdoor builds include them: without a license key they stay off and Casdoor runs as the open source edition.
