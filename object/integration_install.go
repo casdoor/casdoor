@@ -1098,7 +1098,7 @@ func InstallIntegration(req *IntegrationInstallRequest, isGlobalAdmin bool, host
 
 	_, err = addIntegration(integration)
 	if err != nil {
-		return fail(installStageSave, err)
+		return fail(installStageSave, fmt.Errorf("the integration was downloaded but could not be saved to the database of this Casdoor, try again later or ask its administrator: %w", err))
 	}
 	if checkedVersion != "" {
 		ReadMarketplaceVersionMetaStep(item.Id, checkedVersion, item.Edition != "", MarketplaceStepInstalled, "")
