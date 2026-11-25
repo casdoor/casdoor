@@ -80,7 +80,13 @@ const (
 	FeatureAdaptiveRisk     = "Adaptive risk policy"
 )
 
-const KindOnPremise = "OnPremise"
+const (
+	KindOnPremise = "OnPremise"
+	KindSaaS      = "SaaS"
+)
+
+// the console of Casdoor Cloud, which runs the hosted instances
+const cloudConsoleUrl = "https://admin.casdoor.com"
 
 func getKind() string {
 	license, _, _ := getState()
@@ -153,6 +159,7 @@ var (
 func init() {
 	conf.SetEditionGetter(Get)
 	conf.SetHideUpgradesGetter(HidesUpgrades)
+	conf.SetUpgradeUrlGetter(UpgradeUrl)
 }
 
 func mustDecodeBase64(s string) []byte {
@@ -361,6 +368,21 @@ func FindRequired(message string) (*RequiredError, int, int) {
 func HidesUpgrades() bool {
 	license, _, _ := getState()
 	return license != nil && license.Kind == KindOnPremise
+}
+
+// UpgradeUrl tells where the upgrade offers of a hosted instance lead: the page of the Casdoor Cloud console that
+// finds the instance by the host the console runs at and changes its plan, instead of the prices of the self-hosted
+// editions. It is empty elsewhere.
+func UpgradeUrl() string {
+	license, _, _ := getState()
+	if license == nil || license.Kind != KindSaaS {
+		return ""
+	}
+	server := strings.TrimRight(license.Server, "/")
+	if server == "" {
+		server = cloudConsoleUrl
+	}
+	return server + "/upgrade"
 }
 
 // GetFeatures returns the features that the license grants on their own

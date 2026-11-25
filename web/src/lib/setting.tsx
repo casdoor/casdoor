@@ -52,8 +52,15 @@ export const SEARCH_DEBOUNCE_MS = 300;
 export const PricingUrl = "https://www.casdoor.com/pricing/self-hosted";
 
 // The pricing page tagged with the place the link sits in, for the analytics of www.casdoor.com. It carries only
-// that place and the edition, never this deployment's address.
+// that place and the edition, never this deployment's address. A hosted instance goes to the change of its plan instead.
 export function getPricingUrl(placement: string, edition?: string): string {
+  if (Conf.UpgradeUrl) {
+    const params = new URLSearchParams({host: window.location.host});
+    if (edition && edition !== "Community") {
+      params.set("edition", edition.toLowerCase());
+    }
+    return `${Conf.UpgradeUrl}?${params}`;
+  }
   const params = new URLSearchParams({utm_source: "casdoor", utm_medium: "product", utm_campaign: placement});
   if (edition && edition !== "Community") {
     params.set("edition", edition.toLowerCase());

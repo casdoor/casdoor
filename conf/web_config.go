@@ -33,6 +33,13 @@ func SetHideUpgradesGetter(getter func() bool) {
 	getHideUpgrades = getter
 }
 
+// getUpgradeUrl is set by the edition package too
+var getUpgradeUrl func() string
+
+func SetUpgradeUrlGetter(getter func() string) {
+	getUpgradeUrl = getter
+}
+
 func SetShowCloudPromotion(show bool) {
 	showCloudPromotion.Store(show)
 }
@@ -93,6 +100,7 @@ type WebConfig struct {
 	ShowCloudPromotion  bool   `json:"showCloudPromotion"`
 	Edition             string `json:"edition"`
 	HideUpgrades        bool   `json:"hideUpgrades"`
+	UpgradeUrl          string `json:"upgradeUrl"`
 
 	HasDefaultEmailProvider bool `json:"hasDefaultEmailProvider"`
 
@@ -140,6 +148,11 @@ func GetWebConfig() *WebConfig {
 	// and a self-hosted community edition does not offer them until a global admin turns on the promotion
 	config.HideUpgrades = !config.ThemeShowcase &&
 		((getHideUpgrades != nil && getHideUpgrades()) || (config.Edition == "Community" && !showCloudPromotion.Load()))
+
+	// a hosted instance changes its plan in the console of Casdoor Cloud, the demo sites show the editions' prices
+	if !config.ThemeShowcase && getUpgradeUrl != nil {
+		config.UpgradeUrl = getUpgradeUrl()
+	}
 
 	config.CustomHtmlAllowedTags = GetCustomHtmlAllowedTags()
 	config.HasDefaultEmailProvider = hasDefaultEmailProvider.Load()

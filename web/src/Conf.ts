@@ -67,6 +67,9 @@ export let MarketplaceUrl = "https://cdn.jsdelivr.net/gh/casdoor/casdoor-integra
 // An on-premise license was sold by contract: its console does not offer the higher editions
 export let HideUpgrades = false;
 
+// A hosted instance of Casdoor Cloud: its upgrade offers lead to the change of its plan in the console of Casdoor Cloud
+export let UpgradeUrl = "";
+
 /** Whether the console leaves out the offer of an edition higher than the license gives. */
 export function isUpgradeHidden(required: string): boolean {
   return HideUpgrades && Editions.indexOf(Edition) < Editions.indexOf(required);
@@ -121,6 +124,9 @@ export function setConfig(config: Record<string, any>) {
   }
   if (config.hideUpgrades !== undefined) {
     HideUpgrades = config.hideUpgrades;
+  }
+  if (config.upgradeUrl !== undefined) {
+    UpgradeUrl = config.upgradeUrl;
   }
   if (Array.isArray(config.customHtmlAllowedTags)) {
     CustomHtmlAllowedTags = config.customHtmlAllowedTags;
