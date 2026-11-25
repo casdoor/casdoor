@@ -87,7 +87,7 @@ func RegisterDynamicClient(req *DynamicClientRegistrationRequest, organization s
 	if org.DcrPolicy == "" || org.DcrPolicy == "disabled" {
 		return nil, &DcrError{
 			Error:            "invalid_client_metadata",
-			ErrorDescription: "dynamic client registration is disabled for this organization",
+			ErrorDescription: fmt.Sprintf("dynamic client registration is disabled for the organization %s, an administrator can turn on \"Enable dynamic client registration\" in its settings, or register the client as an application in the console and give its client ID to the client", organization),
 		}, nil
 	}
 

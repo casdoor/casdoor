@@ -196,6 +196,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 
 	registrationEndpoint := fmt.Sprintf("%s/api/oauth/register", originBackend)
 	authorizationEndpoint := fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
+	dcrOrg := "built-in"
 	cimdOrg := ""
 	requirePar := false
 
@@ -213,6 +214,7 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 
 			if application.Organization != "" {
 				registrationEndpoint, authorizationEndpoint = getOrganizationEndpoints(registrationEndpoint, authorizationEndpoint, application.Organization)
+				dcrOrg = application.Organization
 				cimdOrg = application.Organization
 			}
 
@@ -223,6 +225,12 @@ func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 
 			requirePar = application.RequirePushedAuthorizationRequests
 		}
+	}
+
+	// a client that sees the registration endpoint registers itself instead of asking for a client ID, so it is only
+	// shown where the registration is allowed
+	if !IsDynamicClientRegistrationEnabled(dcrOrg) {
+		registrationEndpoint = ""
 	}
 
 	// Examples:
@@ -289,7 +297,11 @@ func GetOidcDiscoveryByOrganization(host string, organizationName string) (*Oidc
 
 	oidcDiscovery := GetOidcDiscovery(host, "")
 	oidcDiscovery.Issuer = GetOrganizationIssuer(host, organization.Name)
-	oidcDiscovery.RegistrationEndpoint, oidcDiscovery.AuthorizationEndpoint = getOrganizationEndpoints(oidcDiscovery.RegistrationEndpoint, oidcDiscovery.AuthorizationEndpoint, organization.Name)
+	_, originBackend := GetOriginFromHost(host)
+	oidcDiscovery.RegistrationEndpoint, oidcDiscovery.AuthorizationEndpoint = getOrganizationEndpoints(fmt.Sprintf("%s/api/oauth/register", originBackend), oidcDiscovery.AuthorizationEndpoint, organization.Name)
+	if !IsDynamicClientRegistrationEnabled(organization.Name) {
+		oidcDiscovery.RegistrationEndpoint = ""
+	}
 	oidcDiscovery.ClientIdMetadataDocumentSupported = IsClientIdMetadataDocumentSupported(organization.Name)
 
 	scopes, err := getOrganizationApplicationScopes(organization.Name)

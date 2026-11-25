@@ -74,7 +74,11 @@ func IsClientIdMetadataDocumentSupported(organization string) bool {
 	if organization == "" {
 		organization = cimdOrganization
 	}
+	return IsDynamicClientRegistrationEnabled(organization)
+}
 
+// IsDynamicClientRegistrationEnabled reports whether clients can register themselves in an organization
+func IsDynamicClientRegistrationEnabled(organization string) bool {
 	org, err := GetOrganization(util.GetId("admin", organization))
 	if err != nil || org == nil {
 		return false
