@@ -65,10 +65,10 @@ func getListTool(k *kind) *toolDef {
 		Properties:  properties,
 		Required:    required,
 		Organization: func(t *toolCall) (string, error) {
-			return t.getString("organization"), nil
+			return t.getListOrganization(), nil
 		},
 		Run: func(t *toolCall) (string, error) {
-			organization := t.getString("organization")
+			organization := t.getListOrganization()
 			if k.Name != "organization" && organization == "" {
 				return "", fmt.Errorf("the argument organization is required")
 			}
@@ -171,7 +171,7 @@ func getUpdateTool(k *kind) *toolDef {
 			if err != nil {
 				return "", err
 			}
-			fields, err := t.getObject("fields")
+			fields, err := t.getUpdateFields(k)
 			if err != nil {
 				return "", err
 			}
@@ -238,6 +238,25 @@ func getDeleteTool(k *kind) *toolDef {
 			return fmt.Sprintf("Deleted the %s %s", k.Name, id), nil
 		},
 	}
+}
+
+// getListOrganization is the organization to list the objects of, agents often call it "owner" as in the objects
+func (t *toolCall) getListOrganization() string {
+	if organization := t.getString("organization"); organization != "" {
+		return organization
+	}
+	return t.getString("owner")
+}
+
+// getUpdateFields is the fields to change, also taken from the object named after the kind, as the update tools of
+// applications and users take it
+func (t *toolCall) getUpdateFields(k *kind) (map[string]interface{}, error) {
+	if _, ok := t.args["fields"]; !ok {
+		if _, ok = t.args[k.Name]; ok {
+			return t.getObject(k.Name)
+		}
+	}
+	return t.getObject("fields")
 }
 
 // getKindOrganization is the organization of the object with the ID, without loading it when the ID tells

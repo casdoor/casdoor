@@ -538,6 +538,10 @@ func getBuiltinWrites() map[string]*builtinWrite {
 			return "", obj
 		}}
 		writes["update_"+name] = &builtinWrite{Kind: k, Action: actionUpdate, Parse: func(args map[string]json.RawMessage) (string, map[string]interface{}) {
+			// "fields" is how the update tools of the other kinds take the changes
+			if _, ok := args[key]; !ok {
+				return idOf(args), objectOf(args, "fields")
+			}
 			return idOf(args), objectOf(args, key)
 		}}
 		writes["delete_"+name] = &builtinWrite{Kind: k, Action: actionDelete, Parse: func(args map[string]json.RawMessage) (string, map[string]interface{}) {

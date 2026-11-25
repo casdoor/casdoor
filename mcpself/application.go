@@ -107,7 +107,27 @@ func (c *McpController) handleUpdateApplicationTool(id interface{}, args UpdateA
 
 // handleDeleteApplicationTool handles the delete_application MCP tool
 func (c *McpController) handleDeleteApplicationTool(id interface{}, args DeleteApplicationArgs) {
-	affected, err := object.DeleteApplication(&args.Application)
+	// the application is deleted by its ID, the organization given with it or not
+	owner := args.Application.Owner
+	if owner == "" {
+		owner = "admin"
+	}
+	applicationId := util.GetId(owner, args.Application.Name)
+	application, err := object.GetApplication(applicationId)
+	if err != nil {
+		c.SendToolErrorResult(id, err.Error())
+		return
+	}
+	if application == nil {
+		c.SendToolErrorResult(id, fmt.Sprintf("the application: %s does not exist", applicationId))
+		return
+	}
+	if !c.isOrganizationAllowed(application.Organization) {
+		c.SendToolErrorResult(id, "unauthorized operation")
+		return
+	}
+
+	affected, err := object.DeleteApplication(application)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return

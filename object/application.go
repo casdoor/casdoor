@@ -611,6 +611,9 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 
 func AddApplication(application *Application, lang string) (bool, error) {
 	application.Owner = "admin"
+	if application.CreatedTime == "" {
+		application.CreatedTime = util.GetCurrentTime()
+	}
 	if application.Organization == "" {
 		application.Organization = "built-in"
 	}
