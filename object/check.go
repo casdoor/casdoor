@@ -310,7 +310,17 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		passwordType = "plain"
 	}
 
-	credManager := cred.GetCredManager(passwordType)
+	// the hash of a user imported from another identity system may be one that only the import action can check
+	isPluginPassword := isPluginPasswordType(passwordType)
+	credPasswordType := passwordType
+	if isPluginPassword {
+		credPasswordType = organization.PasswordType
+		if credPasswordType == "" {
+			credPasswordType = "plain"
+		}
+	}
+
+	credManager := cred.GetCredManager(credPasswordType)
 	if credManager == nil {
 		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), passwordType)
 	}
@@ -321,11 +331,15 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		}
 	}
 
-	if !credManager.IsPasswordCorrect(password, user.Password, organization.PasswordSalt) && !credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
+	if isPluginPassword {
+		if !isImportedPasswordCorrect(user, passwordType, password) {
+			return recordSigninErrorInfo(user, lang, enableCaptcha)
+		}
+	} else if !credManager.IsPasswordCorrect(password, user.Password, organization.PasswordSalt) && !credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
 		return recordSigninErrorInfo(user, lang, enableCaptcha)
 	}
 
-	isOutdated := organization.PasswordType != "" && passwordType != organization.PasswordType
+	isOutdated := isPluginPassword || (organization.PasswordType != "" && passwordType != organization.PasswordType)
 	if isOutdated {
 		user.Password = password
 		user.UpdateUserPassword(organization)

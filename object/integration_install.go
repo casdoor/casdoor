@@ -162,6 +162,7 @@ var actionKindCategories = map[string]string{
 	"idp":                "OAuth",
 	"idv":                "ID Verification",
 	"cert":               "",
+	"import":             "",
 }
 
 type IntegrationInstallRequest struct {

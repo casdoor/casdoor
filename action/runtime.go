@@ -327,7 +327,7 @@ func (w logWriter) Write(p []byte) (int, error) {
 func Call(name string, module []byte, hosts []string, method string, config *Config, params interface{}, out interface{}) error {
 	timeout := callTimeout
 	// a sync pages through the whole directory of the other system, sometimes under its rate limit
-	if strings.HasPrefix(method, "syncer.") {
+	if strings.HasPrefix(method, "syncer.") || method == "import.list" {
 		timeout = syncerCallTimeout
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -344,6 +344,7 @@ func Call(name string, module []byte, hosts []string, method string, config *Con
 		WithStartFunctions("_initialize").
 		WithSysWalltime().
 		WithSysNanotime().
+		WithSysNanosleep().
 		WithRandSource(rand.Reader).
 		WithStdout(logWriter{name: name}).
 		WithStderr(logWriter{name: name})

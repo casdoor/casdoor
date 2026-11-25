@@ -520,6 +520,22 @@ export function newSubscription(account: Account) {
   };
 }
 
+export function newMigration(account: Account) {
+  const randomName = Setting.getRandomName();
+  return {
+    owner: "admin",
+    name: `migration_${randomName}`,
+    createdTime: now(),
+    displayName: `New Migration - ${randomName}`,
+    organization: Setting.getRequestOrganization(account),
+    plugin: "",
+    host: "",
+    clientId: "",
+    clientSecret: "",
+    metadata: "",
+  };
+}
+
 export function newSyncer(account: Account) {
   const randomName = Setting.getRandomName();
   const organizationName = Setting.getRequestOrganization(account);

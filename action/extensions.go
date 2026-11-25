@@ -14,7 +14,10 @@
 
 package action
 
-import "strings"
+import (
+	"encoding/json"
+	"strings"
+)
 
 // Module is an installed action: its name in the organization, the WebAssembly module and the hosts it may call
 type Module struct {
@@ -190,4 +193,52 @@ func VerifyCertificate(m *Module, req *CertVerifyRequest) (*CertVerifyResult, er
 	res := &CertVerifyResult{}
 	err := Call(m.Name, m.Module, m.Hosts, "cert.verify", &Config{}, req, res)
 	return res, err
+}
+
+// ImportFile is a file the admin uploaded for an import, such as the realm export of another identity system
+type ImportFile struct {
+	Name string `json:"name"`
+	Data []byte `json:"data"`
+}
+
+// ImportListRequest asks an action of kind "import" for a page of one kind of objects of the other system
+type ImportListRequest struct {
+	// "certs", "groups", "applications", "users", "roles" or "permissions"
+	Kind         string        `json:"kind"`
+	Cursor       string        `json:"cursor"`
+	Organization string        `json:"organization"`
+	Files        []*ImportFile `json:"files"`
+}
+
+// ImportListResult holds the objects in Casdoor's own JSON, and the cursor of the next page, empty after the last one
+type ImportListResult struct {
+	Items    []json.RawMessage `json:"items"`
+	Cursor   string            `json:"cursor"`
+	Warnings []string          `json:"warnings"`
+}
+
+// ListImport runs "import.list" of an action of kind "import"
+func ListImport(m *Module, config *Config, req *ImportListRequest) (*ImportListResult, error) {
+	res := &ImportListResult{}
+	err := Call(m.Name, m.Module, m.Hosts, "import.list", config, req, res)
+	return res, err
+}
+
+// TestImport runs the optional "import.test" of an action of kind "import"
+func TestImport(m *Module, config *Config, files []*ImportFile) error {
+	return Call(m.Name, m.Module, m.Hosts, "import.test", config, map[string]interface{}{"files": files}, nil)
+}
+
+// VerifyImportedPassword runs "import.verifyPassword" of an action of kind "import" on the sign-in of a user whose
+// password hash came from the other system in a format Casdoor doesn't know
+func VerifyImportedPassword(m *Module, password string, hash string, salt string) (bool, error) {
+	resp := struct {
+		Valid bool `json:"valid"`
+	}{}
+	err := Call(m.Name, m.Module, m.Hosts, "import.verifyPassword", &Config{}, map[string]string{
+		"password": password,
+		"hash":     hash,
+		"salt":     salt,
+	}, &resp)
+	return resp.Valid, err
 }

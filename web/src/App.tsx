@@ -126,6 +126,8 @@ const FormListPage = React.lazy(() => import("@/pages/FormListPage"));
 const FormEditPage = React.lazy(() => import("@/pages/FormEditPage"));
 const SyncerListPage = React.lazy(() => import("@/pages/SyncerListPage"));
 const SyncerEditPage = React.lazy(() => import("@/pages/SyncerEditPage"));
+const MigrationListPage = React.lazy(() => import("@/pages/MigrationListPage"));
+const MigrationEditPage = React.lazy(() => import("@/pages/MigrationEditPage"));
 const WebhookListPage = React.lazy(() => import("@/pages/WebhookListPage"));
 const WebhookEditPage = React.lazy(() => import("@/pages/WebhookEditPage"));
 const WebhookEventListPage = React.lazy(() => import("@/pages/WebhookEventListPage"));
@@ -395,6 +397,8 @@ export default function App() {
           <Route path="/forms/:formName" element={<FormEditPage />} />
           <Route path="/syncers" element={<SyncerListPage />} />
           <Route path="/syncers/:organizationName/:syncerName" element={<SyncerEditPage />} />
+          <Route path="/migrations" element={<MigrationListPage />} />
+          <Route path="/migrations/:organizationName/:migrationName" element={<MigrationEditPage />} />
           <Route path="/webhooks" element={<WebhookListPage />} />
           <Route path="/webhooks/:webhookName" element={<WebhookEditPage />} />
           <Route path="/webhook-events" element={<WebhookEventListPage />} />

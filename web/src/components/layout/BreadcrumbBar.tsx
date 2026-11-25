@@ -51,6 +51,7 @@ const RESOURCE_LABELS: Record<string, string> = {
   "settings": "general:Global Settings",
   "forms": "general:Forms",
   "syncers": "general:Syncers",
+  "migrations": "general:Migrations",
   "webhooks": "general:Webhooks",
   "webhook-events": "general:Webhook Events",
   "tickets": "general:Tickets",

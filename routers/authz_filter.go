@@ -40,6 +40,7 @@ import (
 var orgOwnerObject = []string{
 	"-organization",
 	"-syncer",
+	"-migration",
 	"-webhook",
 	"-application",
 	"-token",
@@ -54,6 +55,8 @@ var organizationParamObject = []string{
 	"/api/get-syncers",
 	"/api/get-syncer",
 	"/api/run-syncer",
+	"/api/get-migrations",
+	"/api/get-migration",
 	"/api/get-tokens",
 	"/api/get-token",
 	"/api/get-webhooks",
@@ -330,7 +333,7 @@ func getObject(ctx *context.Context) (string, string, error) {
 
 		return "", "", nil
 	} else {
-		if path == "/api/run-syncer" {
+		if path == "/api/run-syncer" || path == "/api/run-migration" {
 			return getRunSyncerObject(ctx)
 		}
 

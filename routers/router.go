@@ -440,6 +440,13 @@ func InitAPI() {
 	web.Router("/api/run-syncer", &controllers.ApiController{}, "POST:RunSyncer")
 	web.Router("/api/test-syncer-db", &controllers.ApiController{}, "POST:TestSyncerDb")
 
+	web.Router("/api/get-migrations", &controllers.ApiController{}, "GET:GetMigrations")
+	web.Router("/api/get-migration", &controllers.ApiController{}, "GET:GetMigration")
+	web.Router("/api/update-migration", &controllers.ApiController{}, "POST:UpdateMigration")
+	web.Router("/api/add-migration", &controllers.ApiController{}, "POST:AddMigration")
+	web.Router("/api/delete-migration", &controllers.ApiController{}, "POST:DeleteMigration")
+	web.Router("/api/run-migration", &controllers.ApiController{}, "POST:RunMigration")
+
 	web.Router("/api/get-webhooks", &controllers.ApiController{}, "GET:GetWebhooks")
 	web.Router("/api/get-webhook", &controllers.ApiController{}, "GET:GetWebhook")
 	web.Router("/api/update-webhook", &controllers.ApiController{}, "POST:UpdateWebhook")

@@ -194,6 +194,7 @@ export function getNavGroups(account: Account | null | undefined): NavGroup[] {
   adminItems.push(
     {key: "/forms", label: i18next.t("general:Forms")},
     {key: "/syncers", label: i18next.t("general:Syncers")},
+    {key: "/migrations", label: i18next.t("general:Migrations")},
     {key: "/webhooks", label: i18next.t("general:Webhooks")},
     {key: "/webhook-events", label: i18next.t("general:Webhook Events")},
     {key: "/tickets", label: i18next.t("general:Tickets")},

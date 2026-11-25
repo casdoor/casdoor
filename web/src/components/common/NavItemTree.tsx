@@ -104,6 +104,7 @@ function getNavItemNodes(): TreeNode[] {
             {key: "/settings", title: i18next.t("general:Global Settings")},
             {key: "/forms", title: i18next.t("general:Forms")},
             {key: "/syncers", title: i18next.t("general:Syncers")},
+            {key: "/migrations", title: i18next.t("general:Migrations")},
             {key: "/webhooks", title: i18next.t("general:Webhooks")},
             {key: "/webhook-events", title: i18next.t("general:Webhook Events")},
             {key: "/tickets", title: i18next.t("general:Tickets")},
