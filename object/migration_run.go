@@ -817,10 +817,30 @@ func isImportedPasswordCorrect(user *User, passwordType string, password string)
 		return false
 	}
 
-	valid, err := action.VerifyImportedPassword(m, password, user.Password, user.PasswordSalt)
+	config, err := getImportConfig(user.Owner, name)
+	if err != nil {
+		logs.Warn("the password of the user: %s can't be checked: %s", user.GetId(), err.Error())
+		return false
+	}
+
+	valid, err := action.VerifyImportedPassword(m, config, password, user.Password, user.PasswordSalt)
 	if err != nil {
 		logs.Warn("the password of the user: %s can't be checked: %s", user.GetId(), err.Error())
 		return false
 	}
 	return valid
+}
+
+// getImportConfig is the configuration of the organization's latest migration through the action, so that an action
+// can check passwords with the other system, which it reaches at the migration's host
+func getImportConfig(organization string, plugin string) (*action.Config, error) {
+	migration := &Migration{}
+	has, err := ormer.Engine.Where("organization = ? and plugin = ?", organization, plugin).Desc("updated_time").Get(migration)
+	if err != nil {
+		return nil, err
+	}
+	if !has {
+		return &action.Config{}, nil
+	}
+	return &action.Config{Host: migration.Host, ClientId: migration.ClientId, ClientSecret: migration.ClientSecret, Metadata: migration.Metadata}, nil
 }

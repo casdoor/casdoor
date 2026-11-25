@@ -230,12 +230,13 @@ func TestImport(m *Module, config *Config, files []*ImportFile) error {
 }
 
 // VerifyImportedPassword runs "import.verifyPassword" of an action of kind "import" on the sign-in of a user whose
-// password hash came from the other system in a format Casdoor doesn't know
-func VerifyImportedPassword(m *Module, password string, hash string, salt string) (bool, error) {
+// password hash came from the other system in a format Casdoor doesn't know, with the configuration of the migration,
+// for an action that checks the password with the other system
+func VerifyImportedPassword(m *Module, config *Config, password string, hash string, salt string) (bool, error) {
 	resp := struct {
 		Valid bool `json:"valid"`
 	}{}
-	err := Call(m.Name, m.Module, m.Hosts, "import.verifyPassword", &Config{}, map[string]string{
+	err := Call(m.Name, m.Module, m.Hosts, "import.verifyPassword", config, map[string]string{
 		"password": password,
 		"hash":     hash,
 		"salt":     salt,
