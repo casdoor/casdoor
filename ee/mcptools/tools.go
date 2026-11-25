@@ -170,7 +170,12 @@ func (t *toolCall) isWrite() bool {
 }
 
 func (t *toolCall) isDelete() bool {
-	return (t.builtin != nil && t.builtin.Action == actionDelete) || (t.def != nil && t.def.Delete)
+	return (t.builtin != nil && t.builtin.Action == actionDelete) || (t.def != nil && t.def.Delete) || t.name == "undo_migration"
+}
+
+// isMigrationChange tells whether a migration tool of the server adds or deletes the objects of an organization
+func isMigrationChange(name string) bool {
+	return name == "apply_migration" || name == "undo_migration"
 }
 
 // CallTool runs a tool of the commercial edition, and wraps the tools of the server itself with the dry run, the
@@ -225,7 +230,7 @@ func (e *extension) CallTool(c *mcpself.McpController, id interface{}, name stri
 		return
 	}
 
-	if t.isWrite() && !t.dryRun && t.holdForApproval() {
+	if (t.isWrite() && !t.dryRun || isMigrationChange(name)) && t.holdForApproval() {
 		return
 	}
 

@@ -128,13 +128,25 @@ var BuiltinScopes = []*object.ScopeItem{
 		Description: "Create, update, and delete certs",
 		Tools:       []string{},
 	},
+	{
+		Name:        "migration:read",
+		DisplayName: "Read Migrations",
+		Description: "View migrations and their reports",
+		Tools:       []string{"get_migrations", "get_migration"},
+	},
+	{
+		Name:        "migration:write",
+		DisplayName: "Run Migrations",
+		Description: "Preview, apply and undo migrations from other identity systems",
+		Tools:       []string{"plan_migration", "apply_migration", "undo_migration"},
+	},
 }
 
 // ConvenienceScopes defines alias scopes that expand to multiple resource scopes
 var ConvenienceScopes = map[string][]string{
-	"read":  {"application:read", "user:read", "organization:read", "permission:read", "role:read", "provider:read", "token:read", "group:read", "cert:read"},
-	"write": {"application:write", "user:write", "organization:write", "permission:write", "role:write", "provider:write", "token:write", "group:write", "cert:write"},
-	"admin": {"application:read", "application:write", "user:read", "user:write", "organization:read", "organization:write", "permission:read", "permission:write", "role:read", "role:write", "provider:read", "provider:write", "token:read", "token:write", "group:read", "group:write", "cert:read", "cert:write"},
+	"read":  {"application:read", "user:read", "organization:read", "permission:read", "role:read", "provider:read", "token:read", "group:read", "cert:read", "migration:read"},
+	"write": {"application:write", "user:write", "organization:write", "permission:write", "role:write", "provider:write", "token:write", "group:write", "cert:write", "migration:write"},
+	"admin": {"application:read", "application:write", "user:read", "user:write", "organization:read", "organization:write", "permission:read", "permission:write", "role:read", "role:write", "provider:read", "provider:write", "token:read", "token:write", "group:read", "group:write", "cert:read", "cert:write", "migration:read", "migration:write"},
 }
 
 // GetToolsForScopes returns a map of tools allowed by the given scopes

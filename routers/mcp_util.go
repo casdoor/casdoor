@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 
 	"github.com/beego/beego/v2/server/web/context"
+	"github.com/casdoor/casdoor/mcpself"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -178,6 +179,11 @@ func getMcpObjects(ctx *context.Context) ([]Object, error) {
 		var args deleteUserArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
 			return []Object{{Owner: args.User.Owner, Name: args.User.Name}}, nil
+		}
+	case "get_migrations", "get_migration", "plan_migration", "apply_migration", "undo_migration":
+		var args mcpself.MigrationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			return []Object{{Owner: args.Organization}}, nil
 		}
 	}
 

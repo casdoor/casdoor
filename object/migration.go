@@ -15,6 +15,7 @@
 package object
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -226,4 +227,36 @@ func DeleteMigration(migration *Migration) (bool, error) {
 
 func (migration *Migration) GetId() string {
 	return fmt.Sprintf("%s/%s", migration.Owner, migration.Name)
+}
+
+// GetImportActions returns the actions of kind "import" installed in the organization, which migrations read the
+// other identity systems with
+func GetImportActions(owner string) ([]*Integration, error) {
+	integrations, err := GetIntegrations(owner)
+	if err != nil {
+		return nil, err
+	}
+
+	actions := []*Integration{}
+	for _, integration := range integrations {
+		if integration.Type != "action" {
+			continue
+		}
+		kind := integration.Kind
+		if kind == "" {
+			bundle := &IntegrationBundle{}
+			if json.Unmarshal([]byte(integration.Bundle), bundle) != nil {
+				continue
+			}
+			file, err := getActionFile(bundle)
+			if err != nil {
+				continue
+			}
+			kind = file.Kind
+		}
+		if kind == "import" {
+			actions = append(actions, integration)
+		}
+	}
+	return actions, nil
 }

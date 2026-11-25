@@ -435,6 +435,13 @@ func (c *McpController) callTool(id interface{}, params McpCallToolParams) {
 			return
 		}
 		c.handleDeleteUserTool(req.ID, args)
+	case "get_migrations", "get_migration", "plan_migration", "apply_migration", "undo_migration":
+		var args MigrationArgs
+		if err := json.Unmarshal(params.Arguments, &args); err != nil {
+			c.sendInvalidParamsError(req.ID, err.Error())
+			return
+		}
+		c.callMigrationTool(req.ID, params.Name, args)
 	default:
 		c.McpResponseError(req.ID, -32602, "Invalid tool name", fmt.Sprintf("Tool '%s' not found", params.Name))
 	}
@@ -494,7 +501,7 @@ func (c *McpController) sendInsufficientScopeError(id interface{}, toolName stri
 
 // getAllTools returns all available MCP tools
 func (c *McpController) getAllTools() []McpTool {
-	return []McpTool{
+	tools := []McpTool{
 		{
 			Name:        "get_applications",
 			Description: "Get all applications for a specific owner",
@@ -655,4 +662,5 @@ func (c *McpController) getAllTools() []McpTool {
 			},
 		},
 	}
+	return append(tools, getMigrationTools()...)
 }
