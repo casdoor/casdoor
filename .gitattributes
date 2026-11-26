@@ -2,4 +2,5 @@
 *.js linguist-detectable=false
 # Declare files that will always have LF line endings on checkout.
 # Git will always convert line endings to LF on checkout. You should use this for files that must keep LF endings, even on Windows.
-*.sh text eol=lfyarn.lock text eol=lf
+*.sh text eol=lf
+yarn.lock text eol=lf
