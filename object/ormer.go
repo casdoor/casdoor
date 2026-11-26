@@ -611,7 +611,7 @@ func (a *Ormer) createTable() {
 	}
 }
 
-// the "migration" table of the schema migrator removed in 2023 has only an "id" column and is no longer used,
+// the "migration" table of the schema migrator removed in 2023 is keyed by an "id" column and is no longer used,
 // it is dropped so that the table of the migrations from other identity systems can take its name
 func (a *Ormer) dropLegacyMigrationTable() error {
 	exist, err := a.Engine.IsTableExist(new(Migration))
@@ -629,7 +629,12 @@ func (a *Ormer) dropLegacyMigrationTable() error {
 		return err
 	}
 
-	if len(columns) != 1 || !strings.EqualFold(columns[0], "id") {
+	hasId, hasOwner := false, false
+	for _, column := range columns {
+		hasId = hasId || strings.EqualFold(column, "id")
+		hasOwner = hasOwner || strings.EqualFold(column, "owner")
+	}
+	if !hasId || hasOwner {
 		return nil
 	}
 	return a.Engine.DropTables(new(Migration))
