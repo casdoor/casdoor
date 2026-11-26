@@ -214,7 +214,7 @@ jobs:
           done
       - uses: cypress-io/github-action@v7
         with:
-          browser: chrome
+          browser: electron
           # `yarn install` above already installed everything, Cypress included.
           install: false
           start: yarn start
