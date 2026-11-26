@@ -163,6 +163,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	userId := user.GetId()
 	c.renewSessionIdForUser(userId)
+	c.setMfaUserSession("")
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	authTime := c.getAuthTime()
 	responseType, isResponseType := object.ParseResponseType(form.Type)
@@ -1579,7 +1580,7 @@ func (c *ApiController) Login() {
 				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
 		}
-	} else if c.GetMfaUserSession() != "" {
+	} else if c.GetMfaUserSession() != "" && (authForm.Passcode != "" || authForm.RecoveryCode != "" || c.GetSessionUsername() == "") {
 		var user *object.User
 		user, err = object.GetUser(c.GetMfaUserSession())
 		if err != nil {
