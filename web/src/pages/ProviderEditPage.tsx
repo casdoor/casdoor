@@ -558,13 +558,13 @@ export default function ProviderEditPage() {
     patchProvider({userMapping});
   };
 
-  const save = async(exitAfterSave: boolean) => {
+  const save = async(exitAfterSave: boolean): Promise<boolean> => {
     if (provider === null) {
-      return;
+      return false;
     }
     const payload = Setting.deepCopy(provider);
     setSaving(true);
-    await submitEdit({
+    const saved = await submitEdit({
       mode,
       record: payload,
       add: (record) => ProviderBackend.addProvider(record),
@@ -589,6 +589,22 @@ export default function ProviderEditPage() {
       },
     });
     setSaving(false);
+    return saved;
+  };
+
+  // the backend finds the provider to test by its saved name, so a new or renamed provider is saved first; the SMS
+  // and notification tests also read the rest of the settings from the saved provider, so they always save first
+  const saveAndTest = async(test: (saved: any) => Promise<any>, alwaysSave = false) => {
+    if (provider === null) {
+      return;
+    }
+    const payload = Setting.deepCopy(provider);
+    if (alwaysSave || mode === "add" || provider.name !== name || provider.owner !== owner) {
+      if (!await save(false)) {
+        return;
+      }
+    }
+    await test(payload);
   };
 
   const loadSamlConfiguration = (metadata: string) => {
@@ -1184,13 +1200,13 @@ export default function ProviderEditPage() {
             onChange={(e) => updateProviderField("receiver", e.target.value)}
           />
           {!["Azure ACS", "Custom HTTP Email", "SendGrid", "Resend"].includes(provider.type) ? (
-            <Button variant="outline" onClick={() => ProviderTest.connectSmtpServer(provider)}>
+            <Button variant="outline" disabled={saving} onClick={() => saveAndTest((saved) => ProviderTest.connectSmtpServer(saved))}>
               {i18next.t("provider:Test SMTP Connection")}
             </Button>
           ) : null}
           <Button
-            disabled={!Setting.isValidEmail(provider.receiver ?? "")}
-            onClick={() => ProviderTest.sendTestEmail(provider, provider.receiver)}
+            disabled={saving || !Setting.isValidEmail(provider.receiver ?? "")}
+            onClick={() => saveAndTest((saved) => ProviderTest.sendTestEmail(saved, saved.receiver))}
           >
             {i18next.t("provider:Send Testing Email")}
           </Button>
@@ -1277,8 +1293,8 @@ export default function ProviderEditPage() {
             onChange={(e) => updateProviderField("receiver", e.target.value)}
           />
           <Button
-            disabled={!Setting.isValidPhone(provider.receiver ?? "") || (provider.type === "Custom HTTP SMS" && provider.endpoint === "")}
-            onClick={() => ProviderTest.sendTestSms(provider, "+" + Setting.getCountryCode(provider.content) + provider.receiver)}
+            disabled={saving || !Setting.isValidPhone(provider.receiver ?? "") || (provider.type === "Custom HTTP SMS" && provider.endpoint === "")}
+            onClick={() => saveAndTest((saved) => ProviderTest.sendTestSms(saved, "+" + Setting.getCountryCode(saved.content) + saved.receiver), true)}
           >
             {i18next.t("provider:Send Testing SMS")}
           </Button>
@@ -1328,7 +1344,7 @@ export default function ProviderEditPage() {
                 onChange={(e) => updateProviderField("receiver", e.target.value)}
               />
             ) : null}
-            <Button onClick={() => ProviderTest.sendTestNotification(provider)}>
+            <Button disabled={saving} onClick={() => saveAndTest((saved) => ProviderTest.sendTestNotification(saved), true)}>
               {i18next.t("provider:Send Testing Notification")}
             </Button>
           </div>
@@ -1753,7 +1769,9 @@ export default function ProviderEditPage() {
       mode={mode}
       backTo="/providers"
       saving={saving}
-      onSave={save}
+      onSave={async(exitAfterSave) => {
+        await save(exitAfterSave);
+      }}
     >
       <FormRow labelKey="general:Name">
         <Input
