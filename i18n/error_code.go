@@ -165,7 +165,9 @@ func loadErrorCodes() {
 
 func addErrorCodeText(language string, text string, code string) {
 	text = strings.TrimSpace(text)
-	if !formatVerbRegex.MatchString(text) {
+	// a message ending with a colon gets a name appended by its caller
+	openEnded := strings.HasSuffix(text, ":") || strings.HasSuffix(text, "：")
+	if !openEnded && !formatVerbRegex.MatchString(text) {
 		errorCodeTexts[text] = code
 		return
 	}
@@ -174,7 +176,11 @@ func addErrorCodeText(language string, text string, code string) {
 	for i, part := range parts {
 		parts[i] = regexp.QuoteMeta(part)
 	}
-	regex := regexp.MustCompile("^" + strings.Join(parts, "(?s:.*)") + "$")
+	pattern := strings.Join(parts, "(?s:.*)")
+	if openEnded {
+		pattern += "(?s:.*)"
+	}
+	regex := regexp.MustCompile("^" + pattern + "$")
 	errorCodePatterns[language] = append(errorCodePatterns[language], errorCodePattern{regex: regex, code: code})
 }
 
