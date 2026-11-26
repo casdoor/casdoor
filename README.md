@@ -120,7 +120,7 @@ Coming from another product? See how Casdoor compares with [Keycloak](https://ww
 
 ## 📦 Installation
 
-Four supported paths, fastest first. All of them end up at <http://localhost:8000>.
+Four supported paths, fastest first: the all-in-one Docker image, Docker Compose with MySQL, Helm on Kubernetes, and building from source. All of them end up at <http://localhost:8000>.
 
 > Rather not run the server, database and upgrades yourself? [Casdoor Cloud](https://www.casdoor.com/pricing?utm_source=github&utm_medium=readme&utm_content=install) gives you a dedicated Casdoor instance in the region you choose, with flat monthly pricing and no per-user fees.
 
