@@ -121,11 +121,23 @@ type IdpUser struct {
 	Extra       map[string]string `json:"extra"`
 }
 
-// GetIdpToken runs "idp.getToken" of an action of kind "idp", which exchanges the authorization code
-func GetIdpToken(m *Module, config *Config, code string, redirectUri string) (*IdpToken, error) {
+// GetIdpToken runs "idp.getToken" of an action of kind "idp", which exchanges the authorization code. challenge is
+// the one the action gave this browser to sign, for an action that signs in with its own script on the sign-in page
+func GetIdpToken(m *Module, config *Config, code string, redirectUri string, challenge string) (*IdpToken, error) {
 	token := &IdpToken{}
-	err := Call(m.Name, m.Module, m.Hosts, "idp.getToken", config, map[string]string{"code": code, "redirectUri": redirectUri}, token)
+	err := Call(m.Name, m.Module, m.Hosts, "idp.getToken", config, map[string]string{"code": code, "redirectUri": redirectUri, "challenge": challenge}, token)
 	return token, err
+}
+
+// GetIdpChallenge runs "idp.getChallenge" of an action of kind "idp" with a sign-in script: the text, such as a
+// message for a wallet to sign, that the user proves to own an account with. origin is the page the user signs in
+// on, input what the script sent
+func GetIdpChallenge(m *Module, config *Config, origin string, application string, input map[string]string) (string, error) {
+	res := struct {
+		Challenge string `json:"challenge"`
+	}{}
+	err := Call(m.Name, m.Module, m.Hosts, "idp.getChallenge", config, map[string]interface{}{"origin": origin, "application": application, "input": input}, &res)
+	return res.Challenge, err
 }
 
 // GetIdpUserInfo runs "idp.getUserInfo" of an action of kind "idp"

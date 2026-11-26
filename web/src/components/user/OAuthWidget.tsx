@@ -5,6 +5,7 @@ import {WeChatQrDialog, needsWeChatQrDialog} from "@/components/auth/WeChatQrDia
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Provider from "@/auth/Provider";
 import * as Setting from "@/lib/setting";
+import {hasPluginScript, runPluginSignIn} from "@/ee/lib/plugin-signin";
 
 const BLANK_AVATAR =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAQAAACROWYpAAAAHElEQVR42mNkoAAwjmoe1TyqeVTzqOZRzcNZMwB18wAfEFQkPQAAAABJRU5ErkJggg==";
@@ -62,7 +63,7 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   const [wechatOpen, setWechatOpen] = React.useState(false);
 
   let linkedValue: string;
-  if (provider.type === "Custom Flexible") {
+  if (provider.type === "Custom Flexible" || provider.type === "Plugin") {
     const link = (user.thirdPartyLinks || []).find((item: any) => item.providerName === provider.name);
     linkedValue = link ? link.providerId : "";
   } else {
@@ -88,6 +89,10 @@ function OAuthRow({user, application, providerItem, account, onUnlinked}: Widget
   const link = () => {
     if (needsWeChatQrDialog(provider)) {
       setWechatOpen(true);
+      return;
+    }
+    if (hasPluginScript(provider)) {
+      runPluginSignIn(application, provider, "link");
       return;
     }
     Setting.goToLink(Provider.getAuthUrl(application, provider, "link"));

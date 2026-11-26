@@ -105,6 +105,8 @@ type IntegrationManifest struct {
 	Name        map[string]string       `json:"name"`
 	Variables   []*IntegrationVariable  `json:"variables"`
 	Permissions *IntegrationPermissions `json:"permissions"`
+	// the edition a paid integration is for
+	Edition string `json:"edition"`
 	// the files an admin downloads to install elsewhere, such as the plugin of an API gateway
 	Downloads []string `json:"downloads"`
 }
@@ -149,6 +151,9 @@ type actionFile struct {
 	Sha256 string `json:"sha256"`
 	// push only: the user field that holds the receiver
 	ReceiverField string `json:"receiverField"`
+	// idp only: the JavaScript module the sign-in page runs instead of going to an authorization page
+	Script       string `json:"script"`
+	ScriptSha256 string `json:"scriptSha256"`
 }
 
 // the kinds of actions this Casdoor runs, and the provider category each one creates on install ("" for none)
@@ -806,6 +811,9 @@ func getActionFile(bundle *IntegrationBundle) (*actionFile, error) {
 	if file.Module == "" || strings.ContainsAny(file.Module, "/\\") || file.Sha256 == "" {
 		return nil, fmt.Errorf("the action.json of the action has no valid module")
 	}
+	if file.Script != "" && (file.Kind != "idp" || strings.ContainsAny(file.Script, "/\\") || !strings.HasSuffix(file.Script, ".js") || file.ScriptSha256 == "") {
+		return nil, fmt.Errorf("the action.json of the action has no valid script")
+	}
 	return file, nil
 }
 
@@ -830,6 +838,25 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 
 	integration.Kind = file.Kind
 	integration.Wasm = module
+
+	// the provider below is checked against the edition of the integration, which is saved only after it
+	if integration.LicenseId != "" && bundle.Manifest != nil && bundle.Manifest.Edition != "" {
+		installingActionEditions.Store(integration.GetId(), bundle.Manifest.Edition)
+		defer installingActionEditions.Delete(integration.GetId())
+	}
+
+	if file.Script != "" {
+		var script []byte
+		script, err = bundle.Fetch(file.Script)
+		if err != nil {
+			return err
+		}
+		hash = sha256.Sum256(script)
+		if !strings.EqualFold(hex.EncodeToString(hash[:]), file.ScriptSha256) {
+			return fmt.Errorf("the checksum of %s does not match the action", file.Script)
+		}
+		integration.Script = string(script)
+	}
 
 	// the syncers and the security settings of the organization pick these actions themselves
 	category := actionKindCategories[file.Kind]
@@ -869,6 +896,34 @@ func installActionIntegration(integration *Integration, bundle *IntegrationBundl
 
 	integration.Provider = provider.Name
 	return nil
+}
+
+// GetActionScript returns the sign-in script of the action a provider of type Plugin runs, "" when it has none
+func GetActionScript(owner string, name string) (string, error) {
+	integration, err := getIntegration(owner, name)
+	if err != nil || integration == nil || integration.Type != "action" {
+		return "", err
+	}
+	return integration.Script, nil
+}
+
+// the editions of the paid actions being installed, by integration ID
+var installingActionEditions sync.Map
+
+// GetActionEdition returns the edition a paid action downloaded with the license was published for, "" for any other
+func GetActionEdition(owner string, name string) (string, error) {
+	if value, ok := installingActionEditions.Load(util.GetId(owner, name)); ok {
+		return value.(string), nil
+	}
+	integration, err := getIntegration(owner, name)
+	if err != nil || integration == nil || integration.LicenseId == "" {
+		return "", err
+	}
+	bundle := &IntegrationBundle{}
+	if err = json.Unmarshal([]byte(integration.Bundle), bundle); err != nil || bundle.Manifest == nil {
+		return "", err
+	}
+	return bundle.Manifest.Edition, nil
 }
 
 // getActionModule returns the module and allowed hosts of the action a provider of type Plugin runs.

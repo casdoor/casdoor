@@ -592,6 +592,9 @@ function buildAuthUrl(application: any, provider: any, method: string, code?: st
     return `${endpoint}?client_key=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Kwai") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Plugin" && !provider.customAuthUrl) {
+    // the plugin signs in on the page with its own script and comes back with the code, see web/src/ee/lib/plugin-signin.ts
+    return `${redirectUri}?state=${encodeURIComponent(state)}`;
   } else if (type === "Custom") {
     if (/\{[a-zA-Z_][a-zA-Z0-9_]*\}/.test(provider.customAuthUrl ?? "")) {
       const values: Record<string, string> = {clientId: provider.clientId, redirectUri, scope: provider.scopes ?? "", state, codeChallenge};

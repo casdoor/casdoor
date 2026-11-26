@@ -184,6 +184,8 @@ p, *, *, GET, /api/faceid-signin-begin, *, *
 p, *, *, GET, /api/login/cert, *, *
 p, *, *, POST, /api/cloud-signin, *, *
 p, *, *, GET, /api/get-cert-challenge, *, *
+p, *, *, POST, /api/get-plugin-challenge, *, *
+p, *, *, GET, /api/get-plugin-script, *, *
 p, *, *, GET, /api/kerberos-login, *, *
 p, *, *, POST, /api/grant-consent, *, *
 p, *, *, POST, /api/revoke-consent, *, *

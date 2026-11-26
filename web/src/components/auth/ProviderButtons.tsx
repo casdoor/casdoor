@@ -7,6 +7,7 @@ import {WeChatQrDialog, needsWeChatQrDialog} from "@/components/auth/WeChatQrDia
 import * as AuthBackend from "@/backend/AuthBackend";
 import * as Provider from "@/auth/Provider";
 import * as Setting from "@/lib/setting";
+import {hasPluginScript, runPluginSignIn} from "@/ee/lib/plugin-signin";
 
 interface ProviderButtonsProps {
   application: any;
@@ -73,6 +74,10 @@ export function ProviderButtons({application, method, rule, onBeforeClick, onPro
     }
     if (needsWeChatQrDialog(provider)) {
       setWechatItem(providerItem);
+      return;
+    }
+    if (hasPluginScript(provider)) {
+      runPluginSignIn(application, provider, method);
       return;
     }
 

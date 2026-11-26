@@ -1217,7 +1217,12 @@ func (c *ApiController) Login() {
 			idpInfo.State = authForm.CallbackState
 			var idProvider idp.IdProvider
 			if provider.Type == object.ProviderTypePlugin {
-				idProvider, err = ee.GetPluginIdProvider(provider, authForm.RedirectUri)
+				// the challenge a sign-in script was given is single-use, answered or not
+				challenge, _ := c.GetSession(ee.PluginChallengeSessionKey).(string)
+				if challenge != "" {
+					c.DelSession(ee.PluginChallengeSessionKey)
+				}
+				idProvider, err = ee.GetPluginIdProvider(provider, authForm.RedirectUri, challenge)
 			} else {
 				idProvider, err = idp.GetIdProvider(idpInfo, authForm.RedirectUri)
 			}

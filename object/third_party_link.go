@@ -29,8 +29,11 @@ type ThirdPartyLink struct {
 	CreatedTime  string `xorm:"varchar(100)" json:"createdTime"`
 }
 
+// IsFlexibleCustomProvider tells whether the accounts of a provider type are linked in the third_party_link table, by
+// provider name, instead of a user column named after the type: Custom Flexible, and Plugin, whose providers are as
+// many as the plugins installed
 func IsFlexibleCustomProvider(providerType string) bool {
-	return providerType == "Custom Flexible"
+	return providerType == "Custom Flexible" || providerType == ProviderTypePlugin
 }
 
 func IsCustomOAuthProvider(providerType string) bool {

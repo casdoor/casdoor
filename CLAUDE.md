@@ -33,3 +33,6 @@ Not migrated on purpose:
   the `ai-assistant` entry of `WidgetItemTree`) are dropped. Do not port them.
 - **Web3 providers.** The `Web3` category (MetaMask, Web3-Onboard) was removed
   from the backend and `web`. Do not port `web-old`'s wallet sign-in code.
+  Wallet sign-in is the paid Marketplace plugin `web3-wallet` (an idp action
+  with a sign-in script, see `web/src/ee/lib/plugin-signin.ts`); keep its
+  code in the plugin, not in Casdoor.

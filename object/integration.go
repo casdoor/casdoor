@@ -47,6 +47,8 @@ type Integration struct {
 	// the WebAssembly module of an action and its kind
 	Wasm []byte `xorm:"wasm longblob" json:"-"`
 	Kind string `xorm:"varchar(50)" json:"kind"`
+	// the script an action of kind idp runs on the sign-in page instead of going to an authorization page
+	Script string `xorm:"mediumtext" json:"-"`
 	// the module of an action installed before it was kept as bytes, base64 encoded
 	Module string `xorm:"mediumtext" json:"-"`
 	// the license the module was downloaded with, for a paid integration
