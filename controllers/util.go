@@ -62,6 +62,13 @@ func (c *ApiController) ResponseErrorWithCode(code string, error string, data ..
 		return
 	}
 
+	if code == "" {
+		code = i18n.GetErrorCode(c.GetAcceptLanguage(), error)
+	}
+	if code == object.SigninReasonUserNotFound && conf.GetConfigBool("enableErrorMask") {
+		code = object.SigninReasonWrongPassword
+	}
+
 	resp := &Response{Status: "error", Code: code, Msg: util.GetReadableError(error)}
 	c.ResponseJsonData(resp, data...)
 }
