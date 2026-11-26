@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM node:20.20.1 AS FRONT
+FROM --platform=$BUILDPLATFORM node:24.22.3 AS FRONT
 WORKDIR /web
 
 # Copy only dependency files first for better caching
