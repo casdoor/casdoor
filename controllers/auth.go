@@ -833,6 +833,44 @@ func getSigninApplicationByClientId(clientId string, organization string) (*obje
 	return object.GetSigninApplicationOfOrganization(application, organization)
 }
 
+// signinToUserOrganization lets "organization/username" on the sign-in page of the built-in organization sign in a user
+// of another organization through that organization's default application, as /login/<organization> does
+func signinToUserOrganization(authForm *form.AuthForm) error {
+	if authForm.Type != ResponseTypeLogin || authForm.Organization != object.CasdoorOrganization || !strings.Contains(authForm.Username, "/") {
+		return nil
+	}
+	organization, username := util.GetOwnerAndNameFromIdNoCheck(authForm.Username)
+	if organization == "" || username == "" || organization == object.CasdoorOrganization {
+		return nil
+	}
+
+	application, err := object.GetApplication(util.GetId("admin", authForm.Application))
+	if err != nil || application == nil || application.Organization != object.CasdoorOrganization || application.IsShared || len(application.ExternalUsers) > 0 || len(application.ExternalGroups) > 0 {
+		return err
+	}
+	// an unknown organization signs in as usual and gets the error of an unknown user
+	defaultApplication, err := object.GetDefaultApplication(util.GetId("admin", organization))
+	if err != nil || defaultApplication == nil {
+		return nil
+	}
+
+	authForm.Organization = organization
+	authForm.Application = defaultApplication.Name
+	authForm.Username = username
+	return nil
+}
+
+// withOtherOrganizationHint tells a user not found on the sign-in page of the built-in organization where the users of
+// other organizations sign in. It is added to every unknown name, so it does not tell whether the account exists elsewhere,
+// and not when unknown users are masked as wrong passwords
+func (c *ApiController) withOtherOrganizationHint(err error, authForm *form.AuthForm) error {
+	var signinErr *object.SigninError
+	if authForm.Type != ResponseTypeLogin || authForm.Organization != object.CasdoorOrganization || conf.GetConfigBool("enableErrorMask") || !errors.As(err, &signinErr) || signinErr.Reason != object.SigninReasonUserNotFound {
+		return err
+	}
+	return object.NewSigninError(signinErr.Reason, fmt.Sprintf(c.T("auth:The user: %s doesn't exist. If your account belongs to another organization, sign in on the page /login/<organization> or enter <organization>/<username> as the username"), util.GetId(authForm.Organization, authForm.Username)))
+}
+
 // Login ...
 // @Title Login
 // @Tag Login API
@@ -1014,6 +1052,12 @@ func (c *ApiController) Login() {
 				}
 			}
 		} else {
+			err = signinToUserOrganization(&authForm)
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+
 			var application *object.Application
 			application, err = getSigninApplication(fmt.Sprintf("admin/%s", authForm.Application), authForm.Organization)
 			if err != nil {
@@ -1121,7 +1165,7 @@ func (c *ApiController) Login() {
 		}
 
 		if err != nil {
-			c.responseSigninError(err, "")
+			c.responseSigninError(c.withOtherOrganizationHint(err, &authForm), "")
 			return
 		} else {
 			var application *object.Application

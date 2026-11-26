@@ -56,6 +56,7 @@
     "The provider: %s does not exist": "Le fournisseur : %s n'existe pas",
     "The provider: %s is not enabled for the application": "Le fournisseur :%s n'est pas activé pour l'application",
     "The subscription: %s does not exist": "L'abonnement : %s n'existe pas",
+    "The user: %s doesn't exist. If your account belongs to another organization, sign in on the page /login/<organization> or enter <organization>/<username> as the username": "L'utilisateur : %s n'existe pas. Si votre compte appartient à une autre organisation, connectez-vous sur la page /login/<organisation> ou saisissez <organisation>/<nom d'utilisateur> comme nom d'utilisateur",
     "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "L'utilisateur: %s n'est pas autorisé à se connecter à l'application: %s par les autorisations de l'organisation: %s",
     "This application can only be signed in to from a trusted device, install the Casdoor device agent and enroll this device": "On ne peut se connecter à cette application que depuis un appareil de confiance, installez l'agent d'appareil Casdoor et inscrivez cet appareil",
     "This sign-in looks risky and has been blocked, please contact your administrator": "Cette connexion semble risquée et a été bloquée, veuillez contacter votre administrateur",

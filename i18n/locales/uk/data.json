@@ -56,6 +56,7 @@
     "The provider: %s does not exist": "Провайдер: %s не існує",
     "The provider: %s is not enabled for the application": "Провайдер: %s не увімкнено для цього додатка",
     "The subscription: %s does not exist": "Підписка: %s не існує",
+    "The user: %s doesn't exist. If your account belongs to another organization, sign in on the page /login/<organization> or enter <organization>/<username> as the username": "Користувач: %s не існує. Якщо ваш обліковий запис належить до іншої організації, увійдіть на сторінці /login/<організація> або введіть <організація>/<ім'я користувача> як ім'я користувача",
     "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "Користувачу: %s не дозволено входити в додаток: %s згідно з дозволами організації: %s",
     "This application can only be signed in to from a trusted device, install the Casdoor device agent and enroll this device": "До цього застосунку можна ввійти лише з довіреного пристрою, встановіть агент пристрою Casdoor і зареєструйте цей пристрій",
     "This sign-in looks risky and has been blocked, please contact your administrator": "Цей вхід виглядає ризикованим і заблокований, зверніться до адміністратора",

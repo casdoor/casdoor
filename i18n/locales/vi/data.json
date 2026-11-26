@@ -56,6 +56,7 @@
     "The provider: %s does not exist": "Nhà cung cấp: %s không tồn tại",
     "The provider: %s is not enabled for the application": "Nhà cung cấp: %s không được kích hoạt cho ứng dụng",
     "The subscription: %s does not exist": "Đăng ký: %s không tồn tại",
+    "The user: %s doesn't exist. If your account belongs to another organization, sign in on the page /login/<organization> or enter <organization>/<username> as the username": "Người dùng: %s không tồn tại. Nếu tài khoản của bạn thuộc tổ chức khác, hãy đăng nhập tại trang /login/<tổ chức> hoặc nhập <tổ chức>/<tên người dùng> làm tên người dùng",
     "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "Người dùng: %s không được phép đăng nhập vào ứng dụng: %s theo quyền của tổ chức: %s",
     "This application can only be signed in to from a trusted device, install the Casdoor device agent and enroll this device": "Chỉ có thể đăng nhập ứng dụng này từ thiết bị tin cậy, hãy cài đặt Casdoor device agent và đăng ký thiết bị này",
     "This sign-in looks risky and has been blocked, please contact your administrator": "Lần đăng nhập này có rủi ro và đã bị chặn, vui lòng liên hệ quản trị viên",

@@ -56,6 +56,7 @@
     "The provider: %s does not exist": "Sağlayıcı: %s mevcut değil",
     "The provider: %s is not enabled for the application": "Provider: %s bu uygulama için etkin değil",
     "The subscription: %s does not exist": "Abonelik: %s mevcut değil",
+    "The user: %s doesn't exist. If your account belongs to another organization, sign in on the page /login/<organization> or enter <organization>/<username> as the username": "Kullanıcı: %s mevcut değil. Hesabınız başka bir kuruluşa aitse /login/<kuruluş> sayfasından giriş yapın veya kullanıcı adı olarak <kuruluş>/<kullanıcı adı> girin",
     "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "Kullanıcı: %s, uygulama: %s için oturum açamaz, kuruluş: %s izinleri buna izin vermiyor",
     "This application can only be signed in to from a trusted device, install the Casdoor device agent and enroll this device": "Bu uygulamaya yalnızca güvenilir bir cihazdan giriş yapılabilir, Casdoor cihaz aracısını yükleyin ve bu cihazı kaydedin",
     "This sign-in looks risky and has been blocked, please contact your administrator": "Bu oturum açma riskli göründüğü için engellendi, lütfen yöneticinize başvurun",

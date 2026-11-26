@@ -56,6 +56,7 @@
     "The provider: %s does not exist": "プロバイダ「%s」は存在しません",
     "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
     "The subscription: %s does not exist": "サブスクリプション：%s は存在しません",
+    "The user: %s doesn't exist. If your account belongs to another organization, sign in on the page /login/<organization> or enter <organization>/<username> as the username": "ユーザー：%s は存在しません。アカウントが別の組織に属している場合は、/login/<組織名> のページでサインインするか、ユーザー名に <組織名>/<ユーザー名> と入力してください",
     "The user: %s is not allowed to sign in to the application: %s by the permissions of the organization: %s": "ユーザー: %s はアプリケーション: %s へのサインインを組織: %s の権限で許可されていません",
     "This application can only be signed in to from a trusted device, install the Casdoor device agent and enroll this device": "このアプリには信頼済みデバイスからのみサインインできます。Casdoor デバイスエージェントをインストールしてこのデバイスを登録してください",
     "This sign-in looks risky and has been blocked, please contact your administrator": "このサインインはリスクが高いためブロックされました。管理者に連絡してください",
