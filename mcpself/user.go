@@ -136,12 +136,30 @@ func (c *McpController) handleUpdateUserTool(id interface{}, args UpdateUserArgs
 
 // handleDeleteUserTool handles the delete_user MCP tool
 func (c *McpController) handleDeleteUserTool(id interface{}, args DeleteUserArgs) {
-	if args.User.Owner == "built-in" && args.User.Name == "admin" {
+	user := &args.User
+	if userId := args.GetId(); args.Id != "" || args.Name != "" {
+		owner, name, err := util.GetOwnerAndNameFromIdWithError(userId)
+		if err != nil || owner == "" || name == "" {
+			c.SendToolErrorResult(id, "give the ID of the user (e.g., built-in/alice) or the user object with its owner and name")
+			return
+		}
+		user, err = object.GetUser(userId)
+		if err != nil {
+			c.SendToolErrorResult(id, err.Error())
+			return
+		}
+		if user == nil {
+			c.SendToolErrorResult(id, fmt.Sprintf("the user: %s does not exist", userId))
+			return
+		}
+	}
+
+	if user.Owner == "built-in" && user.Name == "admin" {
 		c.SendToolErrorResult(id, "cannot delete the built-in admin user")
 		return
 	}
 
-	affected, err := object.DeleteUser(&args.User)
+	affected, err := object.DeleteUser(user)
 	if err != nil {
 		c.SendToolErrorResult(id, err.Error())
 		return

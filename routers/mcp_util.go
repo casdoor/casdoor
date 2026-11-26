@@ -73,6 +73,9 @@ func getMcpObjects(ctx *context.Context) ([]Object, error) {
 	}
 
 	type deleteApplicationArgs struct {
+		Id          string          `json:"id"`
+		Owner       string          `json:"owner"`
+		Name        string          `json:"name"`
 		Application applicationStub `json:"application"`
 	}
 
@@ -95,7 +98,10 @@ func getMcpObjects(ctx *context.Context) ([]Object, error) {
 	}
 
 	type deleteUserArgs struct {
-		User userStub `json:"user"`
+		Id    string   `json:"id"`
+		Owner string   `json:"owner"`
+		Name  string   `json:"name"`
+		User  userStub `json:"user"`
 	}
 
 	var mcpReq mcpRequest
@@ -145,6 +151,17 @@ func getMcpObjects(ctx *context.Context) ([]Object, error) {
 	case "delete_application":
 		var args deleteApplicationArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			if args.Id == "" && args.Name != "" {
+				owner := args.Owner
+				if owner == "" {
+					owner = "admin"
+				}
+				args.Id = util.GetId(owner, args.Name)
+			}
+			if args.Id != "" {
+				obj, err := getMcpApplicationObject(args.Id)
+				return []Object{obj}, err
+			}
 			return []Object{extractOwnerNameFromAppStub(args.Application)}, nil
 		}
 	case "get_users":
@@ -178,6 +195,13 @@ func getMcpObjects(ctx *context.Context) ([]Object, error) {
 	case "delete_user":
 		var args deleteUserArgs
 		if err := json.Unmarshal(params.Arguments, &args); err == nil {
+			if args.Id != "" {
+				owner, name, err := util.GetOwnerAndNameFromIdWithError(args.Id)
+				return []Object{{Owner: owner, Name: name}}, err
+			}
+			if args.Name != "" {
+				return []Object{{Owner: args.Owner, Name: args.Name}}, nil
+			}
 			return []Object{{Owner: args.User.Owner, Name: args.User.Name}}, nil
 		}
 	case "get_migrations", "get_migration", "plan_migration", "apply_migration", "undo_migration":

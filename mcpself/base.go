@@ -104,7 +104,25 @@ type UpdateApplicationArgs struct {
 }
 
 type DeleteApplicationArgs struct {
+	Id          string             `json:"id"`
+	Owner       string             `json:"owner"`
+	Name        string             `json:"name"`
 	Application object.Application `json:"application"`
+}
+
+// GetId is the application to delete: its ID, its owner and name, or the application object
+func (args DeleteApplicationArgs) GetId() string {
+	if args.Id != "" {
+		return args.Id
+	}
+	owner, name := args.Owner, args.Name
+	if name == "" {
+		owner, name = args.Application.Owner, args.Application.Name
+	}
+	if owner == "" {
+		owner = "admin"
+	}
+	return util.GetId(owner, name)
 }
 
 type GetUsersArgs struct {
@@ -128,7 +146,18 @@ type UpdateUserArgs struct {
 }
 
 type DeleteUserArgs struct {
-	User object.User `json:"user"`
+	Id    string      `json:"id"`
+	Owner string      `json:"owner"`
+	Name  string      `json:"name"`
+	User  object.User `json:"user"`
+}
+
+// GetId is the user to delete: its ID, or its owner and name
+func (args DeleteUserArgs) GetId() string {
+	if args.Id != "" {
+		return args.Id
+	}
+	return util.GetId(args.Owner, args.Name)
 }
 
 type McpCallToolResult struct {
@@ -564,16 +593,27 @@ func (c *McpController) getAllTools() []McpTool {
 		},
 		{
 			Name:        "delete_application",
-			Description: "Delete an application",
+			Description: "Delete an application, given by its ID or by the application object",
 			InputSchema: map[string]interface{}{
 				"type": "object",
 				"properties": map[string]interface{}{
+					"id": map[string]interface{}{
+						"type":        "string",
+						"description": "The ID of the application in the format of owner/name (e.g., admin/app-example)",
+					},
+					"owner": map[string]interface{}{
+						"type":        "string",
+						"description": "The owner of the application, admin by default, used with name when no ID is given",
+					},
+					"name": map[string]interface{}{
+						"type":        "string",
+						"description": "The name of the application, used with owner when no ID is given",
+					},
 					"application": map[string]interface{}{
 						"type":        "object",
-						"description": "The application object to delete",
+						"description": "The application object to delete, used when no ID is given",
 					},
 				},
-				"required": []string{"application"},
 			},
 		},
 		{
@@ -649,16 +689,27 @@ func (c *McpController) getAllTools() []McpTool {
 		},
 		{
 			Name:        "delete_user",
-			Description: "Delete a user",
+			Description: "Delete a user, given by its ID or by the user object",
 			InputSchema: map[string]interface{}{
 				"type": "object",
 				"properties": map[string]interface{}{
+					"id": map[string]interface{}{
+						"type":        "string",
+						"description": "The ID of the user in the format of owner/name (e.g., built-in/alice)",
+					},
+					"owner": map[string]interface{}{
+						"type":        "string",
+						"description": "The organization of the user, used with name when no ID is given",
+					},
+					"name": map[string]interface{}{
+						"type":        "string",
+						"description": "The name of the user, used with owner when no ID is given",
+					},
 					"user": map[string]interface{}{
 						"type":        "object",
-						"description": "The user object to delete",
+						"description": "The user object to delete, used when no ID is given",
 					},
 				},
-				"required": []string{"user"},
 			},
 		},
 	}

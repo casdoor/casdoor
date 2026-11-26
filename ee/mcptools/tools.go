@@ -525,10 +525,13 @@ func getBuiltinWrites() map[string]*builtinWrite {
 		_ = json.Unmarshal(args[key], &obj)
 		return obj
 	}
+	stringOf := func(args map[string]json.RawMessage, key string) string {
+		value := ""
+		_ = json.Unmarshal(args[key], &value)
+		return value
+	}
 	idOf := func(args map[string]json.RawMessage) string {
-		id := ""
-		_ = json.Unmarshal(args["id"], &id)
-		return id
+		return stringOf(args, "id")
 	}
 
 	writes := map[string]*builtinWrite{}
@@ -551,6 +554,17 @@ func getBuiltinWrites() map[string]*builtinWrite {
 		}}
 		writes["delete_"+name] = &builtinWrite{Kind: k, Action: actionDelete, Parse: func(args map[string]json.RawMessage) (string, map[string]interface{}) {
 			obj := objectOf(args, key)
+			if id := idOf(args); id != "" {
+				return id, obj
+			}
+			// the owner and name given on their own instead of the object
+			if name := stringOf(args, "name"); name != "" {
+				owner := stringOf(args, "owner")
+				if owner == "" && key == "application" {
+					owner = "admin"
+				}
+				return util.GetId(owner, name), obj
+			}
 			if key == "application" && getString(obj, "owner") == "" {
 				obj["owner"] = "admin"
 			}
