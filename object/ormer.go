@@ -483,6 +483,11 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.dropLegacyMigrationTable()
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Migration))
 	if err != nil {
 		panic(err)
@@ -604,4 +609,28 @@ func (a *Ormer) createTable() {
 			panic(err)
 		}
 	}
+}
+
+// the "migration" table of the schema migrator removed in 2023 has only an "id" column and is no longer used,
+// it is dropped so that the table of the migrations from other identity systems can take its name
+func (a *Ormer) dropLegacyMigrationTable() error {
+	exist, err := a.Engine.IsTableExist(new(Migration))
+	if err != nil || !exist {
+		return err
+	}
+
+	rows, err := a.Engine.DB().Query(fmt.Sprintf("SELECT * FROM %s WHERE 1 = 0", a.Engine.Quote(a.Engine.TableName(new(Migration), true))))
+	if err != nil {
+		return err
+	}
+	columns, err := rows.Columns()
+	rows.Close()
+	if err != nil {
+		return err
+	}
+
+	if len(columns) != 1 || !strings.EqualFold(columns[0], "id") {
+		return nil
+	}
+	return a.Engine.DropTables(new(Migration))
 }
