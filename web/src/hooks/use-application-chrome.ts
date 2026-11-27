@@ -224,31 +224,31 @@ export function useApplicationHelmet(application: any) {
   }, [application]);
 }
 
-/** what the tab shows before an organization has been loaded */
-const DEFAULT_FAVICON = "https://cdn.casdoor.com/static/favicon.png";
-
 /**
  * The console's tab title and favicon, which follow the signed-in user's
- * organization. Signed out, the favicon falls back to Casdoor's own — the same
- * two <Helmet> blocks web/src/App.js renders.
+ * organization. Signed out, the tab keeps the favicon of index.html, which
+ * routers/static_filter.go brands on sign-in pages, until a page with an
+ * application sets its own (useApplicationHelmet).
  */
 export function useAccountHelmet(account: any) {
   const organization = account?.organization;
   const title = organization?.displayName;
-  const favicon = organization?.favicon || DEFAULT_FAVICON;
+  const favicon = organization?.favicon;
 
   React.useEffect(() => {
     if (title) {
       document.title = title;
     }
 
-    let link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
-    if (!link) {
-      link = document.createElement("link");
-      link.rel = "icon";
-      document.head.appendChild(link);
+    if (favicon) {
+      let link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+      }
+      link.href = favicon;
     }
-    link.href = favicon;
   }, [title, favicon]);
 }
 
