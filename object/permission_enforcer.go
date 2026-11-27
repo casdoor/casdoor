@@ -71,6 +71,80 @@ func getPermissionEnforcer(p *Permission, permissionIDs ...string) (*casbin.Enfo
 	return enforcer, nil
 }
 
+// getPermissionEnforcerForEnforcement leaves stored policies intact while excluding
+// policies that only grant access through a disabled role from this enforcer.
+func getPermissionEnforcerForEnforcement(p *Permission, permissionIDs ...string) (*casbin.Enforcer, error) {
+	enforcer, err := getPermissionEnforcer(p, permissionIDs...)
+	if err != nil {
+		return nil, err
+	}
+
+	err = removeDisabledRolePolicies(enforcer, p, permissionIDs...)
+	if err != nil {
+		return nil, err
+	}
+
+	return enforcer, nil
+}
+
+func removeDisabledRolePolicies(enforcer *casbin.Enforcer, permission *Permission, permissionIDs ...string) error {
+	permissions, err := getPermissionEnforcerTargets(permission, permissionIDs...)
+	if err != nil {
+		return err
+	}
+
+	disabled := map[string]map[string]bool{}
+	roles := map[string]*Role{}
+	for _, p := range permissions {
+		for _, roleId := range p.Roles {
+			if roleId == "*" || strings.HasSuffix(roleId, "/*") || util.InSlice(p.Users, roleId) {
+				continue
+			}
+
+			isGroupSubject := false
+			for _, groupId := range p.Groups {
+				if getPermissionGroupSubject(p.Owner, groupId) == roleId {
+					isGroupSubject = true
+					break
+				}
+			}
+			if isGroupSubject {
+				continue
+			}
+
+			role, ok := roles[roleId]
+			if !ok {
+				role, err = GetRole(roleId)
+				if err != nil {
+					return err
+				}
+				roles[roleId] = role
+			}
+			if role != nil && !role.IsEnabled {
+				if disabled[p.GetId()] == nil {
+					disabled[p.GetId()] = map[string]bool{}
+				}
+				disabled[p.GetId()][roleId] = true
+			}
+		}
+	}
+
+	var policies [][]string
+	for _, policy := range enforcer.GetPolicy() {
+		if len(policy) >= 6 && disabled[policy[5]][policy[0]] {
+			policies = append(policies, policy)
+		}
+	}
+	if len(policies) == 0 {
+		return nil
+	}
+
+	enforcer.EnableAutoSave(false)
+	defer enforcer.EnableAutoSave(true)
+	_, err = enforcer.RemovePolicies(policies)
+	return err
+}
+
 func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 	tableName := "permission_rule"
 	if len(p.Adapter) != 0 {
@@ -187,12 +261,17 @@ func (r *permissionRoleResolver) getRoles(owner string) ([]*Role, error) {
 		return nil, err
 	}
 
-	r.rolesByOwner[owner] = roles
+	enabledRoles := []*Role{}
 	for _, role := range roles {
+		if !role.IsEnabled {
+			continue
+		}
+		enabledRoles = append(enabledRoles, role)
 		r.roleByID[role.GetId()] = role
 	}
+	r.rolesByOwner[owner] = enabledRoles
 
-	return roles, nil
+	return enabledRoles, nil
 }
 
 func (r *permissionRoleResolver) getRolesInRole(permissionOwner string, roleId string, visited map[string]struct{}) ([]*Role, error) {
@@ -441,6 +520,10 @@ func getRuntimeGroupingPolicies(permissions []*Permission) ([][]string, error) {
 				}
 
 				for _, subRole := range role.Roles {
+					if subRole != "*" && !strings.HasSuffix(subRole, "/*") && roleResolver.roleByID[subRole] == nil {
+						continue
+					}
+
 					if domainExist {
 						for _, domain := range permission.Domains {
 							appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(subRole, currentRoleID, domain))
@@ -700,7 +783,7 @@ func removePermissionsPolicies(permissions []*Permission) error {
 }
 
 func Enforce(permission *Permission, request []interface{}, permissionIds ...string) (bool, error) {
-	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
+	enforcer, err := getPermissionEnforcerForEnforcement(permission, permissionIds...)
 	if err != nil {
 		return false, err
 	}
@@ -713,7 +796,7 @@ func Enforce(permission *Permission, request []interface{}, permissionIds ...str
 }
 
 func BatchEnforce(permission *Permission, requests [][]interface{}, permissionIds ...string) ([]bool, error) {
-	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
+	enforcer, err := getPermissionEnforcerForEnforcement(permission, permissionIds...)
 	if err != nil {
 		return nil, err
 	}
@@ -751,7 +834,7 @@ func getEnforcers(userId string) ([]*casbin.Enforcer, error) {
 func getPermissionEnforcers(permissions []*Permission) ([]*casbin.Enforcer, error) {
 	var enforcers []*casbin.Enforcer
 	for _, permission := range permissions {
-		enforcer, err := getPermissionEnforcer(permission)
+		enforcer, err := getPermissionEnforcerForEnforcement(permission)
 		if err != nil {
 			return nil, err
 		}
