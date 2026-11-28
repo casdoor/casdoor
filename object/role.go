@@ -254,6 +254,10 @@ func getRolesByUserInternal(userId string) ([]*Role, map[string][]string, error)
 	// a source is the group that granted the role, "" means it was assigned directly
 	sources := map[string][]string{}
 	for _, role := range roles {
+		if !role.IsEnabled {
+			continue
+		}
+
 		roleSources := []string{}
 		if util.InSlice(role.Users, userId) {
 			roleSources = append(roleSources, "")
@@ -421,28 +425,37 @@ func GetMaskedRoles(roles []*Role) []*Role {
 	return roles
 }
 
-// GetAncestorRoles returns a list of roles that contain the given roleIds
+// GetAncestorRoles returns the enabled roles that contain the given roleIds, a disabled role breaks the chain
 func GetAncestorRoles(roleIds ...string) ([]*Role, error) {
 	if len(roleIds) == 0 {
 		return []*Role{}, nil
 	}
 
-	visited := map[string]bool{}
-	for _, roleId := range roleIds {
-		visited[roleId] = true
-	}
-
 	owner, _ := util.GetOwnerAndNameFromIdNoCheck(roleIds[0])
 
-	allRoles, err := GetRoles(owner)
+	roles, err := GetRoles(owner)
 	if err != nil {
 		return nil, err
 	}
 
+	allRoles := []*Role{}
 	roleMap := map[string]*Role{}
-	for _, r := range allRoles {
-		roleMap[r.GetId()] = r
+	for _, r := range roles {
+		if r.IsEnabled {
+			allRoles = append(allRoles, r)
+			roleMap[r.GetId()] = r
+		}
 	}
+
+	visited := map[string]bool{}
+	enabledRoleIds := []string{}
+	for _, roleId := range roleIds {
+		if roleMap[roleId] != nil {
+			visited[roleId] = true
+			enabledRoleIds = append(enabledRoleIds, roleId)
+		}
+	}
+	roleIds = enabledRoleIds
 
 	// find all the roles that contain father roles
 	res := []*Role{}

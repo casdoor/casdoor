@@ -28,6 +28,15 @@ import (
 )
 
 func getPermissionEnforcer(p *Permission, permissionIDs ...string) (*casbin.Enforcer, error) {
+	return newPermissionEnforcer(p, false, permissionIDs...)
+}
+
+// getEnforcingPermissionEnforcer drops the policies of disabled roles in memory, so it is only for checks, never for writing policies
+func getEnforcingPermissionEnforcer(p *Permission, permissionIDs ...string) (*casbin.Enforcer, error) {
+	return newPermissionEnforcer(p, true, permissionIDs...)
+}
+
+func newPermissionEnforcer(p *Permission, isEnforcing bool, permissionIDs ...string) (*casbin.Enforcer, error) {
 	// Init an enforcer instance without specifying a model or adapter.
 	// If you specify an adapter, it will load all policies, which is a
 	// heavy process that can slow down the application.
@@ -62,13 +71,63 @@ func getPermissionEnforcer(p *Permission, permissionIDs ...string) (*casbin.Enfo
 		return nil, err
 	}
 
-	// we can rebuild group policies in memory
-	err = loadRuntimeGroupingPolicies(enforcer, p, permissionIDs...)
+	targetPermissions, err := getPermissionEnforcerTargets(p, permissionIDs...)
 	if err != nil {
 		return nil, err
 	}
 
+	roleResolver := newPermissionRoleResolver()
+
+	// we can rebuild group policies in memory
+	err = loadRuntimeGroupingPolicies(enforcer, targetPermissions, roleResolver)
+	if err != nil {
+		return nil, err
+	}
+
+	if isEnforcing {
+		err = removeDisabledRolePolicies(enforcer, targetPermissions, roleResolver)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return enforcer, nil
+}
+
+func removeDisabledRolePolicies(enforcer *casbin.Enforcer, permissions []*Permission, roleResolver *permissionRoleResolver) error {
+	disabledSubjects := map[string]bool{}
+	for _, permission := range permissions {
+		for _, roleId := range permission.Roles {
+			if roleId == "*" || strings.HasSuffix(roleId, "/*") || util.InSlice(permission.Users, roleId) {
+				continue
+			}
+
+			isDisabled, err := roleResolver.isRoleDisabled(roleId)
+			if err != nil {
+				return err
+			}
+			if isDisabled {
+				disabledSubjects[permission.GetId()+"\x00"+roleId] = true
+			}
+		}
+	}
+	if len(disabledSubjects) == 0 {
+		return nil
+	}
+
+	policies := [][]string{}
+	for _, policy := range enforcer.GetPolicy() {
+		if len(policy) >= 6 && disabledSubjects[policy[5]+"\x00"+policy[0]] {
+			policies = append(policies, policy)
+		}
+	}
+	if len(policies) == 0 {
+		return nil
+	}
+
+	enforcer.EnableAutoSave(false)
+	_, err := enforcer.RemovePolicies(policies)
+	return err
 }
 
 func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
@@ -166,14 +225,16 @@ func getPermissionGroupSubject(permissionOwner string, groupId string) string {
 }
 
 type permissionRoleResolver struct {
-	rolesByOwner map[string][]*Role
-	roleByID     map[string]*Role
+	rolesByOwner    map[string][]*Role
+	roleByID        map[string]*Role
+	disabledRoleIDs map[string]bool
 }
 
 func newPermissionRoleResolver() *permissionRoleResolver {
 	return &permissionRoleResolver{
-		rolesByOwner: map[string][]*Role{},
-		roleByID:     map[string]*Role{},
+		rolesByOwner:    map[string][]*Role{},
+		roleByID:        map[string]*Role{},
+		disabledRoleIDs: map[string]bool{},
 	}
 }
 
@@ -187,12 +248,29 @@ func (r *permissionRoleResolver) getRoles(owner string) ([]*Role, error) {
 		return nil, err
 	}
 
-	r.rolesByOwner[owner] = roles
+	enabledRoles := []*Role{}
 	for _, role := range roles {
+		if !role.IsEnabled {
+			r.disabledRoleIDs[role.GetId()] = true
+			continue
+		}
+
+		enabledRoles = append(enabledRoles, role)
 		r.roleByID[role.GetId()] = role
 	}
+	r.rolesByOwner[owner] = enabledRoles
 
-	return roles, nil
+	return enabledRoles, nil
+}
+
+func (r *permissionRoleResolver) isRoleDisabled(roleId string) (bool, error) {
+	owner, _ := util.GetOwnerAndNameFromIdNoCheck(roleId)
+	_, err := r.getRoles(owner)
+	if err != nil {
+		return false, err
+	}
+
+	return r.disabledRoleIDs[roleId], nil
 }
 
 func (r *permissionRoleResolver) getRolesInRole(permissionOwner string, roleId string, visited map[string]struct{}) ([]*Role, error) {
@@ -370,10 +448,9 @@ func appendRuntimeGroupingPolicy(groupingPolicies *[][]string, visited map[strin
 	visited[key] = struct{}{}
 }
 
-func getRuntimeGroupingPolicies(permissions []*Permission) ([][]string, error) {
+func getRuntimeGroupingPolicies(permissions []*Permission, roleResolver *permissionRoleResolver) ([][]string, error) {
 	var groupingPolicies [][]string
 	visitedPolicies := map[string]struct{}{}
-	roleResolver := newPermissionRoleResolver()
 	groupResolver := newPermissionGroupResolver()
 
 	for _, permission := range permissions {
@@ -441,6 +518,10 @@ func getRuntimeGroupingPolicies(permissions []*Permission) ([][]string, error) {
 				}
 
 				for _, subRole := range role.Roles {
+					if roleResolver.disabledRoleIDs[subRole] {
+						continue
+					}
+
 					if domainExist {
 						for _, domain := range permission.Domains {
 							appendRuntimeGroupingPolicy(&groupingPolicies, visitedPolicies, newRuntimeGroupingPolicy(subRole, currentRoleID, domain))
@@ -456,17 +537,12 @@ func getRuntimeGroupingPolicies(permissions []*Permission) ([][]string, error) {
 	return groupingPolicies, nil
 }
 
-func loadRuntimeGroupingPolicies(enforcer *casbin.Enforcer, permission *Permission, permissionIDs ...string) error {
+func loadRuntimeGroupingPolicies(enforcer *casbin.Enforcer, targetPermissions []*Permission, roleResolver *permissionRoleResolver) error {
 	if !HasRoleDefinition(enforcer.GetModel()) {
 		return nil
 	}
 
-	targetPermissions, err := getPermissionEnforcerTargets(permission, permissionIDs...)
-	if err != nil {
-		return err
-	}
-
-	groupingPolicies, err := getRuntimeGroupingPolicies(targetPermissions)
+	groupingPolicies, err := getRuntimeGroupingPolicies(targetPermissions, roleResolver)
 	if err != nil {
 		return err
 	}
@@ -700,7 +776,7 @@ func removePermissionsPolicies(permissions []*Permission) error {
 }
 
 func Enforce(permission *Permission, request []interface{}, permissionIds ...string) (bool, error) {
-	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
+	enforcer, err := getEnforcingPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return false, err
 	}
@@ -713,7 +789,7 @@ func Enforce(permission *Permission, request []interface{}, permissionIds ...str
 }
 
 func BatchEnforce(permission *Permission, requests [][]interface{}, permissionIds ...string) ([]bool, error) {
-	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
+	enforcer, err := getEnforcingPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return nil, err
 	}
@@ -751,7 +827,7 @@ func getEnforcers(userId string) ([]*casbin.Enforcer, error) {
 func getPermissionEnforcers(permissions []*Permission) ([]*casbin.Enforcer, error) {
 	var enforcers []*casbin.Enforcer
 	for _, permission := range permissions {
-		enforcer, err := getPermissionEnforcer(permission)
+		enforcer, err := getEnforcingPermissionEnforcer(permission)
 		if err != nil {
 			return nil, err
 		}

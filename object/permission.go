@@ -641,7 +641,7 @@ func (p *Permission) isRoleHit(userId string) bool {
 
 	for _, role := range p.Roles {
 		if role == "*" {
-			return true
+			return len(targetRoles) > 0
 		}
 
 		for _, targetRole := range targetRoles {
