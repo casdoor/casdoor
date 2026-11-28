@@ -273,8 +273,7 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(err.Error())
 			return
 		}
-	} else if vform.Method == ResetVerification {
-		// For reset verification, get the current logged-in user
+	} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
 		user = c.GetCurrentUser()
 	} else if vform.Method == LoginVerification || vform.Method == MagicLinkVerification {
 		// For login verification, try to find user by email/phone for CAPTCHA check
@@ -523,10 +522,11 @@ func (c *ApiController) SendVerificationCode() {
 				vform.CountryCode = organization.CountryCodes[0]
 			}
 		} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
-			if vform.CountryCode == "" {
-				if user = c.GetCurrentUser(); user != nil {
-					vform.CountryCode = user.GetCountryCode(vform.CountryCode)
-				}
+			if user == nil {
+				user = c.GetCurrentUser()
+			}
+			if vform.CountryCode == "" && user != nil {
+				vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 			}
 
 			if vform.Method == ResetVerification && !isUserDestMergeable(user, object.VerifyTypePhone, vform.Dest, vform.CountryCode) {
@@ -700,7 +700,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 		}
 	}
 
-	err = object.CheckVerifyCodeWithLimitAndIp(user, clientIp, checkDest, code, c.GetAcceptLanguage())
+	err = object.CheckVerifyCodeWithLimitAndIp(user.Owner, user, clientIp, checkDest, code, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -733,7 +733,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 		c.SetSessionUsername(user.GetId())
 	}
 
-	err = object.DisableVerificationCode(checkDest)
+	err = object.DisableVerificationCode(user.Owner, user, checkDest)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -817,7 +817,7 @@ func (c *ApiController) VerifyCode() {
 	}
 
 	if !isMasterCode {
-		err = object.DisableVerificationCode(checkDest)
+		err = object.DisableVerificationCode(user.Owner, user, checkDest)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

@@ -151,7 +151,7 @@ func GetVerificationCodeToken(application *Application, username string, country
 	if user != nil {
 		err = CheckSigninCode(user, dest, code, lang)
 	} else {
-		err = CheckVerifyCodeWithLimitAndIp(nil, clientIp, dest, code, lang)
+		err = CheckVerifyCodeWithLimitAndIp(application.Organization, nil, clientIp, dest, code, lang)
 	}
 	if err != nil {
 		return nil, &TokenError{
@@ -183,7 +183,7 @@ func GetVerificationCodeToken(application *Application, username string, country
 		}
 	}
 
-	err = DisableVerificationCode(dest)
+	err = DisableVerificationCode(application.Organization, user, dest)
 	if err != nil {
 		return nil, nil, err
 	}

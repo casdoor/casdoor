@@ -158,6 +158,7 @@ func VerifyMfaPasscode(user *User, mfaProps *MfaProps, passcode string, lang str
 		return verifyTotpPasscodeOnce(user, mfaProps.Secret, passcode, lang)
 	}
 
+	mfaProps.User = user
 	mfaUtil := GetMfaUtil(mfaProps.MfaType, mfaProps)
 	if mfaUtil == nil {
 		return errors.New("Invalid multi-factor authentication type")

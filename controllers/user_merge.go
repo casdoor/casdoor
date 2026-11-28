@@ -181,9 +181,9 @@ func (c *ApiController) MergeUser() {
 		var checkDest string
 		other, checkDest, err = getUserByDest(user, destType, c.Ctx.Request.Form.Get("dest"), c.Ctx.Request.Form.Get("countryCode"))
 		if err == nil && other != nil {
-			err = object.CheckVerifyCodeWithLimitAndIp(user, util.GetClientIpFromRequest(c.Ctx.Request), checkDest, code, c.GetAcceptLanguage())
+			err = object.CheckVerifyCodeWithLimitAndIp(user.Owner, user, util.GetClientIpFromRequest(c.Ctx.Request), checkDest, code, c.GetAcceptLanguage())
 			if err == nil {
-				err = object.DisableVerificationCode(checkDest)
+				err = object.DisableVerificationCode(user.Owner, user, checkDest)
 			}
 		}
 	}

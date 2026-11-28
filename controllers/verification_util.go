@@ -62,7 +62,7 @@ func (c *ApiController) checkVerifyCodeOrOrgMasterCode(user *object.User, dest s
 	}
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-	return object.CheckVerifyCodeOrMasterCodeWithLimitAndIp(user, organization.MasterVerificationCode, clientIp, dest, code, c.GetAcceptLanguage())
+	return object.CheckVerifyCodeOrMasterCodeWithLimitAndIp(user.Owner, user, organization.MasterVerificationCode, clientIp, dest, code, c.GetAcceptLanguage())
 }
 
 func (c *ApiController) verifyMfaPasscode(user *object.User, mfaProps *object.MfaProps, passcode string) error {

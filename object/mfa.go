@@ -29,6 +29,9 @@ type MfaProps struct {
 	URL                string   `json:"url,omitempty"`
 	RecoveryCodes      []string `json:"recoveryCodes,omitempty"`
 	MfaRememberInHours int      `json:"mfaRememberInHours"`
+
+	// the user an email or SMS passcode is checked for
+	User *User `json:"-" xorm:"-" form:"-"`
 }
 
 type MfaInterface interface {

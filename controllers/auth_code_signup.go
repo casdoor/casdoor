@@ -60,7 +60,7 @@ func (c *ApiController) answerCodeSigninSignup(application *object.Application, 
 	}
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-	err := object.CheckVerifyCodeWithLimitAndIp(nil, clientIp, checkDest, authForm.Code, c.GetAcceptLanguage())
+	err := object.CheckVerifyCodeWithLimitAndIp(application.Organization, nil, clientIp, checkDest, authForm.Code, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(fmt.Sprintf("%s - %s", verifyType, err.Error()))
 		return

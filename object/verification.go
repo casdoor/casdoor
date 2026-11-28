@@ -235,75 +235,61 @@ func filterRecordIn24Hours(record *VerificationRecord) *VerificationRecord {
 	return record
 }
 
-func getVerificationRecord(dest string) (*VerificationRecord, error) {
-	if dest == "" {
-		return nil, nil
+// verificationScope limits a code to the organization of the application that sent it, or to
+// the user it was sent to: an organization admin controls the providers of their own applications, so
+// a code they sent for an address must not work for the account of another organization
+func verificationScope(owner string, user *User) (string, []interface{}) {
+	if user == nil {
+		return "owner = ?", []interface{}{owner}
 	}
 
-	record := &VerificationRecord{}
-	record.Receiver = dest
-
-	has, err := ormer.Engine.Desc("time").Where("is_used = ?", false).Get(record)
-	if err != nil {
-		return nil, err
-	}
-
-	record = filterRecordIn24Hours(record)
-	if record == nil {
-		has = false
-	}
-
-	if !has {
-		record = &VerificationRecord{}
-		record.Receiver = dest
-
-		has, err = ormer.Engine.Desc("time").Get(record)
-		if err != nil {
-			return nil, err
-		}
-
-		record = filterRecordIn24Hours(record)
-		if record == nil {
-			has = false
-		}
-
-		if !has {
-			return nil, nil
-		}
-
-		return record, nil
-	}
-
-	return record, nil
+	return fmt.Sprintf("(owner = ? or %s = ?)", quoteColumn("user")), []interface{}{owner, user.GetId()}
 }
 
-func getUnusedVerificationRecord(dest string) (*VerificationRecord, error) {
-	if dest == "" {
-		return nil, nil
+func findVerificationRecord(owner string, user *User, dest string, isUnusedOnly bool) (*VerificationRecord, error) {
+	scope, args := verificationScope(owner, user)
+	session := ormer.Engine.Where("receiver = ?", dest).And(scope, args...)
+	if isUnusedOnly {
+		session = session.And("is_used = ?", false)
 	}
 
 	record := &VerificationRecord{}
-	record.Receiver = dest
-
-	has, err := ormer.Engine.Desc("time").Where("is_used = ?", false).Get(record)
+	has, err := session.Desc("time").Get(record)
 	if err != nil {
 		return nil, err
 	}
-
-	record = filterRecordIn24Hours(record)
-	if record == nil {
-		has = false
-	}
-
 	if !has {
 		return nil, nil
 	}
 
-	return record, nil
+	return filterRecordIn24Hours(record), nil
 }
 
-func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult, error) {
-	record, err := getVerificationRecord(dest)
+func getVerificationRecord(owner string, user *User, dest string) (*VerificationRecord, error) {
+	if dest == "" || owner == "" {
+		return nil, nil
+	}
+
+	record, err := findVerificationRecord(owner, user, dest, true)
+	if err != nil || record != nil {
+		return record, err
+	}
+
+	return findVerificationRecord(owner, user, dest, false)
+}
+
+func getUnusedVerificationRecord(owner string, user *User, dest string) (*VerificationRecord, error) {
+	if dest == "" || owner == "" {
+		return nil, nil
+	}
+
+	return findVerificationRecord(owner, user, dest, true)
+}
+
+// CheckVerificationCode checks a code sent to dest through an application of the organization
+// owner, or sent to the user when one is given
+func CheckVerificationCode(owner string, user *User, dest string, code string, lang string) (*VerifyResult, error) {
+	record, err := getVerificationRecord(owner, user, dest)
 	if err != nil {
 		return nil, err
 	}
@@ -348,8 +334,8 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 	return &VerifyResult{VerificationSuccess, ""}, nil
 }
 
-func DisableVerificationCode(dest string) error {
-	record, err := getUnusedVerificationRecord(dest)
+func DisableVerificationCode(owner string, user *User, dest string) error {
+	record, err := getUnusedVerificationRecord(owner, user, dest)
 	if err != nil {
 		return err
 	}
@@ -369,7 +355,7 @@ func CheckSigninCode(user *User, dest, code, lang string) error {
 		return err
 	}
 
-	result, err := CheckVerificationCode(dest, code, lang)
+	result, err := CheckVerificationCode(user.Owner, user, dest, code, lang)
 	if err != nil {
 		return err
 	}
@@ -469,7 +455,7 @@ func CheckVerifyCodeWithLimit(user *User, dest, code, lang string) error {
 		return err
 	}
 
-	result, err := CheckVerificationCode(dest, code, lang)
+	result, err := CheckVerificationCode(user.Owner, user, dest, code, lang)
 	if err != nil {
 		return err
 	}

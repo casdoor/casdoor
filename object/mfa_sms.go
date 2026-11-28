@@ -36,7 +36,11 @@ func (mfa *SmsMfa) SetupVerify(passCode string, lang string) error {
 		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
-	result, err := CheckVerificationCode(mfa.Secret, passCode, lang)
+	if mfa.User == nil {
+		return errors.New("the user of the passcode is missing")
+	}
+
+	result, err := CheckVerificationCode(mfa.User.Owner, mfa.User, mfa.Secret, passCode, lang)
 	if err != nil {
 		return err
 	}
@@ -77,7 +81,11 @@ func (mfa *SmsMfa) Verify(passCode string, lang string) error {
 		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
-	result, err := CheckVerificationCode(mfa.Secret, passCode, lang)
+	if mfa.User == nil {
+		return errors.New("the user of the passcode is missing")
+	}
+
+	result, err := CheckVerificationCode(mfa.User.Owner, mfa.User, mfa.Secret, passCode, lang)
 	if err != nil {
 		return err
 	}
@@ -85,7 +93,7 @@ func (mfa *SmsMfa) Verify(passCode string, lang string) error {
 		return errors.New(result.Msg)
 	}
 
-	return DisableVerificationCode(mfa.Secret)
+	return DisableVerificationCode(mfa.User.Owner, mfa.User, mfa.Secret)
 }
 
 func NewSmsMfaUtil(config *MfaProps) *SmsMfa {

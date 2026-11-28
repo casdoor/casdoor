@@ -177,6 +177,7 @@ func (c *ApiController) MfaSetupVerify() {
 		return
 	}
 
+	config.User = user
 	verifiedDest := getMfaSetupDest(mfaType, dest, countryCode)
 	err = object.VerifyMfaWithLimit(user, func() error { return mfaUtil.SetupVerify(passcode, c.GetAcceptLanguage()) }, c.GetAcceptLanguage())
 	if err != nil {

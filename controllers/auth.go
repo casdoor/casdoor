@@ -1031,7 +1031,7 @@ func (c *ApiController) Login() {
 			}
 
 			// disable the verification code
-			err = object.DisableVerificationCode(checkDest)
+			err = object.DisableVerificationCode(user.Owner, user, checkDest)
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
 				return

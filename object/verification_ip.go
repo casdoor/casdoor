@@ -117,12 +117,13 @@ func resetVerifyCodeIpErrorTimes(remoteAddr, dest string) {
 
 // CheckVerifyCodeWithLimitAndIp enforces both per-user and per-IP attempt limits for verification codes.
 // It is intended for security-sensitive flows like password reset.
-func CheckVerifyCodeWithLimitAndIp(user *User, remoteAddr, dest, code, lang string) error {
-	_, err := CheckVerifyCodeOrMasterCodeWithLimitAndIp(user, "", remoteAddr, dest, code, lang)
+// owner is the organization the code is checked for, the one of the user when there is a user
+func CheckVerifyCodeWithLimitAndIp(owner string, user *User, remoteAddr, dest, code, lang string) error {
+	_, err := CheckVerifyCodeOrMasterCodeWithLimitAndIp(owner, user, "", remoteAddr, dest, code, lang)
 	return err
 }
 
-func CheckVerifyCodeOrMasterCodeWithLimitAndIp(user *User, masterCode, remoteAddr, dest, code, lang string) (bool, error) {
+func CheckVerifyCodeOrMasterCodeWithLimitAndIp(owner string, user *User, masterCode, remoteAddr, dest, code, lang string) (bool, error) {
 	if err := checkVerifyCodeIpErrorTimes(remoteAddr, dest, lang); err != nil {
 		return false, err
 	}
@@ -138,7 +139,7 @@ func CheckVerifyCodeOrMasterCodeWithLimitAndIp(user *User, masterCode, remoteAdd
 		return true, nil
 	}
 
-	result, err := CheckVerificationCode(dest, code, lang)
+	result, err := CheckVerificationCode(owner, user, dest, code, lang)
 	if err != nil {
 		return false, err
 	}
